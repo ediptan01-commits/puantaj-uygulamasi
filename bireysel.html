@@ -1,16 +1,1052 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bireysel Puantaj</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Bireysel Puantaj Defteri</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #d8c7a5;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #292318;
+}
+
+/* ÜST BAR */
+
+.topbar {
+    height: 70px;
+    background: #29251f;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.back {
+    border: 0;
+    background: transparent;
+    color: white;
+    font-size: 27px;
+    width: 45px;
+    height: 45px;
+}
+
+.month-title {
+    text-align: center;
+}
+
+.month-title strong {
+    display: block;
+    font-size: 18px;
+}
+
+.month-title span {
+    font-size: 12px;
+    opacity: .7;
+}
+
+.month-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.month-buttons button {
+    border: 0;
+    background: #454039;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 9px;
+    font-size: 20px;
+}
+
+
+/* DEFTER ALANI */
+
+.book-area {
+    padding: 18px 8px 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.book {
+    width: min(1100px, 100%);
+    position: relative;
+    perspective: 1800px;
+}
+
+
+/* SAYFA */
+
+.page {
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(80,60,30,.055) 0px,
+            rgba(80,60,30,.055) 1px,
+            transparent 1px,
+            transparent 31px
+        ),
+        #f7efd9;
+
+    border: 1px solid #c8b994;
+
+    min-height: 600px;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.25),
+        inset 0 0 35px rgba(100,70,20,.07);
+
+    overflow: hidden;
+}
+
+
+/* MASAÜSTÜNDE İKİ SAYFA */
+
+.pages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+}
+
+.pages .page:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.pages .page:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+
+/* ORTA CİLT */
+
+.book::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,.15),
+        rgba(255,255,255,.35),
+        rgba(0,0,0,.12)
+    );
+    pointer-events: none;
+}
+
+
+/* SAYFA BAŞLIĞI */
+
+.page-header {
+    min-height: 90px;
+    padding: 13px 12px;
+
+    display: grid;
+    grid-template-columns: 70px 1fr;
+
+    border-bottom: 2px solid #776c53;
+}
+
+.page-title {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 5px;
+}
+
+.name-area {
+    border-left: 1px solid #776c53;
+    padding-left: 10px;
+}
+
+.name-area label {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.name-input {
+    width: 100%;
+    margin-top: 7px;
+    border: none;
+    border-bottom: 1px solid #777;
+    background: transparent;
+    outline: none;
+    font-size: 15px;
+    padding: 4px;
+}
+
+
+/* PUANTAJ TABLOSU */
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 520px;
+    table-layout: fixed;
+}
+
+th,
+td {
+    border: 1px solid #8d826b;
+    height: 30px;
+    text-align: center;
+    font-size: 9px;
+}
+
+th {
+    background: rgba(150,130,90,.09);
+    font-weight: bold;
+}
+
+.worker-col {
+    width: 125px;
+}
+
+.number-col {
+    width: 25px;
+}
+
+.day-cell {
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+}
+
+.day-cell:active {
+    background: #dfd0a8;
+}
+
+.worker-name {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 10px;
+    padding: 3px;
+}
+
+
+/* DURUM RENKLERİ */
+
+.present {
+    background: #dcebd7;
+}
+
+.absent {
+    background: #f0cccc;
+}
+
+.leave {
+    background: #f1dfae;
+}
+
+.report {
+    background: #d6dff0;
+}
+
+.half {
+    background: #ead9c3;
+}
+
+
+/* ALT BİLGİ */
+
+.summary {
+    border-top: 2px solid #776c53;
+}
+
+.summary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.summary-item {
+    min-height: 42px;
+    border-bottom: 1px solid #8d826b;
+    padding: 5px 8px;
+    font-size: 10px;
+}
+
+.summary-item:nth-child(odd) {
+    border-right: 1px solid #8d826b;
+}
+
+.summary-item strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.summary-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 13px;
+}
+
+
+/* NOT */
+
+.note {
+    min-height: 85px;
+    padding: 8px;
+    border-top: 1px solid #8d826b;
+}
+
+.note textarea {
+    width: 100%;
+    height: 55px;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+}
+
+
+/* ALT KONTROLLER */
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.control-button {
+    border: 0;
+    background: #29251f;
+    color: white;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 15px;
+}
+
+.page-number {
+    background: rgba(255,255,255,.65);
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+
+/* ÇALIŞAN EKLE */
+
+.add-worker {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.add-worker button {
+    border: 1px solid #6f654f;
+    background: #eee4cb;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+
+/* MOBİL */
+
+@media (max-width: 700px) {
+
+    .book-area {
+        padding: 10px 5px 25px;
+    }
+
+    .pages {
+        display: block;
+    }
+
+    .pages .page:first-child {
+        display: none;
+    }
+
+    .pages .page:last-child {
+        border-radius: 5px;
+    }
+
+    .book::after {
+        display: none;
+    }
+
+    .page {
+        min-height: calc(100vh - 150px);
+    }
+
+    .page-header {
+        min-height: 85px;
+    }
+
+    table {
+        min-width: 700px;
+    }
+
+}
+
+
+/* SAYFA ÇEVİRME */
+
+.flip-left {
+    animation: flipLeft .35s ease;
+}
+
+.flip-right {
+    animation: flipRight .35s ease;
+}
+
+@keyframes flipLeft {
+
+    0% {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotateY(-8deg);
+        opacity: .7;
+    }
+
+    100% {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes flipRight {
+
+    0% {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotateY(8deg);
+        opacity: .7;
+    }
+
+    100% {
+        transform: rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+</style>
 </head>
 
 <body>
 
-    <h1>Bireysel Puantaj</h1>
 
-    <p>Buraya dijital puantaj tablosunu oluşturacağız.</p>
+<!-- ÜST BAR -->
+
+<div class="topbar">
+
+    <button class="back" onclick="goBack()">‹</button>
+
+    <div class="month-title">
+        <strong id="monthName">Eylül 2026</strong>
+        <span>Bireysel Puantaj Defteri</span>
+    </div>
+
+    <div class="month-buttons">
+        <button onclick="changeMonth(-1)">‹</button>
+        <button onclick="changeMonth(1)">›</button>
+    </div>
+
+</div>
+
+
+<!-- DEFTER -->
+
+<div class="book-area">
+
+<div class="book" id="book">
+
+<div class="pages">
+
+
+<!-- SOL SAYFA -->
+
+<div class="page">
+
+    <div class="page-header">
+
+        <div class="page-title">
+            ÇALIŞANLARIN ADI - SOYADI
+        </div>
+
+        <div class="name-area">
+            <label>PUANTAJ DEFTERİ</label>
+            <input
+                class="name-input"
+                placeholder="Çalışan / kişi adı">
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+
+                    <th class="number-col">
+                        No
+                    </th>
+
+                    <th class="worker-col">
+                        Çalışanın Adı - Soyadı
+                    </th>
+
+                    <script>
+                        for(let i = 1; i <= 19; i++){
+                            document.write(
+                                `<th class="number-col">${i}</th>`
+                            );
+                        }
+                    </script>
+
+                </tr>
+            </thead>
+
+            <tbody id="leftBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- SAĞ SAYFA -->
+
+<div class="page">
+
+    <div class="page-header">
+
+        <div class="page-title">
+            AYLIK PUANTAJ
+        </div>
+
+        <div class="name-area">
+            <label>AYLIK PUANTAJ DEFTERİ</label>
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th class="number-col">
+                        No
+                    </th>
+
+                    <script>
+                        for(let i = 20; i <= 31; i++){
+                            document.write(
+                                `<th class="number-col">${i}</th>`
+                            );
+                        }
+                    </script>
+
+                    <th style="width:120px;">
+                        ÖZET
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="rightBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ÖZET -->
+
+    <div class="summary">
+
+        <div class="summary-row">
+
+            <div class="summary-item">
+                <strong>Saat veya yevmiyeleri toplamı</strong>
+                <input
+                    id="totalHours"
+                    class="summary-input"
+                    placeholder="0">
+            </div>
+
+            <div class="summary-item">
+                <strong>Ücreti</strong>
+                <input
+                    id="salary"
+                    class="summary-input"
+                    placeholder="0 TL">
+            </div>
+
+            <div class="summary-item">
+                <strong>Tediye edilecek meblağ</strong>
+                <input
+                    id="payment"
+                    class="summary-input"
+                    placeholder="0 TL">
+            </div>
+
+            <div class="summary-item">
+                <strong>Avans</strong>
+                <input
+                    id="advance"
+                    class="summary-input"
+                    placeholder="0 TL">
+            </div>
+
+            <div class="summary-item">
+                <strong>Tediye olunacak bakiye</strong>
+                <input
+                    id="balance"
+                    class="summary-input"
+                    placeholder="0 TL">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NOT -->
+
+    <div class="note">
+
+        <strong style="font-size:11px;">
+            Not
+        </strong>
+
+        <textarea
+            placeholder="Not yazabilirsiniz..."></textarea>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- KONTROLLER -->
+
+<div class="controls">
+
+    <button
+        class="control-button"
+        onclick="previousPage()">
+        ◀ Önceki
+    </button>
+
+    <div class="page-number">
+        <span id="pageNumber">1</span> / 2
+    </div>
+
+    <button
+        class="control-button"
+        onclick="nextPage()">
+        Sonraki ▶
+    </button>
+
+</div>
+
+
+<div class="add-worker">
+
+    <button onclick="addWorker()">
+        ＋ Çalışan Ekle
+    </button>
+
+</div>
+
+
+<script>
+
+/* AY */
+
+let currentDate = new Date(2026, 8, 1);
+
+const months = [
+    "Ocak",
+    "Şubat",
+    "Mart",
+    "Nisan",
+    "Mayıs",
+    "Haziran",
+    "Temmuz",
+    "Ağustos",
+    "Eylül",
+    "Ekim",
+    "Kasım",
+    "Aralık"
+];
+
+function updateMonth(){
+
+    document.getElementById("monthName").textContent =
+        months[currentDate.getMonth()] +
+        " " +
+        currentDate.getFullYear();
+
+}
+
+function changeMonth(amount){
+
+    currentDate.setMonth(
+        currentDate.getMonth() + amount
+    );
+
+    updateMonth();
+
+}
+
+
+/* ÇALIŞANLAR */
+
+let workers = [
+    "Çalışan 1",
+    "Çalışan 2",
+    "Çalışan 3"
+];
+
+
+function createWorkers(){
+
+    const left =
+        document.getElementById("leftBody");
+
+    const right =
+        document.getElementById("rightBody");
+
+    left.innerHTML = "";
+    right.innerHTML = "";
+
+
+    workers.forEach((worker, index) => {
+
+        /* SOL */
+
+        let rowLeft =
+            document.createElement("tr");
+
+        rowLeft.innerHTML =
+            `<td>${index + 1}</td>
+             <td>
+                <input
+                    class="worker-name"
+                    value="${worker}">
+             </td>`;
+
+        for(let day = 1; day <= 19; day++){
+
+            rowLeft.innerHTML +=
+                `<td
+                    class="day-cell"
+                    onclick="cycleStatus(this)"
+                    data-day="${day}">
+                </td>`;
+        }
+
+        left.appendChild(rowLeft);
+
+
+        /* SAĞ */
+
+        let rowRight =
+            document.createElement("tr");
+
+        rowRight.innerHTML =
+            `<td>${index + 1}</td>`;
+
+        for(let day = 20; day <= 31; day++){
+
+            rowRight.innerHTML +=
+                `<td
+                    class="day-cell"
+                    onclick="cycleStatus(this)"
+                    data-day="${day}">
+                </td>`;
+        }
+
+        rowRight.innerHTML +=
+            `<td>
+                <input
+                    class="summary-input"
+                    placeholder="—">
+             </td>`;
+
+        right.appendChild(rowRight);
+
+    });
+
+}
+
+
+function addWorker(){
+
+    const number =
+        workers.length + 1;
+
+    workers.push(
+        "Çalışan " + number
+    );
+
+    createWorkers();
+
+}
+
+
+/* PUANTAJ DURUMU */
+
+const statuses = [
+    "",
+    "✓",
+    "X",
+    "İ",
+    "R",
+    "½"
+];
+
+const classes = [
+    "",
+    "present",
+    "absent",
+    "leave",
+    "report",
+    "half"
+];
+
+
+function cycleStatus(cell){
+
+    let current =
+        parseInt(
+            cell.dataset.status || "0"
+        );
+
+    current++;
+
+    if(current >= statuses.length){
+        current = 0;
+    }
+
+    cell.dataset.status = current;
+
+    cell.textContent =
+        statuses[current];
+
+    cell.className =
+        "day-cell " +
+        classes[current];
+
+}
+
+
+/* SAYFA */
+
+let currentPage = 1;
+
+const book =
+    document.getElementById("book");
+
+
+function showPage(page){
+
+    currentPage = page;
+
+    document.getElementById("pageNumber")
+        .textContent = page;
+
+    book.classList.remove(
+        "flip-left",
+        "flip-right"
+    );
+
+    void book.offsetWidth;
+
+    if(page === 1){
+
+        book.classList.add("flip-left");
+
+        document.querySelector(
+            ".pages .page:first-child"
+        ).style.display = "block";
+
+        document.querySelector(
+            ".pages .page:last-child"
+        ).style.display = "block";
+
+    }
+
+}
+
+
+function nextPage(){
+
+    if(currentPage < 2){
+
+        currentPage = 2;
+
+        document.getElementById("pageNumber")
+            .textContent = "2";
+
+        document.querySelector(
+            ".pages .page:first-child"
+        ).style.display = "none";
+
+        book.classList.remove("flip-right");
+
+        void book.offsetWidth;
+
+        book.classList.add("flip-right");
+
+    }
+
+}
+
+
+function previousPage(){
+
+    if(currentPage > 1){
+
+        currentPage = 1;
+
+        document.getElementById("pageNumber")
+            .textContent = "1";
+
+        document.querySelector(
+            ".pages .page:first-child"
+        ).style.display = "block";
+
+        book.classList.remove("flip-left");
+
+        void book.offsetWidth;
+
+        book.classList.add("flip-left");
+
+    }
+
+}
+
+
+/* TELEFONDA KAYDIRMA */
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+
+book.addEventListener(
+    "touchstart",
+    function(event){
+
+        touchStartX =
+            event.changedTouches[0].screenX;
+
+    },
+    {passive:true}
+);
+
+
+book.addEventListener(
+    "touchend",
+    function(event){
+
+        touchEndX =
+            event.changedTouches[0].screenX;
+
+        handleSwipe();
+
+    },
+    {passive:true}
+);
+
+
+function handleSwipe(){
+
+    const distance =
+        touchEndX - touchStartX;
+
+    if(Math.abs(distance) < 50){
+        return;
+    }
+
+    if(distance < 0){
+
+        nextPage();
+
+    } else {
+
+        previousPage();
+
+    }
+
+}
+
+
+/* GERİ */
+
+function goBack(){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* BAŞLAT */
+
+createWorkers();
+
+updateMonth();
+
+</script>
 
 </body>
 </html>
