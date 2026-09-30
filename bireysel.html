@@ -2,12 +2,19 @@
 <html lang="tr">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Bireysel Puantaj</title>
 
 <style>
+
+/* ==================================================
+   TEMEL
+================================================== */
 
 *{
     box-sizing:border-box;
@@ -17,21 +24,30 @@
 
 body{
     font-family:Arial,sans-serif;
+
     background:#d8c7a5;
+
     color:#352e25;
+
+    min-height:100vh;
 }
 
-/* =========================
+
+/* ==================================================
    ÜST BAR
-========================= */
+================================================== */
 
 .top{
     height:72px;
+
     background:#f5ecd8;
+
     border-bottom:1px solid #b8a984;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     padding:0 14px;
@@ -42,10 +58,12 @@ body{
     height:44px;
 
     border:0;
+
     background:transparent;
 
-    font-size:38px;
     color:#40372b;
+
+    font-size:38px;
 }
 
 .title{
@@ -54,65 +72,159 @@ body{
 
 .title b{
     display:block;
+
     font-size:20px;
 }
 
 .title span{
     font-size:12px;
+
     color:#7b705e;
 }
 
-.people{
-    width:44px;
-    height:44px;
 
-    border:0;
-    border-radius:50%;
+/* ==================================================
+   ÇALIŞANLAR ÜST BÖLÜMÜ
+================================================== */
 
-    background:#e5d7b8;
+.employeeBar{
 
-    font-size:21px;
+    background:#eee4ce;
+
+    border-bottom:1px solid #b8a984;
+
+    padding:9px 10px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    overflow-x:auto;
+
+    scrollbar-width:none;
+}
+
+.employeeBar::-webkit-scrollbar{
+    display:none;
 }
 
 
-/* =========================
+/* Çalışan adı */
+
+.employeeChip{
+
+    flex:0 0 auto;
+
+    border:1px solid #b8a984;
+
+    background:#e0d1b1;
+
+    color:#5d5140;
+
+    border-radius:20px;
+
+    padding:8px 13px;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
+    cursor:pointer;
+}
+
+
+/* Aktif çalışan */
+
+.employeeChip.active{
+
+    background:#c9b58b;
+
+    color:#2f281f;
+
+    border-color:#9e8a62;
+
+    font-weight:bold;
+
+}
+
+
+/* Artı */
+
+.addEmployeeTop{
+
+    flex:0 0 auto;
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    border:1px solid #aa9975;
+
+    background:#f4ead5;
+
+    color:#4a3e2e;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+
+/* ==================================================
    ANA
-========================= */
+================================================== */
 
 .main{
+
     width:100%;
+
     max-width:760px;
+
     margin:auto;
 }
 
 
-/* =========================
-   AY BAŞLIĞI
-========================= */
+/* ==================================================
+   AY
+================================================== */
 
 .monthBar{
+
     padding:22px 15px 16px;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 }
 
 .monthName{
+
     font-size:30px;
+
     font-weight:bold;
 }
 
 .monthButtons{
+
     display:flex;
+
     gap:8px;
 }
 
 .monthButtons button{
+
     width:45px;
+
     height:45px;
 
     border:1px solid #b6a47f;
+
     border-radius:12px;
 
     background:#eee2c6;
@@ -123,11 +235,12 @@ body{
 }
 
 
-/* =========================
+/* ==================================================
    SEKME
-========================= */
+================================================== */
 
 .tabs{
+
     margin:0 14px 17px;
 
     height:52px;
@@ -139,11 +252,15 @@ body{
     padding:4px;
 
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
 }
 
 .tab{
+
     border:0;
+
     background:transparent;
 
     border-radius:25px;
@@ -154,34 +271,44 @@ body{
 }
 
 .tab.active{
+
     background:#f5ecd8;
+
     color:#30291f;
+
     font-weight:bold;
 
-    box-shadow:0 2px 5px rgba(0,0,0,.12);
+    box-shadow:
+        0 2px 5px rgba(0,0,0,.12);
 }
 
 
-/* =========================
-   HAFTA GÜNLERİ
-========================= */
+/* ==================================================
+   HAFTA
+================================================== */
 
 .weekdays{
+
     display:grid;
-    grid-template-columns:repeat(7,1fr);
+
+    grid-template-columns:
+        repeat(7,1fr);
 
     background:#e2d4b5;
 
     border-top:1px solid #b9a780;
+
     border-bottom:1px solid #b9a780;
 }
 
 .weekday{
+
     text-align:center;
 
     padding:11px 0;
 
     font-size:13px;
+
     font-weight:bold;
 
     color:#40382d;
@@ -192,23 +319,28 @@ body{
 }
 
 
-/* =========================
+/* ==================================================
    TAKVİM
-========================= */
+================================================== */
 
 .calendar{
+
     display:grid;
-    grid-template-columns:repeat(7,1fr);
+
+    grid-template-columns:
+        repeat(7,1fr);
 
     background:#d5c39e;
 }
 
 .day{
+
     min-height:94px;
 
     background:#eee5d0;
 
     border-right:1px solid #c0ae8b;
+
     border-bottom:1px solid #c0ae8b;
 
     padding-top:8px;
@@ -216,9 +348,12 @@ body{
     text-align:center;
 
     cursor:pointer;
+
+    position:relative;
 }
 
 .day:nth-child(7n+1){
+
     border-left:1px solid #c0ae8b;
 }
 
@@ -226,18 +361,23 @@ body{
 /* Gün numarası */
 
 .dayNumber{
+
     width:36px;
+
     height:36px;
 
     margin:auto;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
     border-radius:50%;
 
     font-size:18px;
+
     font-weight:bold;
 
     color:#3c3429;
@@ -247,31 +387,37 @@ body{
 /* Bugün */
 
 .today .dayNumber{
+
     background:#d96742;
+
     color:white;
 }
 
 
-/* Önceki / sonraki ay */
+/* Diğer ay */
 
 .otherMonth{
+
     background:#ddd1b5;
+
     cursor:default;
 }
 
 .otherMonth .dayNumber{
+
     color:#9a8d76;
 }
 
 
-/* =========================
+/* ==================================================
    DURUMLAR
-========================= */
+================================================== */
 
 .status{
+
     margin-top:7px;
 
-    font-size:13px;
+    font-size:12px;
 
     font-weight:bold;
 
@@ -282,10 +428,12 @@ body{
 /* Çalıştı */
 
 .worked{
+
     background:#dfead7;
 }
 
 .workedStatus{
+
     color:#4d894b;
 }
 
@@ -293,10 +441,12 @@ body{
 /* Gelmedi */
 
 .absent{
+
     background:#f0d8d5;
 }
 
 .absentStatus{
+
     color:#c44f49;
 }
 
@@ -304,10 +454,12 @@ body{
 /* İzinli */
 
 .leave{
+
     background:#e6dfce;
 }
 
 .leaveStatus{
+
     color:#776a51;
 }
 
@@ -315,30 +467,35 @@ body{
 /* Raporlu */
 
 .report{
+
     background:#e4d9eb;
 }
 
 .reportStatus{
+
     color:#755798;
 }
 
 
-/* Yarım gün */
+/* Yarım */
 
 .half{
+
     background:#f0e1c8;
 }
 
 .halfStatus{
+
     color:#b67530;
 }
 
 
-/* =========================
-   KARTLAR
-========================= */
+/* ==================================================
+   KART
+================================================== */
 
 .card{
+
     margin:16px 12px;
 
     background:#f0e6d0;
@@ -354,25 +511,31 @@ body{
 }
 
 .cardTitle{
+
     font-size:21px;
+
     font-weight:bold;
 
     margin-bottom:13px;
 }
 
 
-/* =========================
+/* ==================================================
    ÖZET
-========================= */
+================================================== */
 
 .summaryGrid{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2,1fr);
 
     gap:9px;
 }
 
 .box{
+
     background:#e3d5b7;
 
     border-radius:12px;
@@ -381,6 +544,7 @@ body{
 }
 
 .box small{
+
     display:block;
 
     color:#786d5b;
@@ -391,22 +555,27 @@ body{
 }
 
 .box strong{
+
     font-size:18px;
 }
 
 
-/* =========================
+/* ==================================================
    ÖDEME
-========================= */
+================================================== */
 
 .paymentGrid{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2,1fr);
 
     gap:9px;
 }
 
 .paymentBox{
+
     background:#e3d5b7;
 
     border-radius:12px;
@@ -415,6 +584,7 @@ body{
 }
 
 .paymentBox label{
+
     display:block;
 
     color:#786d5b;
@@ -425,9 +595,11 @@ body{
 }
 
 .paymentBox input{
+
     width:100%;
 
     border:0;
+
     outline:0;
 
     background:transparent;
@@ -438,155 +610,217 @@ body{
 }
 
 .balanceBox{
+
     grid-column:1 / 3;
 }
 
 .balance{
+
     font-size:19px;
+
     font-weight:bold;
 }
 
 
-/* =========================
-   ÇALIŞAN LİSTESİ
-========================= */
+/* ==================================================
+   ÇALIŞAN EKLEME PENCERESİ
+================================================== */
 
-.employeeScreen{
-    display:none;
+.modal{
 
-    min-height:100vh;
+    position:fixed;
 
-    background:#d8c7a5;
-}
+    inset:0;
 
-.employeeList{
-    padding:15px;
-}
-
-.employee{
-    width:100%;
-
-    margin-bottom:10px;
-
-    border:1px solid #bbaa86;
-
-    background:#eee4ce;
-
-    border-radius:15px;
-
-    padding:14px;
+    background:
+        rgba(45,38,28,.45);
 
     display:flex;
 
     align-items:center;
 
-    text-align:left;
-
-    color:#332d23;
-}
-
-.avatar{
-    width:48px;
-    height:48px;
-
-    border-radius:50%;
-
-    background:#d0bf9d;
-
-    display:flex;
-    align-items:center;
     justify-content:center;
 
-    font-size:22px;
+    padding:20px;
 
-    margin-right:12px;
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
+
+    transition:.2s;
+
+    z-index:9999;
 }
 
-.employeeInfo{
-    flex:1;
+.modal.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    pointer-events:auto;
 }
 
-.employeeInfo b{
-    display:block;
-    font-size:16px;
+.modalBox{
+
+    width:100%;
+
+    max-width:390px;
+
+    background:#f4ead4;
+
+    border:1px solid #b9a984;
+
+    border-radius:20px;
+
+    padding:22px;
+
+    box-shadow:
+        0 10px 35px
+        rgba(0,0,0,.25);
 }
 
-.employeeInfo span{
-    display:block;
+.modalTitle{
 
-    margin-top:4px;
+    font-size:23px;
 
-    color:#827664;
+    font-weight:bold;
 
-    font-size:12px;
+    color:#352e25;
+
+    margin-bottom:7px;
 }
 
-.arrow{
-    font-size:26px;
-    color:#817460;
+.modalText{
+
+    font-size:13px;
+
+    color:#776b58;
+
+    margin-bottom:16px;
 }
 
-.addEmployee{
-    display:block;
+.employeeInput{
 
-    margin:5px auto 30px;
+    width:100%;
 
-    border:1px solid #aa9975;
+    height:52px;
 
-    background:#eee4ce;
-
-    color:#382f24;
+    border:1px solid #b9a984;
 
     border-radius:12px;
 
-    padding:13px 20px;
+    background:#e7dac0;
+
+    color:#352e25;
+
+    outline:none;
+
+    padding:0 14px;
+
+    font-size:16px;
+}
+
+.employeeInput:focus{
+
+    border-color:#8f7d58;
+
+    background:#eee4ce;
+}
+
+.modalButtons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:18px;
+}
+
+.modalButtons button{
+
+    border:0;
+
+    border-radius:11px;
+
+    padding:12px 20px;
+
+    font-size:15px;
 
     font-weight:bold;
 }
 
+.cancelButton{
 
-/* =========================
+    background:#ddd0b4;
+
+    color:#554b3c;
+}
+
+.saveEmployeeButton{
+
+    background:#d8a36c;
+
+    color:#30271d;
+}
+
+
+/* ==================================================
    TELEFON
-========================= */
+================================================== */
 
 @media(max-width:500px){
 
     .monthName{
+
         font-size:28px;
     }
 
     .day{
+
         min-height:88px;
     }
 
     .dayNumber{
+
         width:33px;
+
         height:33px;
 
         font-size:17px;
     }
 
     .status{
-        font-size:12px;
+
+        font-size:11px;
     }
 
 }
 
 </style>
+
 </head>
 
 
 <body>
 
 
-<!-- =================================================
-     TAKVİM EKRANI
-================================================= -->
+<!-- ==================================================
+     ANA EKRAN
+================================================== -->
 
-<div id="calendarScreen" class="main">
+<div id="calendarScreen"
+class="main">
 
+
+    <!-- ÜST -->
 
     <div class="top">
+
 
         <button
         class="back"
@@ -610,20 +844,30 @@ body{
         </div>
 
 
-        <button
-        class="people"
-        onclick="showEmployees()">
+        <div
+        style="width:44px">
+        </div>
 
-            👥
-
-        </button>
 
     </div>
 
 
-    <!-- AY -->
+    <!-- ==================================================
+         ÇALIŞAN İSİMLERİ
+    ================================================== -->
+
+    <div
+    id="employeeBar"
+    class="employeeBar">
+    </div>
+
+
+    <!-- ==================================================
+         AY
+    ================================================== -->
 
     <div class="monthBar">
+
 
         <div
         id="monthName"
@@ -633,78 +877,110 @@ body{
 
         <div class="monthButtons">
 
-            <button onclick="changeMonth(-1)">
+
+            <button
+            onclick="changeMonth(-1)">
+
                 ‹
+
             </button>
 
-            <button onclick="changeMonth(1)">
+
+            <button
+            onclick="changeMonth(1)">
+
                 ›
+
             </button>
+
 
         </div>
+
 
     </div>
 
 
-    <!-- GÖRÜNÜM -->
+    <!-- ==================================================
+         SEKMELER
+    ================================================== -->
 
     <div class="tabs">
+
 
         <button class="tab">
             Yıl
         </button>
 
-        <button class="tab active">
+
+        <button
+        class="tab active">
+
             Ay
+
         </button>
+
 
         <button class="tab">
             Hafta
         </button>
 
+
         <button class="tab">
             Gün
         </button>
 
+
     </div>
 
 
-    <!-- HAFTA -->
+    <!-- ==================================================
+         HAFTA GÜNLERİ
+    ================================================== -->
 
     <div class="weekdays">
+
 
         <div class="weekday">
             PZT
         </div>
 
+
         <div class="weekday">
             SAL
         </div>
+
 
         <div class="weekday">
             ÇAR
         </div>
 
+
         <div class="weekday">
             PER
         </div>
+
 
         <div class="weekday">
             CUM
         </div>
 
+
         <div class="weekday weekend">
             CMT
         </div>
+
 
         <div class="weekday weekend">
             PAZ
         </div>
 
+
     </div>
 
 
-    <!-- TAKVİM -->
+    <!-- ==================================================
+         TAKVİM
+    ================================================== -->
 
     <div
     id="calendar"
@@ -712,9 +988,12 @@ body{
     </div>
 
 
-    <!-- AYLIK ÖZET -->
+    <!-- ==================================================
+         ÖZET
+    ================================================== -->
 
     <div class="card">
+
 
         <div class="cardTitle">
             Aylık Özet
@@ -722,6 +1001,7 @@ body{
 
 
         <div class="summaryGrid">
+
 
             <div class="box">
 
@@ -774,14 +1054,18 @@ body{
 
             </div>
 
+
         </div>
 
     </div>
 
 
-    <!-- ÖDEME -->
+    <!-- ==================================================
+         ÖDEME
+    ================================================== -->
 
     <div class="card">
+
 
         <div class="cardTitle">
             Aylık Ödeme
@@ -821,7 +1105,8 @@ body{
             </div>
 
 
-            <div class="paymentBox balanceBox">
+            <div
+            class="paymentBox balanceBox">
 
                 <label>
                     Kalan
@@ -842,60 +1127,68 @@ body{
 
     </div>
 
+
 </div>
 
 
 
-<!-- =================================================
-     ÇALIŞAN LİSTESİ
-================================================= -->
+<!-- ==================================================
+     ÇALIŞAN EKLEME MODALI
+================================================== -->
 
 <div
-id="employeeScreen"
-class="employeeScreen">
+id="addEmployeeModal"
+class="modal">
 
 
-    <div class="top">
-
-        <button
-        class="back"
-        onclick="goBack()">
-
-            ‹
-
-        </button>
+    <div class="modalBox">
 
 
-        <div class="title">
+        <div class="modalTitle">
+            Yeni Çalışan
+        </div>
 
-            <b>
-                Bireysel
-            </b>
 
-            <span>
-                Çalışanlar
-            </span>
+        <div class="modalText">
+
+            Çalışanın adı ve soyadını girin
 
         </div>
 
-        <div style="width:44px"></div>
+
+        <input
+        id="employeeNameInput"
+        class="employeeInput"
+        type="text"
+        placeholder="Ad Soyad"
+        autocomplete="off">
+
+
+        <div class="modalButtons">
+
+
+            <button
+            class="cancelButton"
+            onclick="closeAddEmployee()">
+
+                İptal
+
+            </button>
+
+
+            <button
+            class="saveEmployeeButton"
+            onclick="saveNewEmployee()">
+
+                Ekle
+
+            </button>
+
+
+        </div>
+
 
     </div>
-
-
-    <div
-    id="employeeList"
-    class="employeeList">
-    </div>
-
-
-    <button
-    class="addEmployee"
-    onclick="addEmployee()">
-
-        ＋ Çalışan Ekle
-
-    </button>
 
 </div>
 
@@ -903,9 +1196,9 @@ class="employeeScreen">
 
 <script>
 
-/* =================================================
+/* ==================================================
    AY İSİMLERİ
-================================================= */
+================================================== */
 
 const monthNames = [
 
@@ -925,31 +1218,31 @@ const monthNames = [
 ];
 
 
-/* =================================================
+/* ==================================================
    TARİH
-================================================= */
+================================================== */
 
 let currentDate =
     new Date(2026,8,1);
 
 
-/* =================================================
+/* ==================================================
    ÇALIŞANLAR
-================================================= */
+================================================== */
 
 let employees = [];
 
 
-/* =================================================
+/* ==================================================
    AKTİF ÇALIŞAN
-================================================= */
+================================================== */
 
 let currentEmployee = null;
 
 
-/* =================================================
-   VERİLERİ YÜKLE
-================================================= */
+/* ==================================================
+   VERİ YÜKLE
+================================================== */
 
 function loadData(){
 
@@ -967,6 +1260,7 @@ function loadData(){
                 JSON.parse(saved);
 
         }
+
         catch(error){
 
             employees = [];
@@ -1014,9 +1308,9 @@ function loadData(){
 }
 
 
-/* =================================================
-   VERİ KAYDET
-================================================= */
+/* ==================================================
+   KAYDET
+================================================== */
 
 function saveData(){
 
@@ -1031,9 +1325,9 @@ function saveData(){
 }
 
 
-/* =================================================
+/* ==================================================
    AY ANAHTARI
-================================================= */
+================================================== */
 
 function getMonthKey(){
 
@@ -1052,9 +1346,9 @@ function getMonthKey(){
 }
 
 
-/* =================================================
+/* ==================================================
    AY VERİSİ
-================================================= */
+================================================== */
 
 function getMonthData(){
 
@@ -1089,9 +1383,136 @@ function getMonthData(){
 }
 
 
-/* =================================================
-   TAKVİMİ OLUŞTUR
-================================================= */
+/* ==================================================
+   ÇALIŞAN İSİMLERİNİ GÖSTER
+================================================== */
+
+function renderEmployeeBar(){
+
+    const bar =
+        document.getElementById(
+            "employeeBar"
+        );
+
+
+    bar.innerHTML = "";
+
+
+    employees.forEach(employee => {
+
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.className =
+            "employeeChip";
+
+
+        if(
+            currentEmployee &&
+            employee.id ===
+            currentEmployee.id
+        ){
+
+            button.classList.add(
+                "active"
+            );
+
+        }
+
+
+        button.textContent =
+            employee.name;
+
+
+        button.onclick =
+            function(){
+
+                openEmployee(
+                    employee.id
+                );
+
+            };
+
+
+        bar.appendChild(button);
+
+
+    });
+
+
+    /* ÇALIŞAN EKLE */
+
+    const add =
+        document.createElement(
+            "button"
+        );
+
+
+    add.className =
+        "addEmployeeTop";
+
+
+    add.textContent =
+        "+";
+
+
+    add.title =
+        "Çalışan Ekle";
+
+
+    add.onclick =
+        function(){
+
+            openAddEmployee();
+
+        };
+
+
+    bar.appendChild(add);
+
+}
+
+
+/* ==================================================
+   ÇALIŞAN AÇ
+================================================== */
+
+function openEmployee(id){
+
+    currentEmployee =
+        employees.find(
+            employee =>
+            employee.id === id
+        );
+
+
+    if(!currentEmployee){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "employeeName"
+    ).textContent =
+        currentEmployee.name;
+
+
+    renderEmployeeBar();
+
+    renderCalendar();
+
+}
+
+
+/* ==================================================
+   TAKVİM
+================================================== */
 
 function renderCalendar(){
 
@@ -1111,8 +1532,6 @@ function renderCalendar(){
     calendar.innerHTML = "";
 
 
-    /* AY BAŞLIĞI */
-
     document.getElementById(
         "monthName"
     ).textContent =
@@ -1120,7 +1539,6 @@ function renderCalendar(){
         monthNames[
             currentDate.getMonth()
         ]
-
         +
         " "
         +
@@ -1145,14 +1563,6 @@ function renderCalendar(){
         ).getDay();
 
 
-    /*
-       JavaScript:
-       Pazar = 0
-
-       Biz:
-       Pazartesi = 1
-    */
-
     if(firstDay === 0){
 
         firstDay = 7;
@@ -1160,7 +1570,7 @@ function renderCalendar(){
     }
 
 
-    /* AYDAKİ GÜN SAYISI */
+    /* AYIN GÜN SAYISI */
 
     const daysInMonth =
         new Date(
@@ -1189,18 +1599,23 @@ function renderCalendar(){
 
 
     for(
-        let i = firstDay - 1;
+
+        let i =
+            firstDay - 1;
+
         i > 0;
+
         i--
+
     ){
-
-        const day =
-            previousMonthDays - i + 1;
-
 
         calendar.appendChild(
 
-            createOtherDay(day)
+            createOtherDay(
+
+                previousMonthDays-i+1
+
+            )
 
         );
 
@@ -1210,9 +1625,13 @@ function renderCalendar(){
     /* BU AY */
 
     for(
-        let day = 1;
-        day <= daysInMonth;
+
+        let day=1;
+
+        day<=daysInMonth;
+
         day++
+
     ){
 
         const cell =
@@ -1233,14 +1652,13 @@ function renderCalendar(){
             data.days[key];
 
 
-        /*
-           DURUMA GÖRE RENK
-        */
+        /* DURUM */
 
         if(dayData){
 
             if(
-                dayData.status === "worked"
+                dayData.status ===
+                "worked"
             ){
 
                 cell.classList.add(
@@ -1250,7 +1668,8 @@ function renderCalendar(){
             }
 
             if(
-                dayData.status === "absent"
+                dayData.status ===
+                "absent"
             ){
 
                 cell.classList.add(
@@ -1260,7 +1679,8 @@ function renderCalendar(){
             }
 
             if(
-                dayData.status === "leave"
+                dayData.status ===
+                "leave"
             ){
 
                 cell.classList.add(
@@ -1270,7 +1690,8 @@ function renderCalendar(){
             }
 
             if(
-                dayData.status === "report"
+                dayData.status ===
+                "report"
             ){
 
                 cell.classList.add(
@@ -1280,7 +1701,8 @@ function renderCalendar(){
             }
 
             if(
-                dayData.status === "half"
+                dayData.status ===
+                "half"
             ){
 
                 cell.classList.add(
@@ -1315,7 +1737,9 @@ function renderCalendar(){
 
         /* BUGÜN */
 
-        if(isToday(day)){
+        if(
+            isToday(day)
+        ){
 
             cell.classList.add(
                 "today"
@@ -1339,7 +1763,8 @@ function renderCalendar(){
 
 
             if(
-                dayData.status === "worked"
+                dayData.status ===
+                "worked"
             ){
 
                 status.textContent =
@@ -1352,7 +1777,8 @@ function renderCalendar(){
             }
 
             else if(
-                dayData.status === "absent"
+                dayData.status ===
+                "absent"
             ){
 
                 status.textContent =
@@ -1365,7 +1791,8 @@ function renderCalendar(){
             }
 
             else if(
-                dayData.status === "leave"
+                dayData.status ===
+                "leave"
             ){
 
                 status.textContent =
@@ -1378,7 +1805,8 @@ function renderCalendar(){
             }
 
             else if(
-                dayData.status === "report"
+                dayData.status ===
+                "report"
             ){
 
                 status.textContent =
@@ -1391,7 +1819,8 @@ function renderCalendar(){
             }
 
             else if(
-                dayData.status === "half"
+                dayData.status ===
+                "half"
             ){
 
                 status.textContent =
@@ -1411,15 +1840,14 @@ function renderCalendar(){
         }
 
 
-        /*
-           GÜNE BAS
-        */
+        /* DOKUN */
 
-        cell.onclick = function(){
+        cell.onclick =
+            function(){
 
-            changeDayStatus(day);
+                changeDayStatus(day);
 
-        };
+            };
 
 
         calendar.appendChild(
@@ -1459,9 +1887,9 @@ function renderCalendar(){
 }
 
 
-/* =================================================
-   DİĞER AY GÜNLERİ
-================================================= */
+/* ==================================================
+   DİĞER AY
+================================================== */
 
 function createOtherDay(day){
 
@@ -1499,9 +1927,9 @@ function createOtherDay(day){
 }
 
 
-/* =================================================
+/* ==================================================
    DURUM DEĞİŞTİR
-================================================= */
+================================================== */
 
 function changeDayStatus(day){
 
@@ -1524,63 +1952,52 @@ function changeDayStatus(day){
     let next = null;
 
 
-    /*
-       SIRASI:
-
-       Boş
-       ↓
-       Çalıştı
-       ↓
-       Gelmedi
-       ↓
-       İzinli
-       ↓
-       Raporlu
-       ↓
-       ½ Gün
-       ↓
-       Boş
-    */
-
-
     if(current === null){
 
         next = "worked";
 
     }
 
-    else if(current === "worked"){
+    else if(
+        current === "worked"
+    ){
 
         next = "absent";
 
     }
 
-    else if(current === "absent"){
+    else if(
+        current === "absent"
+    ){
 
         next = "leave";
 
     }
 
-    else if(current === "leave"){
+    else if(
+        current === "leave"
+    ){
 
         next = "report";
 
     }
 
-    else if(current === "report"){
+    else if(
+        current === "report"
+    ){
 
         next = "half";
 
     }
 
-    else if(current === "half"){
+    else if(
+        current === "half"
+    ){
 
         next = null;
 
     }
 
-
-    /* BOŞ */
 
     if(next === null){
 
@@ -1598,13 +2015,16 @@ function changeDayStatus(day){
         if(next === "worked"){
 
             hours = 8;
+
             wage = 1;
 
         }
 
-        else if(next === "half"){
+
+        if(next === "half"){
 
             hours = 4;
+
             wage = 0.5;
 
         }
@@ -1630,9 +2050,9 @@ function changeDayStatus(day){
 }
 
 
-/* =================================================
-   BUGÜN MÜ?
-================================================= */
+/* ==================================================
+   BUGÜN
+================================================== */
 
 function isToday(day){
 
@@ -1663,9 +2083,9 @@ function isToday(day){
 }
 
 
-/* =================================================
+/* ==================================================
    AY DEĞİŞTİR
-================================================= */
+================================================== */
 
 function changeMonth(amount){
 
@@ -1683,9 +2103,9 @@ function changeMonth(amount){
 }
 
 
-/* =================================================
+/* ==================================================
    ÖZET
-================================================= */
+================================================== */
 
 function updateSummary(){
 
@@ -1706,8 +2126,10 @@ function updateSummary(){
         data.days
     ).forEach(day => {
 
+
         if(
-            day.status === "worked"
+            day.status ===
+            "worked"
         ){
 
             worked++;
@@ -1726,7 +2148,8 @@ function updateSummary(){
 
 
         else if(
-            day.status === "half"
+            day.status ===
+            "half"
         ){
 
             worked++;
@@ -1739,7 +2162,8 @@ function updateSummary(){
 
 
         else if(
-            day.status === "absent"
+            day.status ===
+            "absent"
         ){
 
             absent++;
@@ -1758,7 +2182,8 @@ function updateSummary(){
     document.getElementById(
         "hours"
     ).textContent =
-        hours + " saat";
+        hours +
+        " saat";
 
 
     document.getElementById(
@@ -1775,9 +2200,9 @@ function updateSummary(){
 }
 
 
-/* =================================================
+/* ==================================================
    ÖDEME
-================================================= */
+================================================== */
 
 function updatePayment(){
 
@@ -1823,9 +2248,9 @@ function updatePayment(){
 }
 
 
-/* =================================================
+/* ==================================================
    ÖDEME DEĞİŞTİ
-================================================= */
+================================================== */
 
 function paymentChanged(){
 
@@ -1860,198 +2285,176 @@ function paymentChanged(){
 }
 
 
-/* =================================================
-   ÇALIŞANLARI GÖSTER
-================================================= */
+/* ==================================================
+   ÇALIŞAN EKLE PENCERESİNİ AÇ
+================================================== */
 
-function showEmployees(){
-
-    document.getElementById(
-        "calendarScreen"
-    ).style.display =
-        "none";
-
+function openAddEmployee(){
 
     document.getElementById(
-        "employeeScreen"
-    ).style.display =
-        "block";
+        "addEmployeeModal"
+    ).classList.add(
+        "show"
+    );
 
 
-    const list =
+    document.getElementById(
+        "employeeNameInput"
+    ).value = "";
+
+
+    setTimeout(
+
+        function(){
+
+            document.getElementById(
+                "employeeNameInput"
+            ).focus();
+
+        },
+
+        100
+
+    );
+
+}
+
+
+/* ==================================================
+   PENCEREYİ KAPAT
+================================================== */
+
+function closeAddEmployee(){
+
+    document.getElementById(
+        "addEmployeeModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* ==================================================
+   YENİ ÇALIŞANI KAYDET
+================================================== */
+
+function saveNewEmployee(){
+
+    const input =
         document.getElementById(
-            "employeeList"
+            "employeeNameInput"
         );
 
-
-    list.innerHTML = "";
-
-
-    employees.forEach(employee => {
-
-        const button =
-            document.createElement(
-                "button"
-            );
-
-
-        button.className =
-            "employee";
-
-
-        button.innerHTML = `
-
-            <div class="avatar">
-                👤
-            </div>
-
-            <div class="employeeInfo">
-
-                <b>
-                    ${escapeHtml(employee.name)}
-                </b>
-
-                <span>
-                    Aylık puantaj
-                </span>
-
-            </div>
-
-            <div class="arrow">
-                ›
-            </div>
-
-        `;
-
-
-        button.onclick =
-            function(){
-
-                openEmployee(
-                    employee.id
-                );
-
-            };
-
-
-        list.appendChild(
-            button
-        );
-
-    });
-
-}
-
-
-/* =================================================
-   ÇALIŞAN AÇ
-================================================= */
-
-function openEmployee(id){
-
-    currentEmployee =
-        employees.find(
-            employee =>
-            employee.id === id
-        );
-
-
-    if(!currentEmployee){
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "employeeScreen"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "calendarScreen"
-    ).style.display =
-        "block";
-
-
-    document.getElementById(
-        "employeeName"
-    ).textContent =
-        currentEmployee.name;
-
-
-    renderCalendar();
-
-}
-
-
-/* =================================================
-   ÇALIŞAN EKLE
-================================================= */
-
-function addEmployee(){
 
     const name =
-        prompt(
-            "Çalışanın adı ve soyadı:"
-        );
+        input.value.trim();
 
 
-    if(
-        !name ||
-        !name.trim()
-    ){
+    if(!name){
+
+        input.focus();
 
         return;
 
     }
 
 
-    employees.push({
+    const newEmployee = {
 
-        id:Date.now(),
+        id:
+            Date.now(),
 
-        name:name.trim(),
+        name:
+            name,
 
         months:{}
 
-    });
+    };
+
+
+    employees.push(
+        newEmployee
+    );
 
 
     saveData();
 
-    showEmployees();
+    closeAddEmployee();
+
+
+    /*
+       Yeni eklenen çalışanı
+       otomatik seç
+    */
+
+    openEmployee(
+        newEmployee.id
+    );
 
 }
 
 
-/* =================================================
+/* ==================================================
+   ENTER İLE ÇALIŞAN EKLE
+================================================== */
+
+document.addEventListener(
+    "keydown",
+
+    function(event){
+
+        if(
+            event.key === "Enter"
+            &&
+            document
+            .getElementById(
+                "addEmployeeModal"
+            )
+            .classList
+            .contains("show")
+        ){
+
+            saveNewEmployee();
+
+        }
+
+
+        if(
+            event.key === "Escape"
+            &&
+            document
+            .getElementById(
+                "addEmployeeModal"
+            )
+            .classList
+            .contains("show")
+        ){
+
+            closeAddEmployee();
+
+        }
+
+    }
+
+);
+
+
+/* ==================================================
    GERİ
-================================================= */
+================================================== */
 
 function goBack(){
 
-    if(
-        employees.length > 1
-    ){
-
-        showEmployees();
-
-    }
-    else{
-
-        window.location.href =
-            "index.html";
-
-    }
+    window.location.href =
+        "index.html";
 
 }
 
 
-/* =================================================
+/* ==================================================
    GÜVENLİ METİN
-================================================= */
+================================================== */
 
 function escapeHtml(value){
 
@@ -2080,9 +2483,9 @@ function escapeHtml(value){
 }
 
 
-/* =================================================
+/* ==================================================
    BAŞLAT
-================================================= */
+================================================== */
 
 loadData();
 
@@ -2094,4 +2497,5 @@ openEmployee(
 </script>
 
 </body>
+
 </html>
