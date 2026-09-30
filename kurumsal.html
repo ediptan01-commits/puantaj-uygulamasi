@@ -989,7 +989,7 @@ body{
 
 
         <button
-        onclick="alert('Rapor modülünü bir sonraki aşamada ekleyeceğiz.')">
+        onclick="openModal('payment')"
 
             <div class="quickIcon">
                 📄
@@ -1384,6 +1384,7 @@ function openModal(type){
 
     if(type==="worker"){
 
+    
     title.textContent =
         "Yeni Çalışan";
 
@@ -1407,7 +1408,20 @@ function openModal(type){
 
     renderTeamSelect();
 
-}
+    }
+
+    if(type==="payment"){
+
+    title.textContent =
+    "Yeni Ödeme";
+
+    input.placeholder =
+    "Ödeme tutarı";
+
+    teamBox.style.display =
+    "none";
+
+    }
 
 
     input.focus();
