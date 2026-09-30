@@ -2701,15 +2701,12 @@ function escapeHtml(value){
    BAŞLAT
 ================================================== */
 
-localStorage.removeItem("puantajEmployees");
-
 loadData();
 
 if (employees.length > 0) {
-
     openEmployee(employees[0].id);
-
 } else {
+    currentEmployee = null;
 
     const nameElement =
         document.getElementById("employeeName");
@@ -2719,6 +2716,14 @@ if (employees.length > 0) {
     }
 
     renderEmployeeBar();
+
+    if (typeof renderCalendar === "function") {
+        renderCalendar();
+    }
+
+    if (typeof renderSummary === "function") {
+        renderSummary();
+    }
 }
 
 </script>
