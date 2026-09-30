@@ -1393,18 +1393,30 @@ function openModal(type){
 
     if(type==="worker"){
 
-        title.textContent=
-            "Yeni Çalışan";
+    title.textContent =
+        "Yeni Çalışan";
 
-        input.placeholder=
-            "Ad Soyad";
+    input.placeholder =
+        "Ad Soyad";
 
-        teamBox.style.display=
-            "block";
+    teamBox.style.display =
+        "block";
 
-        renderTeamSelect();
+    document.getElementById(
+        "workerRole"
+    ).value = "";
 
-    }
+    document.getElementById(
+        "workerPhone"
+    ).value = "";
+
+    document.getElementById(
+        "workerWage"
+    ).value = "";
+
+    renderTeamSelect();
+
+}
 
 
     input.focus();
@@ -1498,35 +1510,67 @@ function saveModal(){
     }
 
 
-    if(modalType==="worker"){
+   
+if(modalType==="worker"){
 
-        const team =
+    const team =
+        document
+        .getElementById("workerTeam")
+        .value;
+
+    const role =
+        document
+        .getElementById("workerRole")
+        .value
+        .trim();
+
+    const phone =
+        document
+        .getElementById("workerPhone")
+        .value
+        .trim();
+
+    const wage =
+        Number(
             document
-            .getElementById("workerTeam")
-            .value;
+            .getElementById("workerWage")
+            .value
+        ) || 0;
 
-        if(!team){
 
-            alert("Önce ekip ekleyin.");
+    if(!team){
 
-            return;
+        alert(
+            "Önce bir ekip seçin."
+        );
 
-        }
-
-        data.workers.push({
-
-            id:
-            "worker_"+Date.now(),
-
-            name:name,
-
-            teamId:team,
-
-            status:"worked"
-
-        });
+        return;
 
     }
+
+
+    data.workers.push({
+
+        id:
+        "worker_"+Date.now(),
+
+        name:name,
+
+        role:role,
+
+        phone:phone,
+
+        dailyWage:wage,
+
+        teamId:team,
+
+        status:"worked",
+
+        attendance:{}
+
+    });
+
+}
 
 
     saveData();
