@@ -1481,24 +1481,45 @@ function loadData(){
     });
 
 
-    if(employees.length === 0){
+    function loadData(){
 
-        employees.push({
+    const saved =
+        localStorage.getItem(
+            "puantajEmployees"
+        );
 
-            id:1,
+    if(saved){
 
-            name:"Edip Tan",
+        try{
 
-            months:{}
+            employees =
+                JSON.parse(saved);
 
-        });
+        }catch(error){
+
+            employees = [];
+
+        }
 
     }
 
+    if(!Array.isArray(employees)){
 
-    saveData();
+        employees = [];
 
-}
+    }
+
+    employees.forEach(employee => {
+
+        if(!employee.months){
+
+            employee.months = {};
+
+        }
+
+    });
+
+    }
 
 
 /* ==================================================
@@ -2680,12 +2701,25 @@ function escapeHtml(value){
    BAŞLAT
 ================================================== */
 
+localStorage.removeItem("puantajEmployees");
+
 loadData();
 
+if (employees.length > 0) {
 
-openEmployee(
-    employees[0].id
-);
+    openEmployee(employees[0].id);
+
+} else {
+
+    const nameElement =
+        document.getElementById("employeeName");
+
+    if (nameElement) {
+        nameElement.textContent = "Çalışan Yok";
+    }
+
+    renderEmployeeBar();
+}
 
 </script>
 
