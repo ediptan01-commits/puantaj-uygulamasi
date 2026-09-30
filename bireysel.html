@@ -1026,9 +1026,7 @@ class="main">
 
         <div class="title">
 
-            <b id="employeeName">
-                Edip Tan
-            </b>
+            <b id="employeeName"></b>
 
             <span>
                 Puantaj
@@ -1444,50 +1442,6 @@ function loadData(){
             "puantajEmployees"
         );
 
-
-    if(saved){
-
-        try{
-
-            employees =
-                JSON.parse(saved);
-
-        }
-
-        catch(error){
-
-            employees = [];
-
-        }
-
-    }
-
-
-    if(!Array.isArray(employees)){
-
-        employees = [];
-
-    }
-
-
-    employees.forEach(employee => {
-
-        if(!employee.months){
-
-            employee.months = {};
-
-        }
-
-    });
-
-
-    function loadData(){
-
-    const saved =
-        localStorage.getItem(
-            "puantajEmployees"
-        );
-
     if(saved){
 
         try{
@@ -1519,7 +1473,7 @@ function loadData(){
 
     });
 
-    }
+}
 
 
 /* ==================================================
