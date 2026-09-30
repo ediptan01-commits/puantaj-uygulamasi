@@ -1328,7 +1328,9 @@ function renderTeams(){
     box.innerHTML=
         data.teams.map(team=>`
 
-            <div class="team">
+            <div
+    class="team"
+    onclick="openTeam('${team.id}')">
 
                 <div class="teamIcon">
                     👷
