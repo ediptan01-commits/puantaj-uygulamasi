@@ -560,6 +560,217 @@ body{
 
 }
 
+    /* ==================================================
+   EKİP DETAY
+================================================== */
+
+.teamDetail{
+    display:none;
+    min-height:100vh;
+    background:#f3f5f8;
+}
+
+.teamDetailTop{
+    height:68px;
+    background:white;
+    border-bottom:1px solid #e1e5eb;
+
+    display:flex;
+    align-items:center;
+
+    padding:0 15px;
+    gap:12px;
+}
+
+.teamBack{
+    width:42px;
+    height:42px;
+
+    border:0;
+    border-radius:12px;
+
+    background:#eef1f5;
+
+    font-size:28px;
+}
+
+.teamDetailTop b{
+    display:block;
+    font-size:18px;
+}
+
+.teamDetailTop span{
+    display:block;
+    color:#667085;
+    font-size:11px;
+    margin-top:3px;
+}
+
+.teamDetailContent{
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.attendanceStats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.attendanceStats div{
+    background:white;
+    border:1px solid #e4e7ec;
+    border-radius:13px;
+    padding:11px;
+    text-align:center;
+}
+
+.attendanceStats small{
+    display:block;
+    color:#667085;
+    font-size:10px;
+    margin-bottom:5px;
+}
+
+.attendanceStats strong{
+    font-size:20px;
+}
+
+.dateBox{
+    background:#17263d;
+    color:white;
+    border-radius:16px;
+    padding:12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:15px;
+}
+
+.dateBox button{
+    width:38px;
+    height:38px;
+
+    border:0;
+    border-radius:10px;
+
+    background:rgba(255,255,255,.12);
+    color:white;
+
+    font-size:24px;
+}
+
+.dateBox div{
+    text-align:center;
+}
+
+.dateBox small{
+    display:block;
+    font-size:9px;
+    opacity:.6;
+    margin-bottom:4px;
+}
+
+.dateBox b{
+    font-size:16px;
+}
+
+.workerSection{
+    background:white;
+    border:1px solid #e4e7ec;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.workerHead{
+    min-height:58px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:12px 15px;
+
+    border-bottom:1px solid #eaecf0;
+}
+
+.workerHead b{
+    font-size:18px;
+}
+
+.workerHead button{
+    border:0;
+    border-radius:9px;
+    background:#2563eb;
+    color:white;
+    padding:9px 12px;
+    font-weight:bold;
+}
+
+.workerRow{
+    padding:13px 15px;
+    border-bottom:1px solid #eaecf0;
+}
+
+.workerRow:last-child{
+    border-bottom:0;
+}
+
+.workerName{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:9px;
+}
+
+.statusButtons{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:5px;
+}
+
+.statusButtons button{
+    border:1px solid #d0d5dd;
+    background:#f8fafc;
+    border-radius:8px;
+    padding:7px 3px;
+    font-size:9px;
+    color:#475467;
+}
+
+.statusButtons button.active{
+    background:#2563eb;
+    color:white;
+    border-color:#2563eb;
+}
+
+.noWorkers{
+    padding:30px 15px;
+    text-align:center;
+    color:#667085;
+    font-size:13px;
+}
+
+@media(max-width:600px){
+
+    .attendanceStats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .statusButtons{
+        grid-template-columns:repeat(5,1fr);
+    }
+
+    .statusButtons button{
+        font-size:8px;
+        padding:8px 1px;
+    }
+
+}
+    
 </style>
 
 </head>
@@ -821,6 +1032,122 @@ body{
 
 
 <!-- MODAL -->
+
+    <!-- ==================================================
+     EKİP DETAY
+================================================== -->
+
+<div
+id="teamDetail"
+class="teamDetail">
+
+    <div class="teamDetailTop">
+
+        <button
+        class="teamBack"
+        onclick="closeTeam()">
+
+            ‹
+
+        </button>
+
+        <div>
+
+            <b id="detailTeamName">
+                Ekip
+            </b>
+
+            <span id="detailSiteName">
+                Şantiye
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="teamDetailContent">
+
+
+        <!-- ÖZET -->
+
+        <div class="attendanceStats">
+
+            <div>
+                <small>Çalıştı</small>
+                <strong id="workedCount">0</strong>
+            </div>
+
+            <div>
+                <small>Gelmedi</small>
+                <strong id="absentCount">0</strong>
+            </div>
+
+            <div>
+                <small>İzinli</small>
+                <strong id="leaveCount">0</strong>
+            </div>
+
+            <div>
+                <small>Raporlu</small>
+                <strong id="reportCount">0</strong>
+            </div>
+
+        </div>
+
+
+        <!-- TARİH -->
+
+        <div class="dateBox">
+
+            <button
+            onclick="changeTeamDate(-1)">
+                ‹
+            </button>
+
+            <div>
+
+                <small>PUANTAJ TARİHİ</small>
+
+                <b id="teamDate">
+                    30 Eylül 2026
+                </b>
+
+            </div>
+
+            <button
+            onclick="changeTeamDate(1)">
+                ›
+            </button>
+
+        </div>
+
+
+        <!-- ÇALIŞANLAR -->
+
+        <div class="workerSection">
+
+            <div class="workerHead">
+
+                <b>Çalışanlar</b>
+
+                <button
+                onclick="openModal('worker')">
+
+                    + Çalışan
+
+                </button>
+
+            </div>
+
+            <div id="teamWorkers">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <div
 id="modal"
@@ -1360,6 +1687,438 @@ function renderTeams(){
 
 }
 
+    /* ==================================================
+   EKİP DETAY SİSTEMİ
+================================================== */
+
+let currentTeamId = null;
+
+let teamDate =
+    new Date();
+
+
+/* EKİBİ AÇ */
+
+function openTeam(teamId){
+
+    currentTeamId =
+        teamId;
+
+    const team =
+        data.teams.find(
+            t => t.id === teamId
+        );
+
+    if(!team)
+        return;
+
+
+    document
+    .querySelector(".main")
+    .style.display="none";
+
+
+    document
+    .getElementById("teamDetail")
+    .style.display="block";
+
+
+    document
+    .getElementById("detailTeamName")
+    .textContent =
+        team.name;
+
+
+    const site =
+        data.sites.find(
+            s => s.id === team.siteId
+        );
+
+
+    document
+    .getElementById("detailSiteName")
+    .textContent =
+        site
+        ? site.name
+        : "Şantiye belirtilmedi";
+
+
+    renderTeamDetail();
+
+}
+
+
+/* EKİBİ KAPAT */
+
+function closeTeam(){
+
+    document
+    .getElementById("teamDetail")
+    .style.display="none";
+
+
+    document
+    .querySelector(".main")
+    .style.display="block";
+
+    currentTeamId=null;
+
+}
+
+
+/* TARİH */
+
+function formatTeamDate(){
+
+    const months=[
+        "Ocak",
+        "Şubat",
+        "Mart",
+        "Nisan",
+        "Mayıs",
+        "Haziran",
+        "Temmuz",
+        "Ağustos",
+        "Eylül",
+        "Ekim",
+        "Kasım",
+        "Aralık"
+    ];
+
+    return (
+
+        teamDate.getDate()
+        +
+        " "
+        +
+        months[
+            teamDate.getMonth()
+        ]
+        +
+        " "
+        +
+        teamDate.getFullYear()
+
+    );
+
+}
+
+
+function getTeamDateKey(){
+
+    return (
+
+        teamDate.getFullYear()
+        +
+        "-"
+        +
+        String(
+            teamDate.getMonth()+1
+        ).padStart(2,"0")
+        +
+        "-"
+        +
+        String(
+            teamDate.getDate()
+        ).padStart(2,"0")
+
+    );
+
+}
+
+
+function changeTeamDate(amount){
+
+    teamDate.setDate(
+        teamDate.getDate()+amount
+    );
+
+    renderTeamDetail();
+
+}
+
+
+/* DURUM */
+
+function getWorkerStatus(worker){
+
+    if(!worker.attendance)
+        worker.attendance={};
+
+    return (
+
+        worker.attendance[
+            getTeamDateKey()
+        ]
+        ||
+        "worked"
+
+    );
+
+}
+
+
+/* DURUM DEĞİŞTİR */
+
+function setWorkerStatus(
+    workerId,
+    status
+){
+
+    const worker =
+        data.workers.find(
+            w => w.id === workerId
+        );
+
+    if(!worker)
+        return;
+
+
+    if(!worker.attendance)
+        worker.attendance={};
+
+
+    worker.attendance[
+        getTeamDateKey()
+    ] =
+        status;
+
+
+    saveData();
+
+    renderTeamDetail();
+
+}
+
+
+/* EKİP EKRANI */
+
+function renderTeamDetail(){
+
+    const team =
+        data.teams.find(
+            t => t.id === currentTeamId
+        );
+
+    if(!team)
+        return;
+
+
+    document
+    .getElementById("teamDate")
+    .textContent =
+        formatTeamDate();
+
+
+    const workers =
+        data.workers.filter(
+            w =>
+            w.teamId ===
+            currentTeamId
+        );
+
+
+    let worked=0;
+    let absent=0;
+    let leave=0;
+    let report=0;
+
+
+    workers.forEach(worker=>{
+
+        const status =
+            getWorkerStatus(worker);
+
+
+        if(status==="worked")
+            worked++;
+
+        if(status==="absent")
+            absent++;
+
+        if(status==="leave")
+            leave++;
+
+        if(status==="report")
+            report++;
+
+    });
+
+
+    document
+    .getElementById("workedCount")
+    .textContent=worked;
+
+
+    document
+    .getElementById("absentCount")
+    .textContent=absent;
+
+
+    document
+    .getElementById("leaveCount")
+    .textContent=leave;
+
+
+    document
+    .getElementById("reportCount")
+    .textContent=report;
+
+
+    const box =
+        document
+        .getElementById("teamWorkers");
+
+
+    if(workers.length===0){
+
+        box.innerHTML=`
+
+            <div class="noWorkers">
+
+                Bu ekipte henüz çalışan yok.
+
+                <br><br>
+
+                <button
+                onclick="openModal('worker')"
+                style="
+                border:0;
+                background:#2563eb;
+                color:white;
+                border-radius:9px;
+                padding:10px 14px;
+                font-weight:bold;
+                ">
+
+                    + İlk Çalışanı Ekle
+
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML =
+        workers.map(worker=>{
+
+            const status =
+                getWorkerStatus(worker);
+
+
+            return `
+
+                <div class="workerRow">
+
+                    <div class="workerName">
+
+                        ${worker.name}
+
+                    </div>
+
+
+                    <div class="statusButtons">
+
+
+                        <button
+                        class="${
+                            status==="worked"
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                        setWorkerStatus(
+                            '${worker.id}',
+                            'worked'
+                        )">
+
+                            ✓ Çalıştı
+
+                        </button>
+
+
+                        <button
+                        class="${
+                            status==="absent"
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                        setWorkerStatus(
+                            '${worker.id}',
+                            'absent'
+                        )">
+
+                            ✕ Gelmedi
+
+                        </button>
+
+
+                        <button
+                        class="${
+                            status==="leave"
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                        setWorkerStatus(
+                            '${worker.id}',
+                            'leave'
+                        )">
+
+                            İzinli
+
+                        </button>
+
+
+                        <button
+                        class="${
+                            status==="report"
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                        setWorkerStatus(
+                            '${worker.id}',
+                            'report'
+                        )">
+
+                            Raporlu
+
+                        </button>
+
+
+                        <button
+                        class="${
+                            status==="half"
+                            ? "active"
+                            : ""
+                        }"
+                        onclick="
+                        setWorkerStatus(
+                            '${worker.id}',
+                            'half'
+                        )">
+
+                            ½ Gün
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
 
 /* BAŞLAT */
 
