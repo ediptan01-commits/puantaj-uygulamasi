@@ -1254,7 +1254,9 @@ let data = {
 
     teams:[],
 
-    workers:[]
+    workers:[],
+
+    payments:[]
 
 };
 
@@ -1282,10 +1284,17 @@ function loadData(){
                 company:"",
                 sites:[],
                 teams:[],
-                workers:[]
+                workers:[],
+                payments:[]
             };
 
         }
+
+    }
+
+    if(!Array.isArray(data.payments)){
+
+    data.payments=[];
 
     }
 
