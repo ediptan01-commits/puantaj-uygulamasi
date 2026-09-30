@@ -1,798 +1,888 @@
-<!-- ==================================================
-     KURUMSAL İNŞAAT MODÜLÜ
-================================================== -->
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Kurumsal Puantaj</title>
 
 <style>
 
-.corpScreen{
-    display:none;
-    min-height:100vh;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
     background:#f3f5f8;
     color:#172033;
 }
 
-.corpTop{
+/* ÜST BAR */
+
+.top{
     height:68px;
     background:#ffffff;
     border-bottom:1px solid #e1e5eb;
+
     display:flex;
     align-items:center;
+
     padding:0 15px;
     gap:12px;
-    position:sticky;
-    top:0;
-    z-index:100;
 }
 
-.corpBack{
+.back{
     width:42px;
     height:42px;
+
     border:0;
     border-radius:12px;
-    background:#f0f2f5;
-    color:#1d2939;
+
+    background:#eef1f5;
+
     font-size:28px;
-    cursor:pointer;
+    color:#172033;
 }
 
-.corpTitle{
+.title{
     flex:1;
 }
 
-.corpTitle b{
+.title b{
     display:block;
-    font-size:18px;
+    font-size:19px;
 }
 
-.corpTitle span{
+.title span{
     display:block;
-    margin-top:2px;
+    margin-top:3px;
+
     color:#667085;
     font-size:11px;
 }
 
-.corpContent{
+
+/* ANA */
+
+.main{
     width:100%;
     max-width:900px;
     margin:auto;
-    padding:16px;
+    padding:15px;
 }
+
 
 /* ŞİRKET */
 
-.companyCard{
-    background:#18263d;
+.company{
+    background:#17263d;
     color:white;
+
     border-radius:20px;
+
     padding:20px;
+
     margin-bottom:15px;
-    box-shadow:0 5px 18px rgba(15,23,42,.12);
 }
 
-.companyLabel{
+.company small{
+    display:block;
+
     font-size:11px;
-    opacity:.7;
+    opacity:.65;
+
     margin-bottom:5px;
 }
 
-.companyName{
-    font-size:24px;
-    font-weight:bold;
-    margin-bottom:14px;
+.company h1{
+    font-size:25px;
+    margin-bottom:15px;
 }
 
-.companyInput{
+.company input{
     width:100%;
     height:45px;
-    border:1px solid rgba(255,255,255,.2);
+
+    border:1px solid
+    rgba(255,255,255,.2);
+
     border-radius:10px;
-    background:rgba(255,255,255,.1);
+
+    background:
+    rgba(255,255,255,.1);
+
     color:white;
+
     padding:0 12px;
+
     outline:none;
+
     font-size:14px;
 }
 
-.companyInput::placeholder{
-    color:rgba(255,255,255,.6);
-}
 
-/* İSTATİSTİKLER */
+/* İSTATİSTİK */
 
-.corpStats{
+.stats{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+    repeat(2,1fr);
+
     gap:10px;
-    margin-bottom:16px;
+
+    margin-bottom:15px;
 }
 
-.corpStat{
+.stat{
+
     background:white;
+
     border:1px solid #e4e7ec;
+
     border-radius:16px;
+
     padding:15px;
 }
 
-.corpStat small{
+.stat small{
+
     display:block;
+
     color:#667085;
+
     font-size:11px;
+
     margin-bottom:7px;
 }
 
-.corpStat strong{
-    font-size:24px;
-    color:#18263d;
+.stat strong{
+
+    font-size:25px;
+
 }
 
-.corpStat.blue strong{
-    color:#2563eb;
-}
 
-.corpStat.green strong{
-    color:#16a34a;
-}
+/* KART */
 
-.corpStat.red strong{
-    color:#dc2626;
-}
+.card{
 
-.corpStat.orange strong{
-    color:#ea580c;
-}
-
-/* BÖLÜM */
-
-.corpSection{
     background:white;
+
     border:1px solid #e4e7ec;
+
     border-radius:18px;
+
     margin-bottom:15px;
+
     overflow:hidden;
 }
 
-.corpSectionHead{
-    padding:15px;
+.cardHead{
+
+    min-height:58px;
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
+    padding:12px 15px;
+
     border-bottom:1px solid #eaecf0;
 }
 
-.corpSectionTitle{
+.cardTitle{
+
     font-size:18px;
+
     font-weight:bold;
 }
 
-.corpAdd{
+.add{
+
     border:0;
-    border-radius:10px;
+
     background:#2563eb;
+
     color:white;
-    padding:9px 13px;
-    font-size:13px;
+
+    border-radius:9px;
+
+    padding:9px 12px;
+
+    font-size:12px;
+
     font-weight:bold;
-    cursor:pointer;
 }
 
-.corpEmpty{
-    padding:28px 18px;
+
+/* BOŞ */
+
+.empty{
+
     text-align:center;
+
     color:#667085;
+
+    padding:30px 15px;
+
     font-size:13px;
 }
 
-.corpEmptyIcon{
+.emptyIcon{
+
     font-size:35px;
+
     margin-bottom:8px;
 }
 
+
 /* ŞANTİYE */
 
-.siteItem{
+.site{
+
     padding:15px;
-    border-bottom:1px solid #eaecf0;
-    cursor:pointer;
+
+    border-bottom:
+    1px solid #eaecf0;
 }
 
-.siteItem:last-child{
+.site:last-child{
+
     border-bottom:0;
 }
 
-.siteItem:active{
-    background:#f8fafc;
-}
-
-.siteTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
 .siteName{
+
     font-size:16px;
+
     font-weight:bold;
 }
 
-.siteArrow{
-    color:#98a2b3;
-    font-size:22px;
-}
-
 .siteInfo{
+
     display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:8px;
+
+    gap:7px;
+
+    margin-top:7px;
 }
 
-.siteBadge{
+.badge{
+
     background:#f2f4f7;
+
     color:#475467;
-    padding:5px 8px;
+
     border-radius:7px;
+
+    padding:5px 8px;
+
     font-size:10px;
 }
 
-/* EKİPLER */
 
-.teamGrid{
+/* EKİP */
+
+.teams{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:9px;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:10px;
+
     padding:12px;
 }
 
-.teamCard{
+.team{
+
     border:1px solid #e4e7ec;
-    border-radius:14px;
-    padding:13px;
+
     background:#fafbfc;
-    cursor:pointer;
+
+    border-radius:14px;
+
+    padding:13px;
 }
 
 .teamIcon{
-    width:38px;
-    height:38px;
+
+    width:40px;
+    height:40px;
+
     border-radius:11px;
+
     background:#e8f0ff;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    font-size:20px;
+
+    font-size:21px;
+
     margin-bottom:9px;
 }
 
 .teamName{
-    font-weight:bold;
+
     font-size:14px;
+
+    font-weight:bold;
 }
 
-.teamMeta{
-    color:#667085;
-    font-size:10px;
+.teamCount{
+
     margin-top:5px;
-}
 
-/* BUGÜN */
-
-.todayList{
-    padding:5px 15px 10px;
-}
-
-.todayRow{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 0;
-    border-bottom:1px solid #eaecf0;
-}
-
-.todayRow:last-child{
-    border-bottom:0;
-}
-
-.todayTeam{
-    font-size:14px;
-    font-weight:bold;
-}
-
-.todayCount{
-    font-size:12px;
     color:#667085;
+
+    font-size:10px;
 }
 
-.todayStatus{
-    padding:6px 9px;
-    border-radius:8px;
-    background:#ecfdf3;
-    color:#027a48;
-    font-size:10px;
-    font-weight:bold;
-}
 
 /* HIZLI MENÜ */
 
-.quickGrid{
+.quick{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:9px;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:10px;
+
     padding:12px;
 }
 
-.quickButton{
+.quick button{
+
+    background:white;
+
     border:1px solid #e4e7ec;
-    background:#fff;
+
     border-radius:13px;
+
     padding:15px;
+
     text-align:left;
-    cursor:pointer;
 }
 
 .quickIcon{
+
     font-size:23px;
+
     margin-bottom:8px;
 }
 
-.quickButton b{
+.quick b{
+
     display:block;
+
     font-size:13px;
 }
 
-.quickButton span{
+.quick span{
+
     display:block;
-    margin-top:3px;
+
     color:#667085;
+
     font-size:10px;
+
+    margin-top:4px;
 }
+
 
 /* MODAL */
 
-.corpModal{
+.modal{
+
     position:fixed;
+
     inset:0;
-    background:rgba(15,23,42,.5);
+
+    background:
+    rgba(15,23,42,.5);
+
     display:none;
+
     align-items:center;
+
     justify-content:center;
+
     padding:18px;
-    z-index:99999;
+
+    z-index:9999;
 }
 
-.corpModal.show{
+.modal.show{
+
     display:flex;
 }
 
-.corpModalBox{
+.modalBox{
+
     width:100%;
+
     max-width:390px;
+
     background:white;
+
     border-radius:20px;
+
     padding:20px;
 }
 
-.corpModalTitle{
+.modalTitle{
+
     font-size:21px;
+
     font-weight:bold;
+
     margin-bottom:15px;
 }
 
-.corpField{
-    margin-bottom:12px;
+.field{
+
+    margin-bottom:13px;
 }
 
-.corpField label{
+.field label{
+
     display:block;
-    font-size:11px;
+
     color:#667085;
+
+    font-size:11px;
+
     margin-bottom:5px;
 }
 
-.corpField input,
-.corpField select{
+.field input,
+.field select{
+
     width:100%;
+
     height:46px;
+
     border:1px solid #d0d5dd;
+
     border-radius:10px;
+
     padding:0 12px;
+
     font-size:14px;
+
     outline:none;
-    background:white;
 }
 
-.corpModalButtons{
+.buttons{
+
     display:flex;
+
     gap:8px;
-    margin-top:17px;
+
+    margin-top:18px;
 }
 
-.corpModalButtons button{
+.buttons button{
+
     flex:1;
+
     height:45px;
+
     border:0;
+
     border-radius:10px;
+
     font-weight:bold;
-    cursor:pointer;
 }
 
-.corpCancel{
+.cancel{
+
     background:#f2f4f7;
+
     color:#344054;
 }
 
-.corpSave{
+.save{
+
     background:#2563eb;
+
     color:white;
 }
+
 
 /* TELEFON */
 
 @media(max-width:600px){
 
-    .corpContent{
+    .main{
+
         padding:10px;
     }
 
-    .companyCard{
+    .company{
+
         padding:17px;
+
         border-radius:17px;
     }
 
-    .companyName{
+    .company h1{
+
         font-size:21px;
     }
 
-    .corpStats{
-        gap:7px;
-    }
+    .stat{
 
-    .corpStat{
         padding:12px;
     }
 
-    .corpStat strong{
-        font-size:21px;
-    }
+    .stat strong{
 
-    .teamGrid{
-        grid-template-columns:1fr 1fr;
+        font-size:21px;
     }
 
 }
 
 </style>
 
+</head>
 
-<!-- ==================================================
-     KURUMSAL EKRAN
-================================================== -->
 
-<div id="corporateScreen" class="corpScreen">
+<body>
 
-    <div class="corpTop">
 
-        <button
-        class="corpBack"
-        onclick="closeCorporate()">
-            ‹
-        </button>
+<!-- ÜST -->
 
-        <div class="corpTitle">
+<div class="top">
 
-            <b>Kurumsal Puantaj</b>
+    <button
+    class="back"
+    onclick="history.back()">
 
-            <span>
-                İnşaat • Şantiye • Ekip Yönetimi
-            </span>
+        ‹
 
-        </div>
+    </button>
 
-    </div>
+    <div class="title">
 
+        <b>Kurumsal Puantaj</b>
 
-    <div class="corpContent">
-
-
-        <!-- ŞİRKET -->
-
-        <div class="companyCard">
-
-            <div class="companyLabel">
-                ŞİRKET
-            </div>
-
-            <div
-            id="corpCompanyName"
-            class="companyName">
-                Şirket Adı
-            </div>
-
-            <input
-            id="corpCompanyInput"
-            class="companyInput"
-            type="text"
-            placeholder="Şirket adınızı yazın"
-            onchange="saveCorporateCompany()">
-
-        </div>
-
-
-        <!-- İSTATİSTİKLER -->
-
-        <div class="corpStats">
-
-            <div class="corpStat blue">
-
-                <small>
-                    TOPLAM ŞANTİYE
-                </small>
-
-                <strong id="corpSiteCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="corpStat">
-
-                <small>
-                    TOPLAM EKİP
-                </small>
-
-                <strong id="corpTeamCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="corpStat green">
-
-                <small>
-                    ÇALIŞAN
-                </small>
-
-                <strong id="corpWorkerCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="corpStat orange">
-
-                <small>
-                    BUGÜN ÇALIŞAN
-                </small>
-
-                <strong id="corpTodayCount">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- ŞANTİYELER -->
-
-        <div class="corpSection">
-
-            <div class="corpSectionHead">
-
-                <div class="corpSectionTitle">
-                    🏗️ Şantiyeler
-                </div>
-
-                <button
-                class="corpAdd"
-                onclick="openCorporateModal('site')">
-                    + Şantiye
-                </button>
-
-            </div>
-
-            <div id="corpSites"></div>
-
-        </div>
-
-
-        <!-- EKİPLER -->
-
-        <div class="corpSection">
-
-            <div class="corpSectionHead">
-
-                <div class="corpSectionTitle">
-                    👷 Ekipler
-                </div>
-
-                <button
-                class="corpAdd"
-                onclick="openCorporateModal('team')">
-                    + Ekip
-                </button>
-
-            </div>
-
-            <div
-            id="corpTeams"
-            class="teamGrid">
-            </div>
-
-        </div>
-
-
-        <!-- BUGÜNKÜ PUANTAJ -->
-
-        <div class="corpSection">
-
-            <div class="corpSectionHead">
-
-                <div class="corpSectionTitle">
-                    📅 Bugünkü Puantaj
-                </div>
-
-            </div>
-
-            <div
-            id="corpToday"
-            class="todayList">
-            </div>
-
-        </div>
-
-
-        <!-- HIZLI MENÜ -->
-
-        <div class="corpSection">
-
-            <div class="corpSectionHead">
-
-                <div class="corpSectionTitle">
-                    Yönetim
-                </div>
-
-            </div>
-
-            <div class="quickGrid">
-
-                <button
-                class="quickButton"
-                onclick="openCorporateModal('worker')">
-
-                    <div class="quickIcon">
-                        👷
-                    </div>
-
-                    <b>Çalışan Ekle</b>
-
-                    <span>
-                        Ekibe çalışan ekle
-                    </span>
-
-                </button>
-
-
-                <button
-                class="quickButton"
-                onclick="corporateComingSoon('Ödemeler')">
-
-                    <div class="quickIcon">
-                        💰
-                    </div>
-
-                    <b>Ödemeler</b>
-
-                    <span>
-                        Avans ve hakediş
-                    </span>
-
-                </button>
-
-
-                <button
-                class="quickButton"
-                onclick="corporateComingSoon('Hakedişler')">
-
-                    <div class="quickIcon">
-                        📊
-                    </div>
-
-                    <b>Hakedişler</b>
-
-                    <span>
-                        İş ve metraj takibi
-                    </span>
-
-                </button>
-
-
-                <button
-                class="quickButton"
-                onclick="corporateComingSoon('Raporlar')">
-
-                    <div class="quickIcon">
-                        📄
-                    </div>
-
-                    <b>Raporlar</b>
-
-                    <span>
-                        Puantaj ve maliyet
-                    </span>
-
-                </button>
-
-            </div>
-
-        </div>
-
+        <span>
+            İnşaat • Şantiye • Ekip Yönetimi
+        </span>
 
     </div>
 
 </div>
 
 
-<!-- ==================================================
-     KURUMSAL MODAL
-================================================== -->
+<div class="main">
+
+
+<!-- ŞİRKET -->
+
+<div class="company">
+
+    <small>
+        ŞİRKET
+    </small>
+
+    <h1 id="companyName">
+        Şirket Adı
+    </h1>
+
+    <input
+    id="companyInput"
+    type="text"
+    placeholder="Şirket adını yazın"
+    onchange="saveCompany()">
+
+</div>
+
+
+<!-- İSTATİSTİKLER -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <small>
+            ŞANTİYE
+        </small>
+
+        <strong id="siteCount">
+            0
+        </strong>
+
+    </div>
+
+    <div class="stat">
+
+        <small>
+            EKİP
+        </small>
+
+        <strong id="teamCount">
+            0
+        </strong>
+
+    </div>
+
+    <div class="stat">
+
+        <small>
+            ÇALIŞAN
+        </small>
+
+        <strong id="workerCount">
+            0
+        </strong>
+
+    </div>
+
+    <div class="stat">
+
+        <small>
+            BUGÜN ÇALIŞAN
+        </small>
+
+        <strong id="todayCount">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- ŞANTİYELER -->
+
+<div class="card">
+
+    <div class="cardHead">
+
+        <div class="cardTitle">
+            🏗️ Şantiyeler
+        </div>
+
+        <button
+        class="add"
+        onclick="openModal('site')">
+
+            + Şantiye
+
+        </button>
+
+    </div>
+
+    <div id="sites"></div>
+
+</div>
+
+
+<!-- EKİPLER -->
+
+<div class="card">
+
+    <div class="cardHead">
+
+        <div class="cardTitle">
+            👷 Ekipler
+        </div>
+
+        <button
+        class="add"
+        onclick="openModal('team')">
+
+            + Ekip
+
+        </button>
+
+    </div>
+
+    <div
+    id="teams"
+    class="teams">
+
+    </div>
+
+</div>
+
+
+<!-- YÖNETİM -->
+
+<div class="card">
+
+    <div class="cardHead">
+
+        <div class="cardTitle">
+            Yönetim
+        </div>
+
+    </div>
+
+
+    <div class="quick">
+
+        <button
+        onclick="openModal('worker')">
+
+            <div class="quickIcon">
+                👷
+            </div>
+
+            <b>
+                Çalışan Ekle
+            </b>
+
+            <span>
+                Ekibe çalışan ekle
+            </span>
+
+        </button>
+
+
+        <button
+        onclick="alert('Ödeme modülünü bir sonraki aşamada ekleyeceğiz.')">
+
+            <div class="quickIcon">
+                💰
+            </div>
+
+            <b>
+                Ödemeler
+            </b>
+
+            <span>
+                Avans ve ödemeler
+            </span>
+
+        </button>
+
+
+        <button
+        onclick="alert('Hakediş modülünü bir sonraki aşamada ekleyeceğiz.')">
+
+            <div class="quickIcon">
+                📊
+            </div>
+
+            <b>
+                Hakediş
+            </b>
+
+            <span>
+                Metraj ve iş takibi
+            </span>
+
+        </button>
+
+
+        <button
+        onclick="alert('Rapor modülünü bir sonraki aşamada ekleyeceğiz.')">
+
+            <div class="quickIcon">
+                📄
+            </div>
+
+            <b>
+                Raporlar
+            </b>
+
+            <span>
+                Puantaj raporları
+            </span>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- MODAL -->
 
 <div
-id="corporateModal"
-class="corpModal">
+id="modal"
+class="modal">
 
-    <div class="corpModalBox">
+    <div class="modalBox">
 
         <div
-        id="corpModalTitle"
-        class="corpModalTitle">
+        id="modalTitle"
+        class="modalTitle">
+
             Yeni Şantiye
+
         </div>
 
 
-        <div class="corpField">
+        <div class="field">
 
             <label>
                 Ad
             </label>
 
             <input
-            id="corpModalName"
+            id="modalName"
             type="text"
-            placeholder="Adını yazın">
+            placeholder="Ad">
 
         </div>
 
 
         <div
-        id="corpTeamSelectArea"
-        class="corpField"
+        id="teamSelectBox"
+        class="field"
         style="display:none;">
 
             <label>
                 Ekip
             </label>
 
-            <select id="corpWorkerTeam">
+            <select
+            id="workerTeam">
             </select>
 
         </div>
 
 
-        <div class="corpModalButtons">
+        <div class="buttons">
 
             <button
-            class="corpCancel"
-            onclick="closeCorporateModal()">
+            class="cancel"
+            onclick="closeModal()">
+
                 İptal
+
             </button>
 
             <button
-            class="corpSave"
-            onclick="saveCorporateModal()">
+            class="save"
+            onclick="saveModal()">
+
                 Kaydet
+
             </button>
 
         </div>
@@ -804,13 +894,11 @@ class="corpModal">
 
 <script>
 
-/* ==================================================
-   KURUMSAL VERİ
-================================================== */
+/* VERİ */
 
-let corporateData = {
+let data = {
 
-    companyName:"",
+    company:"",
 
     sites:[],
 
@@ -820,32 +908,28 @@ let corporateData = {
 
 };
 
+let modalType="";
 
-let corporateModalType = null;
 
+/* YÜKLE */
 
-/* ==================================================
-   KURUMSAL VERİ YÜKLE
-================================================== */
-
-function loadCorporateData(){
+function loadData(){
 
     const saved =
         localStorage.getItem(
-            "puantajCorporateData"
+            "kurumsalPuantaj"
         );
 
     if(saved){
 
         try{
 
-            corporateData =
-                JSON.parse(saved);
+            data=JSON.parse(saved);
 
-        }catch(error){
+        }catch(e){
 
-            corporateData = {
-                companyName:"",
+            data={
+                company:"",
                 sites:[],
                 teams:[],
                 workers:[]
@@ -855,193 +939,319 @@ function loadCorporateData(){
 
     }
 
-    if(!corporateData.sites)
-        corporateData.sites=[];
-
-    if(!corporateData.teams)
-        corporateData.teams=[];
-
-    if(!corporateData.workers)
-        corporateData.workers=[];
-
 }
 
 
-/* ==================================================
-   KAYDET
-================================================== */
+/* KAYDET */
 
-function saveCorporateData(){
+function saveData(){
 
     localStorage.setItem(
-        "puantajCorporateData",
-        JSON.stringify(corporateData)
+
+        "kurumsalPuantaj",
+
+        JSON.stringify(data)
+
     );
 
 }
 
 
-/* ==================================================
-   KURUMSALI AÇ
-================================================== */
+/* ŞİRKET */
 
-function openCorporate(){
+function saveCompany(){
 
-    const calendarScreen =
-        document.getElementById(
-            "calendarScreen"
-        );
+    data.company =
+        document
+        .getElementById("companyInput")
+        .value
+        .trim();
 
-    const corporateScreen =
-        document.getElementById(
-            "corporateScreen"
-        );
+    saveData();
 
-    if(calendarScreen)
-        calendarScreen.style.display="none";
-
-    if(corporateScreen)
-        corporateScreen.style.display="block";
-
-    loadCorporateData();
-
-    renderCorporate();
+    render();
 
 }
 
 
-/* ==================================================
-   KURUMSALI KAPAT
-================================================== */
+/* MODAL */
 
-function closeCorporate(){
+function openModal(type){
 
-    const corporateScreen =
-        document.getElementById(
-            "corporateScreen"
-        );
+    modalType=type;
 
-    const calendarScreen =
-        document.getElementById(
-            "calendarScreen"
-        );
+    document
+    .getElementById("modal")
+    .classList.add("show");
 
-    if(corporateScreen)
-        corporateScreen.style.display="none";
-
-    if(calendarScreen)
-        calendarScreen.style.display="block";
-
-}
-
-
-/* ==================================================
-   ŞİRKET ADI
-================================================== */
-
-function saveCorporateCompany(){
+    const title =
+        document
+        .getElementById("modalTitle");
 
     const input =
-        document.getElementById(
-            "corpCompanyInput"
-        );
+        document
+        .getElementById("modalName");
+
+    const teamBox =
+        document
+        .getElementById("teamSelectBox");
+
+    teamBox.style.display="none";
+
+    input.value="";
+
+
+    if(type==="site"){
+
+        title.textContent=
+            "Yeni Şantiye";
+
+        input.placeholder=
+            "Örn: Nilüfer Konut Projesi";
+
+    }
+
+
+    if(type==="team"){
+
+        title.textContent=
+            "Yeni Ekip";
+
+        input.placeholder=
+            "Örn: Kalıpçı Ekibi";
+
+    }
+
+
+    if(type==="worker"){
+
+        title.textContent=
+            "Yeni Çalışan";
+
+        input.placeholder=
+            "Ad Soyad";
+
+        teamBox.style.display=
+            "block";
+
+        renderTeamSelect();
+
+    }
+
+
+    input.focus();
+
+}
+
+
+/* EKİP SEÇ */
+
+function renderTeamSelect(){
+
+    const select =
+        document
+        .getElementById("workerTeam");
+
+    if(data.teams.length===0){
+
+        select.innerHTML=
+            `<option>
+                Önce ekip ekleyin
+            </option>`;
+
+        return;
+
+    }
+
+
+    select.innerHTML=
+        data.teams.map(team=>`
+
+            <option value="${team.id}">
+                ${team.name}
+            </option>
+
+        `).join("");
+
+}
+
+
+/* KAYDET */
+
+function saveModal(){
 
     const name =
-        input.value.trim();
+        document
+        .getElementById("modalName")
+        .value
+        .trim();
 
-    corporateData.companyName =
-        name;
+    if(!name){
 
-    saveCorporateData();
+        alert("Lütfen isim girin.");
 
-    renderCorporate();
+        return;
+
+    }
+
+
+    if(modalType==="site"){
+
+        data.sites.push({
+
+            id:
+            "site_"+Date.now(),
+
+            name:name
+
+        });
+
+    }
+
+
+    if(modalType==="team"){
+
+        data.teams.push({
+
+            id:
+            "team_"+Date.now(),
+
+            name:name,
+
+            siteId:
+            data.sites.length
+            ?
+            data.sites[0].id
+            :
+            null
+
+        });
+
+    }
+
+
+    if(modalType==="worker"){
+
+        const team =
+            document
+            .getElementById("workerTeam")
+            .value;
+
+        if(!team){
+
+            alert("Önce ekip ekleyin.");
+
+            return;
+
+        }
+
+        data.workers.push({
+
+            id:
+            "worker_"+Date.now(),
+
+            name:name,
+
+            teamId:team,
+
+            status:"worked"
+
+        });
+
+    }
+
+
+    saveData();
+
+    closeModal();
+
+    render();
 
 }
 
 
-/* ==================================================
-   RENDER
-================================================== */
+/* KAPAT */
 
-function renderCorporate(){
+function closeModal(){
 
-    const companyName =
-        corporateData.companyName ||
+    document
+    .getElementById("modal")
+    .classList.remove("show");
+
+}
+
+
+/* RENDER */
+
+function render(){
+
+    document
+    .getElementById("companyName")
+    .textContent=
+        data.company ||
         "Şirket Adı";
 
-    document.getElementById(
-        "corpCompanyName"
-    ).textContent =
-        companyName;
 
-    document.getElementById(
-        "corpCompanyInput"
-    ).value =
-        corporateData.companyName || "";
+    document
+    .getElementById("companyInput")
+    .value=
+        data.company || "";
 
 
-    document.getElementById(
-        "corpSiteCount"
-    ).textContent =
-        corporateData.sites.length;
+    document
+    .getElementById("siteCount")
+    .textContent=
+        data.sites.length;
 
 
-    document.getElementById(
-        "corpTeamCount"
-    ).textContent =
-        corporateData.teams.length;
+    document
+    .getElementById("teamCount")
+    .textContent=
+        data.teams.length;
 
 
-    document.getElementById(
-        "corpWorkerCount"
-    ).textContent =
-        corporateData.workers.length;
+    document
+    .getElementById("workerCount")
+    .textContent=
+        data.workers.length;
 
 
-    document.getElementById(
-        "corpTodayCount"
-    ).textContent =
-        corporateData.workers.length;
+    document
+    .getElementById("todayCount")
+    .textContent=
+        data.workers.length;
 
 
-    renderCorporateSites();
+    renderSites();
 
-    renderCorporateTeams();
-
-    renderCorporateToday();
+    renderTeams();
 
 }
 
 
-/* ==================================================
-   ŞANTİYELER
-================================================== */
+/* ŞANTİYELER */
 
-function renderCorporateSites(){
+function renderSites(){
 
-    const box =
-        document.getElementById(
-            "corpSites"
-        );
+    const box=
+        document
+        .getElementById("sites");
 
-    if(corporateData.sites.length===0){
 
-        box.innerHTML = `
-            <div class="corpEmpty">
+    if(data.sites.length===0){
 
-                <div class="corpEmptyIcon">
+        box.innerHTML=`
+
+            <div class="empty">
+
+                <div class="emptyIcon">
                     🏗️
                 </div>
 
                 Henüz şantiye eklenmedi.
 
-                <br>
-
-                Yukarıdaki
-                <b>+ Şantiye</b>
-                butonundan ekleyebilirsiniz.
-
             </div>
+
         `;
 
         return;
@@ -1049,70 +1259,58 @@ function renderCorporateSites(){
     }
 
 
-    box.innerHTML =
-        corporateData.sites.map(site => {
+    box.innerHTML=
+        data.sites.map(site=>`
 
-            const teamCount =
-                corporateData.teams.filter(
-                    team =>
-                    team.siteId === site.id
-                ).length;
+            <div class="site">
 
-            return `
+                <div class="siteName">
+                    ${site.name}
+                </div>
 
-                <div
-                class="siteItem">
+                <div class="siteInfo">
 
-                    <div class="siteTop">
+                    <div class="badge">
 
-                        <div class="siteName">
-                            ${escapeCorporate(site.name)}
-                        </div>
+                        ${
+                            data.teams.filter(
+                                t =>
+                                t.siteId===
+                                site.id
+                            ).length
+                        }
 
-                        <div class="siteArrow">
-                            ›
-                        </div>
-
-                    </div>
-
-                    <div class="siteInfo">
-
-                        <div class="siteBadge">
-                            ${teamCount} ekip
-                        </div>
+                        ekip
 
                     </div>
 
                 </div>
 
-            `;
+            </div>
 
-        }).join("");
+        `).join("");
 
 }
 
 
-/* ==================================================
-   EKİPLER
-================================================== */
+/* EKİPLER */
 
-function renderCorporateTeams(){
+function renderTeams(){
 
-    const box =
-        document.getElementById(
-            "corpTeams"
-        );
+    const box=
+        document
+        .getElementById("teams");
 
 
-    if(corporateData.teams.length===0){
+    if(data.teams.length===0){
 
-        box.innerHTML = `
+        box.innerHTML=`
 
             <div
-            class="corpEmpty"
+            class="empty"
             style="grid-column:1/3;">
 
-                <div class="corpEmptyIcon">
+                <div class="emptyIcon">
                     👷
                 </div>
 
@@ -1127,384 +1325,48 @@ function renderCorporateTeams(){
     }
 
 
-    box.innerHTML =
-        corporateData.teams.map(team => {
+    box.innerHTML=
+        data.teams.map(team=>`
 
-            const count =
-                corporateData.workers.filter(
-                    worker =>
-                    worker.teamId === team.id
-                ).length;
+            <div class="team">
 
-            return `
-
-                <div
-                class="teamCard">
-
-                    <div class="teamIcon">
-                        👷
-                    </div>
-
-                    <div class="teamName">
-                        ${escapeCorporate(team.name)}
-                    </div>
-
-                    <div class="teamMeta">
-                        ${count} çalışan
-                    </div>
-
+                <div class="teamIcon">
+                    👷
                 </div>
 
-            `;
+                <div class="teamName">
+                    ${team.name}
+                </div>
 
-        }).join("");
+                <div class="teamCount">
 
-}
+                    ${
+                        data.workers.filter(
+                            w =>
+                            w.teamId===
+                            team.id
+                        ).length
+                    }
 
+                    çalışan
 
-/* ==================================================
-   BUGÜN
-================================================== */
-
-function renderCorporateToday(){
-
-    const box =
-        document.getElementById(
-            "corpToday"
-        );
-
-
-    if(corporateData.teams.length===0){
-
-        box.innerHTML = `
-
-            <div class="corpEmpty">
-
-                Bugünkü puantajı görmek için
-                önce ekip ekleyin.
+                </div>
 
             </div>
 
-        `;
-
-        return;
-
-    }
-
-
-    box.innerHTML=
-  corporateData.teams.map(team => {
-
-            const count =
-                corporateData.workers.filter(
-                    worker =>
-                    worker.teamId === team.id
-                ).length;
-
-            return `
-
-                <div class="todayRow">
-
-                    <div>
-
-                        <div class="todayTeam">
-                            ${escapeCorporate(team.name)}
-                        </div>
-
-                        <div class="todayCount">
-                            ${count} çalışan
-                        </div>
-
-                    </div>
-
-                    <div class="todayStatus">
-                        ${count} kişi
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
+        `).join("");
 
 }
 
 
-/* ==================================================
-   MODAL AÇ
-================================================== */
+/* BAŞLAT */
 
-function openCorporateModal(type){
+loadData();
 
-    corporateModalType =
-        type;
-
-    const modal =
-        document.getElementById(
-            "corporateModal"
-        );
-
-    const title =
-        document.getElementById(
-            "corpModalTitle"
-        );
-
-    const input =
-        document.getElementById(
-            "corpModalName"
-        );
-
-    const teamArea =
-        document.getElementById(
-            "corpTeamSelectArea"
-        );
-
-
-    input.value="";
-
-    teamArea.style.display="none";
-
-
-    if(type==="site"){
-
-        title.textContent =
-            "Yeni Şantiye";
-
-        input.placeholder =
-            "Örn: Nilüfer Konut Projesi";
-
-    }
-
-
-    if(type==="team"){
-
-        title.textContent =
-            "Yeni Ekip";
-
-        input.placeholder =
-            "Örn: Kalıpçı Ekibi";
-
-    }
-
-
-    if(type==="worker"){
-
-        title.textContent =
-            "Yeni Çalışan";
-
-        input.placeholder =
-            "Ad Soyad";
-
-        teamArea.style.display =
-            "block";
-
-        renderWorkerTeamSelect();
-
-    }
-
-
-    modal.classList.add("show");
-
-    setTimeout(() => {
-        input.focus();
-    },100);
-
-}
-
-
-/* ==================================================
-   EKİP SEÇİMİ
-================================================== */
-
-function renderWorkerTeamSelect(){
-
-    const select =
-        document.getElementById(
-            "corpWorkerTeam"
-        );
-
-    if(corporateData.teams.length===0){
-
-        select.innerHTML =
-            `<option value="">
-                Önce ekip ekleyin
-            </option>`;
-
-        return;
-
-    }
-
-
-    select.innerHTML =
-        corporateData.teams.map(team => {
-
-            return `
-                <option value="${team.id}">
-                    ${escapeCorporate(team.name)}
-                </option>
-            `;
-
-        }).join("");
-
-}
-
-
-/* ==================================================
-   MODAL KAYDET
-================================================== */
-
-function saveCorporateModal(){
-
-    const input =
-        document.getElementById(
-            "corpModalName"
-        );
-
-    const name =
-        input.value.trim();
-
-
-    if(!name){
-
-        alert("Lütfen bir isim girin.");
-
-        return;
-
-    }
-
-
-    if(corporateModalType==="site"){
-
-        corporateData.sites.push({
-
-            id:
-            "site_" +
-            Date.now(),
-
-            name:name
-
-        });
-
-    }
-
-
-    if(corporateModalType==="team"){
-
-        corporateData.teams.push({
-
-            id:
-            "team_" +
-            Date.now(),
-
-            name:name,
-
-            siteId:
-            corporateData.sites.length
-            ?
-            corporateData.sites[0].id
-            :
-            null
-
-        });
-
-    }
-
-
-    if(corporateModalType==="worker"){
-
-        const teamId =
-            document.getElementById(
-                "corpWorkerTeam"
-            ).value;
-
-        if(!teamId){
-
-            alert(
-                "Önce bir ekip oluşturun."
-            );
-
-            return;
-
-        }
-
-
-        corporateData.workers.push({
-
-            id:
-            "worker_" +
-            Date.now(),
-
-            name:name,
-
-            teamId:teamId,
-
-            status:"worked"
-
-        });
-
-    }
-
-
-    saveCorporateData();
-
-    closeCorporateModal();
-
-    renderCorporate();
-
-}
-
-
-/* ==================================================
-   MODAL KAPAT
-================================================== */
-
-function closeCorporateModal(){
-
-    document
-    .getElementById(
-        "corporateModal"
-    )
-    .classList.remove("show");
-
-    corporateModalType=null;
-
-}
-
-
-/* ==================================================
-   YAKINDA
-================================================== */
-
-function corporateComingSoon(name){
-
-    alert(
-        name +
-        " modülünü bir sonraki aşamada ekleyeceğiz."
-    );
-
-}
-
-
-/* ==================================================
-   GÜVENLİ METİN
-================================================== */
-
-function escapeCorporate(text){
-
-    return String(text)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* ==================================================
-   KURUMSAL VERİYİ HAZIRLA
-================================================== */
-
-loadCorporateData();
+render();
 
 </script>
+
+</body>
+
+</html>
