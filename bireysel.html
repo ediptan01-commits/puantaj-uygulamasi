@@ -2657,6 +2657,10 @@ function escapeHtml(value){
 
 loadData();
 
+   localStorage.removeItem("puantajEmployees");
+employees = [];
+currentEmployee = null;
+
 if (employees.length > 0) {
     openEmployee(employees[0].id);
 } else {
