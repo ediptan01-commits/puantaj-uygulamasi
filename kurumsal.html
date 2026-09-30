@@ -1216,6 +1216,42 @@ class="modal">
 
         </div>
 
+        <div id="paymentFields" style="display:none;">
+
+    <div class="field">
+        <label>Çalışan</label>
+        <select id="paymentWorker">
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Ödeme Türü</label>
+        <select id="paymentType">
+            <option value="wage">Maaş / Yevmiye</option>
+            <option value="advance">Avans</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Ödeme Tutarı (TL)</label>
+        <input
+            id="paymentAmount"
+            type="number"
+            placeholder="Örn: 5000"
+        >
+    </div>
+
+    <div class="field">
+        <label>Açıklama</label>
+        <input
+            id="paymentNote"
+            type="text"
+            placeholder="Örn: Haftalık ödeme"
+        >
+    </div>
+
+        </div>
+
 
         <div class="buttons">
 
@@ -1421,10 +1457,43 @@ function openModal(type){
     teamBox.style.display =
     "none";
 
+        document.getElementById(
+    "paymentFields"
+).style.display = "block";
+
+        renderPaymentWorkers();
+
     }
 
 
     input.focus();
+
+}
+
+    /* ÖDEME ÇALIŞANLARI */
+
+function renderPaymentWorkers(){
+
+    const select =
+        document.getElementById("paymentWorker");
+
+    if(!select) return;
+
+    select.innerHTML = "";
+
+    data.workers.forEach(worker => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = worker.id;
+
+        option.textContent =
+            worker.name;
+
+        select.appendChild(option);
+
+    });
 
 }
 
@@ -1470,6 +1539,63 @@ function saveModal(){
         .getElementById("modalName")
         .value
         .trim();
+
+    if(modalType==="payment"){
+
+    const workerId =
+        document.getElementById("paymentWorker").value;
+
+    const type =
+        document.getElementById("paymentType").value;
+
+    const amount =
+        Number(
+            document.getElementById("paymentAmount").value
+        );
+
+    const note =
+        document.getElementById("paymentNote").value.trim();
+
+    if(!workerId){
+        alert("Lütfen çalışan seçin.");
+        return;
+    }
+
+    if(!amount || amount <= 0){
+        alert("Lütfen geçerli bir ödeme tutarı girin.");
+        return;
+    }
+
+    data.payments.push({
+
+        id:
+        "payment_" + Date.now(),
+
+        workerId:
+        workerId,
+
+        type:
+        type,
+
+        amount:
+        amount,
+
+        note:
+        note,
+
+        date:
+        new Date().toISOString()
+
+    });
+
+    saveData();
+
+    closeModal();
+
+    render();
+
+    return;
+    }
 
     if(!name){
 
