@@ -804,7 +804,7 @@ onclick="location.href='index.html'">
 </div>
 
 
-<div class="main">
+<div class="main" id="mainScreen">
 
 
 <!-- ŞİRKET -->
@@ -1319,6 +1319,16 @@ let modalType="";
 
 
 /* YÜKLE */
+
+    function openReports(){
+    document.getElementById("mainScreen").style.display = "none";
+    document.getElementById("reportsScreen").style.display = "block";
+}
+
+function closeReports(){
+    document.getElementById("reportsScreen").style.display = "none";
+    document.getElementById("mainScreen").style.display = "block";
+}
 
 function loadData(){
 
