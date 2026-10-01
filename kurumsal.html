@@ -1129,6 +1129,27 @@ class="teamDetail">
 
 </div>
 
+    <!-- RAPOR EKRANI -->
+<div id="reportsScreen" style="display:none; padding:15px;">
+
+    <h2>📊 Puantaj Raporları</h2>
+
+    <div style="margin:15px 0;">
+        <button onclick="showReport('daily')">Günlük</button>
+        <button onclick="showReport('weekly')">Haftalık</button>
+        <button onclick="showReport('monthly')">Aylık</button>
+    </div>
+
+    <div id="reportContent">
+        Rapor türünü seçin.
+    </div>
+
+    <button onclick="closeReports()" style="margin-top:20px;">
+        Ana Ekrana Dön
+    </button>
+
+</div>
+
 <div
 id="modal"
 class="modal">
