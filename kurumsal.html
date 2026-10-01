@@ -2336,6 +2336,35 @@ function renderTeamDetail(){
 
 /* BAŞLAT */
 
+  /* TELEFON GERİ TUŞU */
+
+const kurumsalSayfaAdresi = location.href;
+
+history.pushState(
+    { kurumsal: true },
+    "",
+    kurumsalSayfaAdresi
+);
+
+window.addEventListener("popstate", function () {
+
+    const modal = document.getElementById("modal");
+    const teamDetail = document.getElementById("teamDetail");
+
+    if (modal.classList.contains("show")) {
+        closeModal();
+    } else if (teamDetail.style.display === "block") {
+        closeTeam();
+    }
+
+    history.pushState(
+        { kurumsal: true },
+        "",
+        kurumsalSayfaAdresi
+    );
+
+});  
+
 loadData();
 
 render();
