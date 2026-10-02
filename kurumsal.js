@@ -1,5 +1,3 @@
-<script>
-
 /* VERİ */
 
 let data = {
@@ -1290,6 +1288,3 @@ function restoreData(event) {
 loadData();
 
 render();
-
-</script>
-
