@@ -1993,7 +1993,7 @@ function renderSites(){
     box.innerHTML=
         data.sites.map(site=>`
 
-            <div class="site">
+           <div class="site" onclick="toggleSite('${site.id}')">
 
                 <div class="siteName">
                     ${site.name}
@@ -2023,6 +2023,40 @@ function renderSites(){
 
 }
 
+    let selectedSiteId = null;
+
+function toggleSite(siteId) {
+    selectedSiteId =
+        selectedSiteId === siteId ? null : siteId;
+
+    renderSites();
+
+    const detail = document.getElementById("siteDetails");
+    if (!selectedSiteId) {
+        if (detail) detail.remove();
+        return;
+    }
+
+    const site = data.sites.find(s => s.id === selectedSiteId);
+    if (!site) return;
+
+    const teams = data.teams.filter(t => t.siteId === siteId);
+
+    const html = `
+        <div class="card" id="siteDetails">
+            <h2>${site.name} - Şantiye Detayları</h2>
+            <h3>Ekipler</h3>
+            ${teams.length
+                ? teams.map(team => `
+                    <p><strong>${team.name}</strong></p>
+                `).join("")
+                : "<p>Henüz ekip yok.</p>"
+            }
+        </div>
+    `;
+
+    document.getElementById("sites").insertAdjacentHTML("afterend", html);
+}
 
 /* EKİPLER */
 
