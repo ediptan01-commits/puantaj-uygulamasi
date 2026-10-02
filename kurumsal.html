@@ -1594,6 +1594,16 @@ function openModal(type){
 
         input.placeholder=
             "Örn: Kalıpçı Ekibi";
+        document.getElementById("teamSiteBox").style.display = "block";
+
+const siteSelect = document.getElementById("teamSite");
+
+siteSelect.innerHTML = '<option value="">Şantiye seçin</option>';
+
+data.sites.forEach(site => {
+    siteSelect.innerHTML +=
+        `<option value="${site.id}">${site.name}</option>`;
+});
 
     }
 
