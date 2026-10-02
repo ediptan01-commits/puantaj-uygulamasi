@@ -2577,6 +2577,7 @@ function restoreData(event) {
     try {
       const backup = JSON.parse(e.target.result);
       const restored = backup.data;
+        console.log("Yedek içeriği:", backup);
 
       if (
         !restored ||
