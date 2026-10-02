@@ -1995,7 +1995,17 @@ function renderSites(){
 
            <div class="site" onclick="toggleSite('${site.id}')">
 
-                <div class="siteName">
+           ${selectedSiteId === site.id ? `
+    <div class="siteDetails">
+        <h3>${site.name} - Şantiye Detayları</h3>
+        <h4>Ekipler</h4>
+        ${data.teams.filter(t => t.siteId === site.id).map(team => `
+            <p>${team.name}</p>
+        `).join("") || "<p>Henüz ekip yok.</p>"}
+    </div>
+` : ""}
+
+              <div class="siteName">
                     ${site.name}
                 </div>
 
