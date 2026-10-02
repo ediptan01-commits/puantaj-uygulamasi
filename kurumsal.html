@@ -1330,17 +1330,19 @@ function closeReports(){
     document.getElementById("mainScreen").style.display = "block";
 }
 
-   function showReport(type){
+```javascript
+function showReport(type){
 
     const content = document.getElementById("reportContent");
-
     const today = new Date();
+
     let startDate = new Date(today);
     let endDate = new Date(today);
 
     if(type === "weekly"){
         const day = today.getDay();
         const diff = day === 0 ? -6 : 1 - day;
+
         startDate.setDate(today.getDate() + diff);
         endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 6);
@@ -1356,24 +1358,122 @@ function closeReports(){
         String(date.getMonth() + 1).padStart(2,"0") + "-" +
         String(date.getDate()).padStart(2,"0");
 
-    let total = 0;
+    const startKey = dateKey(startDate);
+    const endKey = dateKey(endDate);
 
-    data.workers.forEach(worker => {
-        if(!worker.attendance) return;
+    const workerTotals = data.workers.map(worker => {
+        let days = 0;
 
-        Object.entries(worker.attendance).forEach(([date, status]) => {
-            if(date >= dateKey(startDate) &&
-               date <= dateKey(endDate) &&
-               status === "worked"){
-                total++;
+        Object.entries(worker.attendance || {}).forEach(([date, status]) => {
+            if(date >= startKey && date <= endKey && status === "worked"){
+                days++;
             }
         });
+
+        const team = data.teams.find(t => t.id === worker.teamId);
+        const site = team
+            ? data.sites.find(s => s.id === team.siteId)
+            : null;
+
+        return {
+            name: worker.name,
+            team: team ? team.name : "Ekip yok",
+            site: site ? site.name : "Şantiye yok",
+            days: days
+        };
     });
 
-    content.innerHTML =
-        "<h3>Toplam çalışma günü</h3>" +
-        "<p style='font-size:28px;font-weight:bold'>" +
-        total + "</p>";
+    const teamTotals = {};
+    const siteTotals = {};
+
+    workerTotals.forEach(worker => {
+        if(!teamTotals[worker.team]){
+            teamTotals[worker.team] = 0;
+        }
+
+        if(!siteTotals[worker.site]){
+            siteTotals[worker.site] = 0;
+        }
+
+        teamTotals[worker.team] += worker.days;
+        siteTotals[worker.site] += worker.days;
+    });
+
+    const totalDays = workerTotals.reduce(
+        (sum, worker) => sum + worker.days, 0
+    );
+
+    const periodName = {
+        daily: "Günlük",
+        weekly: "Haftalık",
+        monthly: "Aylık"
+    };
+
+    let html = `
+        <h3>${periodName[type]} Raporu</h3>
+        <p>${startKey} - ${endKey}</p>
+
+        <h2>Toplam çalışma günü: ${totalDays}</h2>
+
+        <h3>Çalışan Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Çalışan</th>
+                <th>Ekip</th>
+                <th>Şantiye</th>
+                <th>Gün</th>
+            </tr>
+    `;
+
+    workerTotals.forEach(worker => {
+        html += `
+            <tr>
+                <td>${worker.name}</td>
+                <td>${worker.team}</td>
+                <td>${worker.site}</td>
+                <td>${worker.days}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+        </table>
+        </div>
+
+        <h3>Ekip Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Ekip</th>
+                <th>Toplam gün</th>
+            </tr>
+    `;
+
+    Object.entries(teamTotals).forEach(([name, days]) => {
+        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+    });
+
+    html += `
+        </table>
+        </div>
+
+        <h3>Şantiye Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Şantiye</th>
+                <th>Toplam gün</th>
+            </tr>
+    `;
+
+    Object.entries(siteTotals).forEach(([name, days]) => {
+        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+    });
+
+    html += `</table></div>`;
+
+    content.innerHTML = html;
 }
 
 function loadData(){
