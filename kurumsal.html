@@ -2538,6 +2538,79 @@ window.addEventListener("popstate", function () {
 
 });  
 
+    
+// VERİLERİ YEDEKLE
+function backupData() {
+  const backup = {
+    backupDate: new Date().toISOString(),
+    data: data
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "puantaj-yedek-" +
+    new Date().toISOString().slice(0, 10) + ".json";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+  alert("Yedek dosyası indirildi.");
+}
+
+// YEDEKTEN GERİ YÜKLE
+function restoreData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const backup = JSON.parse(e.target.result);
+      const restored = backup.data;
+
+      if (
+        !restored ||
+        !Array.isArray(restored.sites) ||
+        !Array.isArray(restored.teams) ||
+        !Array.isArray(restored.workers) ||
+        !Array.isArray(restored.payments)
+      ) {
+        alert("Yedek dosyasının biçimi geçerli değil.");
+        return;
+      }
+
+      const confirmed = confirm(
+        "Mevcut veriler yedekteki verilerle değiştirilecek. Devam edilsin mi?"
+      );
+
+      if (!confirmed) return;
+
+      data = restored;
+      saveData();
+      render();
+
+      alert("Yedek başarıyla geri yüklendi.");
+    } catch (error) {
+      alert("Dosya okunamadı veya geçerli bir yedek değil.");
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+
 loadData();
 
 render();
