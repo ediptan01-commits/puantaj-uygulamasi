@@ -1964,6 +1964,7 @@ function render(){
 
 let selectedSiteId = null;
 
+ 
 function renderSites() {
     const box = document.getElementById("sites");
 
@@ -1995,6 +1996,12 @@ function renderSites() {
                     <div class="badge">
                         ${teams.length} ekip
                     </div>
+
+                    <button
+                        class="deleteBtn"
+                        onclick="event.stopPropagation(); deleteSite('${site.id}')">
+                        🗑️ Sil
+                    </button>
                 </div>
 
                 ${isOpen ? `
@@ -2016,80 +2023,30 @@ function renderSites() {
     }).join("");
 }
 
-function toggleSite(siteId) {
-    selectedSiteId =
-        selectedSiteId === siteId ? null : siteId;
+   
+function deleteSite(siteId) {
+    const site = data.sites.find(s => s.id === siteId);
+    if (!site) return;
 
-    renderSites();
-}
+    const onay = confirm(
+        site.name + " şantiyesini silmek istediğine emin misin?"
+    );
 
+    if (!onay) return;
 
-/* EKİPLER */
+    data.sites = data.sites.filter(s => s.id !== siteId);
+    data.teams = data.teams.filter(t => t.siteId !== siteId);
 
-function renderTeams(){
-
-    const box=
-        document
-        .getElementById("teams");
-
-
-    if(data.teams.length===0){
-
-        box.innerHTML=`
-
-            <div
-            class="empty"
-            style="grid-column:1/3;">
-
-                <div class="emptyIcon">
-                    👷
-                </div>
-
-                Henüz ekip eklenmedi.
-
-            </div>
-
-        `;
-
-        return;
-
+    if (selectedSiteId === siteId) {
+        selectedSiteId = null;
     }
 
-
-    box.innerHTML=
-        data.teams.map(team=>`
-
-            <div
-    class="team"
-    onclick="openTeam('${team.id}')">
-
-                <div class="teamIcon">
-                    👷
-                </div>
-
-                <div class="teamName">
-                    ${team.name}
-                </div>
-
-                <div class="teamCount">
-
-                    ${
-                        data.workers.filter(
-                            w =>
-                            w.teamId===
-                            team.id
-                        ).length
-                    }
-
-                    çalışan
-
-                </div>
-
-            </div>
-
-        `).join("");
-
+    saveData();
+    renderSites();
+    renderTeams();
 }
+ 
+
 
     /* ==================================================
    EKİP DETAY SİSTEMİ
