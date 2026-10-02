@@ -756,4 +756,12 @@ body{
     }
 
 }
-    
+
+/* Mobil görünüm */
+html {
+    font-size: 16px;
+}
+
+body {
+    zoom: 1;
+}
