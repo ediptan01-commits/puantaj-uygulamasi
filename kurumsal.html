@@ -1330,10 +1330,51 @@ function closeReports(){
     document.getElementById("mainScreen").style.display = "block";
 }
 
-    function showReport(type){
+   function showReport(type){
+
     const content = document.getElementById("reportContent");
-    content.textContent = "Rapor hazırlanıyor...";
+
+    const today = new Date();
+    let startDate = new Date(today);
+    let endDate = new Date(today);
+
+    if(type === "weekly"){
+        const day = today.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        startDate.setDate(today.getDate() + diff);
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
     }
+
+    if(type === "monthly"){
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
+
+    const dateKey = date =>
+        date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2,"0") + "-" +
+        String(date.getDate()).padStart(2,"0");
+
+    let total = 0;
+
+    data.workers.forEach(worker => {
+        if(!worker.attendance) return;
+
+        Object.entries(worker.attendance).forEach(([date, status]) => {
+            if(date >= dateKey(startDate) &&
+               date <= dateKey(endDate) &&
+               status === "worked"){
+                total++;
+            }
+        });
+    });
+
+    content.innerHTML =
+        "<h3>Toplam çalışma günü</h3>" +
+        "<p style='font-size:28px;font-weight:bold'>" +
+        total + "</p>";
+}
 
 function loadData(){
 
