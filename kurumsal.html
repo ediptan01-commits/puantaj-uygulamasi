@@ -1812,21 +1812,19 @@ function saveModal(){
 
     if(modalType==="team"){
 
-        data.teams.push({
+       const selectedSiteId = document.getElementById("teamSite").value;
 
-            id:
-            "team_"+Date.now(),
+if (!selectedSiteId) {
+    alert("Lütfen şantiye seçin.");
+    return;
+}
 
-            name:name,
+data.teams.push({
+    id: "team_" + Date.now(),
+    name: name,
+    siteId: selectedSiteId
+});
 
-            siteId:
-            data.sites.length
-            ?
-            data.sites[0].id
-            :
-            null
-
-        });
 
     }
 
