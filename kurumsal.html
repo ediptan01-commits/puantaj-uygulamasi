@@ -1007,6 +1007,27 @@ onclick="location.href='index.html'">
 
 </div>
 
+    
+<!-- VERİ YÖNETİMİ -->
+<div class="card">
+  <h2>Veri Yönetimi</h2>
+  <p>Verilerinizi yedekleyebilir veya yedeğinizden geri yükleyebilirsiniz.</p>
+
+  <button class="btn" onclick="backupData()">Yedek İndir</button>
+
+  <button class="btn" onclick="document.getElementById('backupFile').click()">
+    Yedekten Geri Yükle
+  </button>
+
+  <input
+    type="file"
+    id="backupFile"
+    accept=".json,application/json"
+    style="display:none"
+    onchange="restoreData(event)"
+  />
+</div>
+
 
 </div>
 
