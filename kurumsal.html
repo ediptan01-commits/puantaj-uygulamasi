@@ -2023,7 +2023,7 @@ function renderSites(){
 
 }
 
-    let selectedSiteId = null;
+let selectedSiteId = null;
 
 function toggleSite(siteId) {
     selectedSiteId =
@@ -2031,7 +2031,8 @@ function toggleSite(siteId) {
 
     renderSites();
 
-    const detail = document.getElementById("siteDetails");
+    let detail = document.getElementById("siteDetails");
+
     if (!selectedSiteId) {
         if (detail) detail.remove();
         return;
@@ -2043,19 +2044,29 @@ function toggleSite(siteId) {
     const teams = data.teams.filter(t => t.siteId === siteId);
 
     const html = `
-        <div class="card" id="siteDetails">
-            <h2>${site.name} - Şantiye Detayları</h2>
-            <h3>Ekipler</h3>
+        <div class="card" id="siteDetails"
+             style="margin-top:15px; padding:20px;">
+            <h2 style="font-size:22px; margin-bottom:15px;">
+                ${site.name} - Şantiye Detayları
+            </h2>
+
+            <h3 style="font-size:18px;">Ekipler</h3>
+
             ${teams.length
                 ? teams.map(team => `
-                    <p><strong>${team.name}</strong></p>
+                    <div style="padding:10px 0; border-bottom:1px solid #ddd;">
+                        ${team.name}
+                    </div>
                 `).join("")
                 : "<p>Henüz ekip yok.</p>"
             }
         </div>
     `;
 
-    document.getElementById("sites").insertAdjacentHTML("afterend", html);
+    if (detail) detail.remove();
+
+    document.getElementById("sites")
+        .insertAdjacentHTML("afterend", html);
 }
 
 /* EKİPLER */
