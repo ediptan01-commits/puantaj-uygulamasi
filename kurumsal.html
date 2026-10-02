@@ -2602,7 +2602,8 @@ function restoreData(event) {
 
       alert("Yedek başarıyla geri yüklendi.");
     } catch (error) {
-      alert("Dosya okunamadı veya geçerli bir yedek değil.");
+      
+        alert("Hata: " + error.message);
     } finally {
       event.target.value = "";
     }
