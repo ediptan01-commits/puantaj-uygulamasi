@@ -2045,9 +2045,14 @@ function deleteSite(siteId) {
     renderSites();
     renderTeams();
 }
+
+   function toggleSite(siteId) {
+    selectedSiteId =
+        selectedSiteId === siteId ? null : siteId;
+
+    renderSites();
+} 
  
-
-
     /* ==================================================
    EKİP DETAY SİSTEMİ
 ================================================== */
