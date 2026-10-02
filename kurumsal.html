@@ -1330,6 +1330,11 @@ function closeReports(){
     document.getElementById("mainScreen").style.display = "block";
 }
 
+    function showReport(type){
+    const content = document.getElementById("reportContent");
+    content.textContent = "Rapor hazırlanıyor...";
+    }
+
 function loadData(){
 
     const saved =
