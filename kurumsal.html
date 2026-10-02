@@ -1962,109 +1962,67 @@ function render(){
 
 /* ŞANTİYELER */
 
-function renderSites(){
+let selectedSiteId = null;
 
-    const box=
-        document
-        .getElementById("sites");
+function renderSites() {
+    const box = document.getElementById("sites");
 
-
-    if(data.sites.length===0){
-
-        box.innerHTML=`
-
+    if (data.sites.length === 0) {
+        box.innerHTML = `
             <div class="empty">
-
-                <div class="emptyIcon">
-                    🏗️
-                </div>
-
+                <div class="emptyIcon">🏗️</div>
                 Henüz şantiye eklenmedi.
-
             </div>
-
         `;
-
         return;
-
     }
 
+    box.innerHTML = data.sites.map(site => {
+        const teams = data.teams.filter(
+            t => t.siteId === site.id
+        );
 
-    box.innerHTML=
-        data.sites.map(site=>`
+        const isOpen = selectedSiteId === site.id;
 
-           <div class="site" data-site-id="${site.id}" onclick="toggleSite('${site.id}')">
-              <div class="siteName">
+        return `
+            <div class="site">
+                <div class="siteName"
+                     onclick="toggleSite('${site.id}')">
                     ${site.name}
                 </div>
 
                 <div class="siteInfo">
-
                     <div class="badge">
-
-                        ${
-                            data.teams.filter(
-                                t =>
-                                t.siteId===
-                                site.id
-                            ).length
-                        }
-
-                        ekip
-
+                        ${teams.length} ekip
                     </div>
-
                 </div>
 
+                ${isOpen ? `
+                    <div class="siteDetails">
+                        <h3>Şantiye Detayları</h3>
+                        <h4>Ekipler</h4>
+                        ${teams.length
+                            ? teams.map(team => `
+                                <div class="teamRow">
+                                    ${team.name}
+                                </div>
+                            `).join("")
+                            : "<p>Henüz ekip yok.</p>"
+                        }
+                    </div>
+                ` : ""}
             </div>
-
-        `).join("");
-
+        `;
+    }).join("");
 }
-
-let selectedSiteId = null;
 
 function toggleSite(siteId) {
     selectedSiteId =
         selectedSiteId === siteId ? null : siteId;
 
     renderSites();
-
-    let detail = document.getElementById("siteDetails");
-
-    if (!selectedSiteId) {
-        if (detail) detail.remove();
-        return;
-    }
-
-    const site = data.sites.find(s => s.id === selectedSiteId);
-    if (!site) return;
-
-    const teams = data.teams.filter(t => t.siteId === siteId);
-
-    const html = `
-        <div class="card" id="siteDetails"
-             style="margin-top:15px; padding:20px;">
-            <h2 style="font-size:22px; margin-bottom:15px;">
-                ${site.name} - Şantiye Detayları
-            </h2>
-
-            <h3 style="font-size:18px;">Ekipler</h3>
-
-            ${teams.length
-                ? teams.map(team => `
-                    <div style="padding:10px 0; border-bottom:1px solid #ddd;">
-                        ${team.name}
-                    </div>
-                `).join("")
-                : "<p>Henüz ekip yok.</p>"
-            }
-        </div>
-    `;
-
-    if (detail) detail.remove();
-
 }
+
 
 /* EKİPLER */
 
