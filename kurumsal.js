@@ -264,10 +264,11 @@ function openModal(type){
         document
         .getElementById("teamSelectBox");
 
-    teamBox.style.display="none";
+  teamBox.style.display = "none";
+document.getElementById("teamSiteBox").style.display = "none";
+document.getElementById("paymentFields").style.display = "none";
 
-    input.value="";
-
+input.value = "";
 
     if(type==="site"){
 
