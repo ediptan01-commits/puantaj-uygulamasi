@@ -1010,3 +1010,44 @@ body {
     padding: 9px 12px;
     border-radius: 9px;
 }
+
+/* VERİ YÖNETİMİ MOBİL DÜZEN */
+.backupSection {
+    padding: 15px;
+}
+
+.backupSection h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.backupSection p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #475467;
+    margin-bottom: 10px;
+}
+
+.backupSection .btn {
+    border: 0;
+    background: #2563eb;
+    color: white;
+    border-radius: 9px;
+    padding: 10px 12px;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .backupSection {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .backupSection h2 {
+        font-size: 16px;
+    }
+
+    .backupSection p {
+        font-size: 12px;
+    }
+}
