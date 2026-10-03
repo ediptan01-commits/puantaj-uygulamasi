@@ -1217,3 +1217,231 @@ select:focus-visible {
         min-height: 76px;
     }
 }
+
+
+/* =====================================
+   KURUMSAL PUANTAJ
+   REFERANS EKRANINA GÖRE KOMPAKT MOBİL
+===================================== */
+
+@media (max-width: 600px) {
+    .top {
+        height: 58px;
+        padding: 0 12px;
+        gap: 9px;
+    }
+
+    .back {
+        width: 38px;
+        height: 38px;
+        font-size: 24px;
+        border-radius: 12px;
+    }
+
+    .title b {
+        font-size: 17px;
+    }
+
+    .title span {
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .main {
+        padding: 10px;
+    }
+
+    /* Şirket kartı */
+    .company {
+        padding: 17px;
+        margin-bottom: 10px;
+        border-radius: 20px;
+    }
+
+    .company small {
+        font-size: 10px;
+        margin-bottom: 3px;
+    }
+
+    .company h1 {
+        font-size: 23px;
+        margin-bottom: 10px;
+    }
+
+    .company input {
+        height: 39px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+
+    /* Dört istatistik yan yana */
+    .stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+        margin: 10px 0;
+    }
+
+    .stat,
+    .stats > * {
+        min-width: 0;
+        padding: 10px 7px;
+        border-radius: 15px;
+    }
+
+    .stat small {
+        font-size: 9px;
+        line-height: 1.2;
+        margin-bottom: 5px;
+        overflow-wrap: anywhere;
+    }
+
+    .stat strong {
+        font-size: 20px;
+        line-height: 1.1;
+    }
+
+    /* Ana kartlar */
+    .card {
+        margin-bottom: 10px;
+        border-radius: 18px;
+    }
+
+    .cardHead {
+        min-height: 52px;
+        padding: 9px 12px;
+        gap: 8px;
+    }
+
+    .cardTitle {
+        font-size: 17px;
+        line-height: 1.2;
+    }
+
+    .add {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 10px;
+        white-space: nowrap;
+    }
+
+    /* Boş şantiye ve ekip alanları */
+    .empty {
+        padding: 17px 10px;
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .emptyIcon {
+        font-size: 27px;
+        margin-bottom: 4px;
+    }
+
+    /* Ekip kartları */
+    .teams {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 9px;
+    }
+
+    .team {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .teamIcon {
+        width: 34px;
+        height: 34px;
+        font-size: 19px;
+        margin-bottom: 6px;
+    }
+
+    .teamName {
+        font-size: 12px;
+    }
+
+    .teamCount {
+        font-size: 10px;
+    }
+
+    /* Yönetim seçenekleri */
+    .quick {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .quick button {
+        min-width: 0;
+        padding: 11px;
+        border-radius: 13px;
+    }
+
+    .quickIcon {
+        font-size: 23px;
+        margin-bottom: 5px;
+    }
+
+    .quick b {
+        font-size: 12px;
+        line-height: 1.25;
+    }
+
+    .quick span {
+        font-size: 10px;
+        line-height: 1.3;
+        margin-top: 3px;
+    }
+
+    /* Veri yönetimi */
+    #backupSection,
+    .backupSection {
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 17px;
+    }
+
+    .backupSection h2 {
+        font-size: 17px;
+        margin-bottom: 5px;
+    }
+
+    .backupSection p {
+        font-size: 11px;
+        line-height: 1.35;
+        margin-bottom: 8px;
+    }
+
+    #backupSection button,
+    .backupSection .btn {
+        padding: 9px 8px;
+        margin-top: 5px;
+        margin-right: 3px;
+        font-size: 11px;
+        border-radius: 10px;
+    }
+
+    /* Ekip detay ekranı */
+    .teamDetailContent {
+        padding: 10px;
+    }
+}
+
+/* Çok dar telefonlarda okunabilirliği koru */
+@media (max-width: 370px) {
+    .stat,
+    .stats > * {
+        padding: 8px 4px;
+    }
+
+    .stat small {
+        font-size: 8px;
+    }
+
+    .stat strong {
+        font-size: 17px;
+    }
+
+    .quick button {
+        padding: 9px;
+    }
+}
