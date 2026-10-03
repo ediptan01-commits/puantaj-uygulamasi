@@ -1413,108 +1413,81 @@ select:focus-visible {
     }
 }
 
-.company {
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
-}
+/* SON BOYUT AYARLARI */
 
-.company h1 {
-    margin-bottom: 8px !important;
-}
-
-.company input {
-    height: 38px !important;
-}
-
-.company {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-}
-
-.company h1 {
-    margin-top: 0 !important;
-    margin-bottom: 8px !important;
-    font-size: 23px !important;
-    line-height: 1.1 !important;
-}
-
-.company input {
-    height: 36px !important;
-}
-
-/* ŞİRKET KARTI */
+/* Şirket kartı */
 .company small {
-    font-size: 12px !important;
-}
-
-.company h1 {
-    font-size: 25px !important;
-}
-
-.company input {
-    font-size: 15px !important;
-}
-
-/* İSTATİSTİK KUTULARI */
-.statIcon {
-    font-size: 25px !important;
-}
-
-.stat small {
     font-size: 11px !important;
 }
 
-.stat strong {
-    font-size: 25px !important;
+.company h1 {
+    font-size: 23px !important;
 }
 
-/* ŞANTİYE VE EKİP KARTLARI */
-.cardTitle {
+.company input {
+    font-size: 14px !important;
+}
+
+/* İstatistik kutuları */
+.statIcon {
     font-size: 20px !important;
+}
+
+.stat small {
+    font-size: 9px !important;
+}
+
+.stat strong {
+    font-size: 21px !important;
+}
+
+/* Şantiye ve ekip kartları */
+.cardTitle {
+    font-size: 17px !important;
 }
 
 .sectionIcon {
-    font-size: 27px !important;
+    font-size: 23px !important;
 }
 
 .sectionSubtitle {
-    font-size: 14px !important;
+    font-size: 11px !important;
 }
 
 .emptyIcon {
-    font-size: 28px !important;
-}
-
-.empty {
-    font-size: 15px !important;
-}
-
-/* YÖNETİM */
-.managementHeading h2 {
-    font-size: 24px !important;
-}
-
-.managementHeading p {
-    font-size: 15px !important;
-}
-
-.quickIcon {
     font-size: 25px !important;
 }
 
+.empty {
+    font-size: 12px !important;
+}
+
+/* Yönetim kartları */
+.managementHeading h2 {
+    font-size: 19px !important;
+}
+
+.managementHeading p {
+    font-size: 12px !important;
+}
+
+.quickIcon {
+    font-size: 21px !important;
+}
+
 .quickText b {
-    font-size: 15px !important;
+    font-size: 12px !important;
 }
 
 .quickText span {
-    font-size: 13px !important;
+    font-size: 10px !important;
 }
 
-/* VERİ YÖNETİMİ */
+/* Veri yönetimi */
 .backupHeading h2 {
-    font-size: 20px !important;
+    font-size: 18px !important;
 }
 
 .backupHeading p {
-    font-size: 14px !important;
+    font-size: 11px !important;
 }
