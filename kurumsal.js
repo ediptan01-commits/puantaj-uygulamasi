@@ -264,11 +264,13 @@ function openModal(type){
         document
         .getElementById("teamSelectBox");
 
-  teamBox.style.display = "none";
-document.getElementById("teamSiteBox").style.display = "none";
-document.getElementById("paymentFields").style.display = "none";
+    // Her modal açılışında önceki modalın alanlarını sıfırla.
+    teamBox.style.display = "none";
+    document.getElementById("teamSiteBox").style.display = "none";
+    document.getElementById("paymentFields").style.display = "none";
 
-input.value = "";
+    input.value="";
+
 
     if(type==="site"){
 
@@ -608,6 +610,87 @@ function closeModal(){
 
 /* RENDER */
 
+let openStatPanel = null;
+
+function toggleStatPanel(type) {
+    openStatPanel = openStatPanel === type ? null : type;
+    renderStatDetails();
+
+    document.querySelectorAll(".stats .stat").forEach(button => {
+        const isActive = button.classList.contains(
+            type === "sites" ? "statSites" :
+            type === "teams" ? "statTeams" :
+            type === "workers" ? "statWorkers" : "statToday"
+        );
+        button.setAttribute(
+            "aria-expanded",
+            String(openStatPanel !== null && isActive && openStatPanel === type)
+        );
+    });
+}
+
+function renderStatDetails() {
+    const panel = document.getElementById("statDetails");
+    if (!panel) return;
+
+    if (!openStatPanel) {
+        panel.hidden = true;
+        panel.innerHTML = "";
+        return;
+    }
+
+    let heading = "";
+    let rows = [];
+
+    if (openStatPanel === "sites") {
+        heading = "Şantiyeler";
+        rows = data.sites.map(site => site.name);
+    } else if (openStatPanel === "teams") {
+        heading = "Ekipler";
+        rows = data.teams.map(team => {
+            const site = data.sites.find(item => item.id === team.siteId);
+            return team.name + " — " + (site ? site.name : "Şantiye belirtilmedi");
+        });
+    } else if (openStatPanel === "workers") {
+        heading = "Çalışanlar";
+        rows = data.workers.map(worker => {
+            const team = data.teams.find(item => item.id === worker.teamId);
+            return worker.name + " — " + (team ? team.name : "Ekip yok");
+        });
+    } else if (openStatPanel === "today") {
+        heading = "Bugün Çalışanlar";
+        const today = new Date();
+        const todayKey = today.getFullYear() + "-" +
+            String(today.getMonth() + 1).padStart(2, "0") + "-" +
+            String(today.getDate()).padStart(2, "0");
+
+        rows = data.workers
+            .filter(worker => (worker.attendance && worker.attendance[todayKey] || "worked") === "worked")
+            .map(worker => worker.name);
+    }
+
+    panel.hidden = false;
+    panel.innerHTML = "";
+    const title = document.createElement("h3");
+    title.textContent = heading;
+    panel.appendChild(title);
+
+    if (rows.length === 0) {
+        const empty = document.createElement("p");
+        empty.textContent = "Henüz kayıt bulunmuyor.";
+        panel.appendChild(empty);
+        return;
+    }
+
+    const list = document.createElement("ul");
+    rows.forEach(row => {
+        const item = document.createElement("li");
+        item.textContent = row;
+        list.appendChild(item);
+    });
+    panel.appendChild(list);
+}
+
 function render(){
 
     document
@@ -641,12 +724,16 @@ function render(){
         data.workers.length;
 
 
-    document
-    .getElementById("todayCount")
-    .textContent=
-        data.workers.length;
+    const today = new Date();
+    const todayKey = today.getFullYear() + "-" +
+        String(today.getMonth() + 1).padStart(2, "0") + "-" +
+        String(today.getDate()).padStart(2, "0");
+    const todayWorkers = data.workers.filter(worker =>
+        (worker.attendance && worker.attendance[todayKey] || "worked") === "worked"
+    );
+    document.getElementById("todayCount").textContent = todayWorkers.length;
 
-
+    renderStatDetails();
     renderSites();
 
     renderTeams();
@@ -1015,7 +1102,7 @@ function renderTeamDetail(){
     .textContent=absent;
 
 
-    document
+     document
     .getElementById("leaveCount")
     .textContent=leave;
 
