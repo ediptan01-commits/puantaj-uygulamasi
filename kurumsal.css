@@ -113,9 +113,9 @@ select:focus-visible {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: 145px;
-    padding: 18px 22px;
-    margin-bottom: 12px;
+    min-height: auto;
+    padding: 20px 24px;
+    margin-bottom: 0 12px;
     color: white;
     border-radius: 20px;
     background: linear-gradient(115deg, #12365b, #204b78 65%, #173b62);
