@@ -765,3 +765,130 @@ html {
 body {
     zoom: 1;
 }
+
+
+/* MODERN ANASAYFA TASARIMI */
+body {
+    background: #f2f5fb;
+    color: #172033;
+    font-family: Arial, sans-serif;
+}
+
+.main {
+    max-width: 1100px;
+    padding: 20px;
+}
+
+.company {
+    background: linear-gradient(120deg, #12365b, #1e4775);
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 8px 22px rgba(23, 54, 91, .12);
+}
+
+.stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.stat {
+    border: 1px solid #e7edf5;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 5px 18px rgba(30, 50, 80, .05);
+}
+
+.card {
+    border: 1px solid #e5eaf2;
+    border-radius: 24px;
+    box-shadow: 0 5px 18px rgba(30, 50, 80, .05);
+    margin-bottom: 22px;
+}
+
+.cardHead {
+    min-height: 76px;
+    padding: 16px 22px;
+}
+
+.cardTitle {
+    font-size: 23px;
+}
+
+.add {
+    background: #1769ed;
+    border-radius: 13px;
+    padding: 13px 18px;
+    font-size: 14px;
+}
+
+.quick {
+    padding: 18px;
+    gap: 14px;
+}
+
+.quick button {
+    border-radius: 18px;
+    padding: 20px;
+    background: #f2f8ff;
+    border: 1px solid #dceafb;
+}
+
+.quick button:nth-child(2) {
+    background: #fff9eb;
+    border-color: #f7e8c5;
+}
+
+.quick button:nth-child(3) {
+    background: #effbf3;
+    border-color: #d7f2df;
+}
+
+.quickIcon {
+    font-size: 30px;
+}
+
+.quick b {
+    font-size: 16px;
+}
+
+.quick span {
+    font-size: 12px;
+}
+
+.empty {
+    padding: 42px 15px;
+    font-size: 16px;
+}
+
+@media (max-width: 600px) {
+    .main {
+        padding: 12px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .stat {
+        padding: 17px;
+        border-radius: 20px;
+    }
+
+    .cardHead {
+        padding: 14px 16px;
+    }
+
+    .cardTitle {
+        font-size: 21px;
+    }
+
+    .quick {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .quick button {
+        padding: 15px;
+    }
+}
