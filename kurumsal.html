@@ -1,553 +1,362 @@
-<link rel="stylesheet" href="kurumsal.css">
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f2f5fb">
+    <title>Kurumsal Puantaj</title>
+    <link rel="stylesheet" href="kurumsal.css">
 </head>
 <body>
 
-
-<!-- ÜST -->
-
-<div class="top">
-
-    <button
-class="back"
-onclick="location.href='index.html'">
-
+<!-- ÜST BAR -->
+<header class="top">
+    <button class="back" onclick="location.href='index.html'" aria-label="Geri">
         ‹
-
     </button>
 
     <div class="title">
-
         <b>Kurumsal Puantaj</b>
-
-        <span>
-            İnşaat • Şantiye • Ekip Yönetimi
-        </span>
-
+        <span>İnşaat • Şantiye • Ekip Yönetimi</span>
     </div>
 
-</div>
+    <button class="settingsBtn" type="button" onclick="openSettings()" aria-label="Ayarlar">
+        ⚙
+    </button>
+</header>
 
+<!-- ANA EKRAN -->
+<main class="main" id="mainScreen">
 
-<div class="main" id="mainScreen">
+    <!-- ŞİRKET KARTI -->
+    <section class="company">
+        <div class="companyDecoration" aria-hidden="true">🏗️</div>
 
+        <small>ŞİRKET</small>
+        <h1 id="companyName">Şirket Adı</h1>
 
-<!-- ŞİRKET -->
+        <div class="companyEdit">
+            <input
+                id="companyInput"
+                type="text"
+                placeholder="Şirket adını yazın"
+                onchange="saveCompany()"
+                aria-label="Şirket adı"
+            >
+            <span class="editIcon" aria-hidden="true">✎</span>
+        </div>
+    </section>
 
-<div class="company">
-
-    <small>
-        ŞİRKET
-    </small>
-
-    <h1 id="companyName">
-        Şirket Adı
-    </h1>
-
-    <input
-    id="companyInput"
-    type="text"
-    placeholder="Şirket adını yazın"
-    onchange="saveCompany()">
-
-</div>
-
-
-<!-- İSTATİSTİKLER -->
-
-<div class="stats">
-
-    <div class="stat">
-
-        <small>
-            ŞANTİYE
-        </small>
-
-        <strong id="siteCount">
-            0
-        </strong>
-
-    </div>
-
-    <div class="stat">
-
-        <small>
-            EKİP
-        </small>
-
-        <strong id="teamCount">
-            0
-        </strong>
-
-    </div>
-
-    <div class="stat">
-
-        <small>
-            ÇALIŞAN
-        </small>
-
-        <strong id="workerCount">
-            0
-        </strong>
-
-    </div>
-
-    <div class="stat">
-
-        <small>
-            BUGÜN ÇALIŞAN
-        </small>
-
-        <strong id="todayCount">
-            0
-        </strong>
-
-    </div>
-
-</div>
-
-
-<!-- ŞANTİYELER -->
-
-<div class="card">
-
-    <div class="cardHead">
-
-        <div class="cardTitle">
-            🏗️ Şantiyeler
+    <!-- İSTATİSTİKLER -->
+    <section class="stats">
+        <div class="stat statSites">
+            <div class="statIcon">🏗️</div>
+            <small>ŞANTİYE</small>
+            <strong id="siteCount">0</strong>
         </div>
 
-        <button
-        class="add"
-        onclick="openModal('site')">
-
-            + Şantiye
-
-        </button>
-
-    </div>
-
-    <div id="sites"></div>
-
-</div>
-
-
-<!-- EKİPLER -->
-
-<div class="card">
-
-    <div class="cardHead">
-
-        <div class="cardTitle">
-            👷 Ekipler
+        <div class="stat statTeams">
+            <div class="statIcon">👥</div>
+            <small>EKİP</small>
+            <strong id="teamCount">0</strong>
         </div>
 
-        <button
-        class="add"
-        onclick="openModal('team')">
-
-            + Ekip
-
-        </button>
-
-    </div>
-
-    <div
-    id="teams"
-    class="teams">
-
-    </div>
-
-</div>
-
-
-<!-- YÖNETİM -->
-
-<div class="card">
-
-    <div class="cardHead">
-
-        <div class="cardTitle">
-            Yönetim
+        <div class="stat statWorkers">
+            <div class="statIcon">👷</div>
+            <small>ÇALIŞAN</small>
+            <strong id="workerCount">0</strong>
         </div>
 
-    </div>
+        <div class="stat statToday">
+            <div class="statIcon">📅</div>
+            <small>BUGÜN ÇALIŞAN</small>
+            <strong id="todayCount">0</strong>
+        </div>
+    </section>
 
-
-    <div class="quick">
-
-        <button
-        onclick="openModal('worker')">
-
-            <div class="quickIcon">
-                👷
+    <!-- ŞANTİYELER -->
+    <section class="card">
+        <div class="cardHead">
+            <div class="sectionHeading">
+                <div class="sectionIcon">🏗️</div>
+                <div>
+                    <div class="cardTitle">Şantiyeler</div>
+                    <p class="sectionSubtitle">Tüm şantiyelerinizi yönetin</p>
+                </div>
             </div>
 
-            <b>
-                Çalışan Ekle
-            </b>
+            <button class="add" onclick="openModal('site')">
+                <span>＋</span> Şantiye Ekle
+            </button>
+        </div>
 
-            <span>
-                Ekibe çalışan ekle
-            </span>
+        <div id="sites">
+            <div class="empty">
+                <div class="emptyIcon">🏗️</div>
+                Henüz şantiye eklenmedi.
+            </div>
+        </div>
+    </section>
 
-        </button>
+    <!-- EKİPLER -->
+    <section class="card">
+        <div class="cardHead">
+            <div class="sectionHeading">
+                <div class="sectionIcon">👷</div>
+                <div>
+                    <div class="cardTitle">Ekipler</div>
+                    <p class="sectionSubtitle">Şantiyede görev alan ekipleri yönetin</p>
+                </div>
+            </div>
 
+            <button class="add" onclick="openModal('team')">
+                <span>＋</span> Ekip Ekle
+            </button>
+        </div>
 
-        <button
-    onclick="openModal('payment')">
+        <div id="teams" class="teams">
+            <div class="empty">
+                <div class="emptyIcon">👥</div>
+                Henüz ekip eklenmedi.
+            </div>
+        </div>
+    </section>
 
-    <div class="quickIcon">
-        💰
-    </div>
+    <!-- YÖNETİM -->
+    <section class="card managementCard">
+        <div class="managementHeading">
+            <h2>Yönetim</h2>
+            <p>Şantiyenizi kolayca yönetin</p>
+        </div>
 
-    <b>
-        Ödemeler
-    </b>
+        <div class="quick">
+            <button class="quickWorker" onclick="openModal('worker')">
+                <div class="quickIcon">👷</div>
+                <div class="quickText">
+                    <b>Çalışan Ekle</b>
+                    <span>Ekibe çalışan ekle</span>
+                </div>
+                <span class="quickArrow">›</span>
+            </button>
 
-    <span>
-        Avans ve ödemeler
-    </span>
+            <button class="quickPayment" onclick="openModal('payment')">
+                <div class="quickIcon">💰</div>
+                <div class="quickText">
+                    <b>Ödemeler</b>
+                    <span>Avans ve ödemeler</span>
+                </div>
+                <span class="quickArrow">›</span>
+            </button>
 
-        </button>
+            <button class="quickReports" onclick="openReports()">
+                <div class="quickIcon">📄</div>
+                <div class="quickText">
+                    <b>Raporlar</b>
+                    <span>Puantaj raporları</span>
+                </div>
+                <span class="quickArrow">›</span>
+            </button>
+        </div>
+    </section>
 
+    <!-- VERİ YÖNETİMİ -->
+    <section class="card backupSection">
+        <div class="backupHeading">
+            <div class="backupIcon">🗄️</div>
+            <div>
+                <h2>Veri Yönetimi</h2>
+                <p>Verilerinizi yedekleyebilir veya yedeğinizden geri yükleyebilirsiniz.</p>
+            </div>
+        </div>
 
-        <button
-    onclick="openReports()"
->
+        <div class="backupActions">
+            <button class="btn backupDownload" onclick="backupData()">
+                <span>⇩</span> Yedek İndir
+            </button>
 
-    <div class="quickIcon">
-        📄
-    </div>
+            <button class="btn backupRestore" onclick="document.getElementById('backupFile').click()">
+                <span>⇧</span> Yedekten Geri Yükle
+            </button>
+        </div>
 
-    <div>
-        <b>Raporlar</b>
-        <span>Puantaj raporları</span>
-    </div>
+        <input
+            type="file"
+            id="backupFile"
+            accept=".json,application/json"
+            hidden
+            onchange="restoreData(event)"
+        >
+    </section>
+</main>
 
-        </button>
-
-    </div>
-
-</div>
-
-    
-<!-- VERİ YÖNETİMİ -->
-<div class="card backupSection">
-  <h2>Veri Yönetimi</h2>
-  <p>Verilerinizi yedekleyebilir veya yedeğinizden geri yükleyebilirsiniz.</p>
-
-  <button class="btn" onclick="backupData()">Yedek İndir</button>
-
-  <button class="btn" onclick="document.getElementById('backupFile').click()">
-    Yedekten Geri Yükle
-  </button>
-
-  <input
-    type="file"
-    id="backupFile"
-    accept=".json,application/json"
-    style="display:none"
-    onchange="restoreData(event)"
-  />
-</div>
-
-
-</div>
-
-
-<!-- MODAL -->
-
-    <!-- ==================================================
-     EKİP DETAY
-================================================== -->
-
-<div
-id="teamDetail"
-class="teamDetail">
-
+<!-- EKİP DETAY EKRANI -->
+<section id="teamDetail" class="teamDetail">
     <div class="teamDetailTop">
-
-        <button
-        class="teamBack"
-        onclick="closeTeam()">
-
+        <button class="teamBack" onclick="closeTeam()" aria-label="Ekip ekranından geri dön">
             ‹
-
         </button>
 
         <div>
-
-            <b id="detailTeamName">
-                Ekip
-            </b>
-
-            <span id="detailSiteName">
-                Şantiye
-            </span>
-
+            <b id="detailTeamName">Ekip</b>
+            <span id="detailSiteName">Şantiye</span>
         </div>
-
     </div>
 
-
     <div class="teamDetailContent">
-
-
-        <!-- ÖZET -->
-
         <div class="attendanceStats">
-
             <div>
                 <small>Çalıştı</small>
                 <strong id="workedCount">0</strong>
             </div>
-
             <div>
                 <small>Gelmedi</small>
                 <strong id="absentCount">0</strong>
             </div>
-
             <div>
                 <small>İzinli</small>
                 <strong id="leaveCount">0</strong>
             </div>
-
             <div>
                 <small>Raporlu</small>
                 <strong id="reportCount">0</strong>
             </div>
-
         </div>
-
-
-        <!-- TARİH -->
 
         <div class="dateBox">
-
-            <button
-            onclick="changeTeamDate(-1)">
-                ‹
-            </button>
-
+            <button onclick="changeTeamDate(-1)" aria-label="Önceki gün">‹</button>
             <div>
-
                 <small>PUANTAJ TARİHİ</small>
-
-                <b id="teamDate">
-                    30 Eylül 2026
-                </b>
-
+                <b id="teamDate">Bugün</b>
             </div>
-
-            <button
-            onclick="changeTeamDate(1)">
-                ›
-            </button>
-
+            <button onclick="changeTeamDate(1)" aria-label="Sonraki gün">›</button>
         </div>
-
-
-        <!-- ÇALIŞANLAR -->
 
         <div class="workerSection">
-
             <div class="workerHead">
-
                 <b>Çalışanlar</b>
-
-                <button
-                onclick="openModal('worker')">
-
-                    + Çalışan
-
-                </button>
-
+                <button onclick="openModal('worker')">＋ Çalışan</button>
             </div>
-
-            <div id="teamWorkers">
-            </div>
-
+            <div id="teamWorkers"></div>
         </div>
+    </div>
+</section>
 
+<!-- RAPOR EKRANI -->
+<section id="reportsScreen" class="reportsScreen" style="display:none;">
+    <div class="reportsHeader">
+        <button class="teamBack" onclick="closeReports()" aria-label="Raporlardan geri dön">‹</button>
+        <div>
+            <h2>📊 Puantaj Raporları</h2>
+            <p>Çalışma kayıtlarınızı inceleyin</p>
+        </div>
     </div>
 
-</div>
-
-    <!-- RAPOR EKRANI -->
-<div id="reportsScreen" style="display:none; padding:15px;">
-
-    <h2>📊 Puantaj Raporları</h2>
-
-    <div style="margin:15px 0;">
+    <div class="reportTabs">
         <button onclick="showReport('daily')">Günlük</button>
         <button onclick="showReport('weekly')">Haftalık</button>
         <button onclick="showReport('monthly')">Aylık</button>
     </div>
 
-    <div id="reportContent">
+    <div id="reportContent" class="reportContent">
         Rapor türünü seçin.
     </div>
 
-    <button onclick="closeReports()" style="margin-top:20px;">
-        Ana Ekrana Dön
-    </button>
+    <button class="reportBack" onclick="closeReports()">Ana Ekrana Dön</button>
+</section>
 
-</div>
-
-<div
-id="modal"
-class="modal">
-
+<!-- MODAL -->
+<div id="modal" class="modal">
     <div class="modalBox">
-
-        <div
-        id="modalTitle"
-        class="modalTitle">
-
-            Yeni Şantiye
-
-        </div>
-
+        <div id="modalTitle" class="modalTitle">Yeni Şantiye</div>
 
         <div class="field">
-
-            <label>
-                Ad
-            </label>
-
-            <input
-            id="modalName"
-            type="text"
-            placeholder="Ad">
-
+            <label for="modalName">Ad</label>
+            <input id="modalName" type="text" placeholder="Ad">
         </div>
-        
-<div id="teamSiteBox" class="field" style="display:none;">
-    <label>Şantiye Seç</label>
-    <select id="teamSite">
-        <option value="">Şantiye seçin</option>
-    </select>
-</div>
 
-        <div
-        id="teamSelectBox"
-        class="field"
-        style="display:none;">
+        <!-- EKİP İÇİN ŞANTİYE -->
+        <div id="teamSiteBox" class="field" style="display:none;">
+            <label for="teamSite">Şantiye Seç</label>
+            <select id="teamSite">
+                <option value="">Şantiye seçin</option>
+            </select>
+        </div>
+
+        <!-- ÇALIŞAN İÇİN EKİP VE BİLGİLER -->
+        <div id="teamSelectBox" class="field" style="display:none;">
+            <div class="field">
+                <label for="workerRole">Görevi</label>
+                <input id="workerRole" type="text" placeholder="Örn: Kalıp Ustası">
+            </div>
 
             <div class="field">
+                <label for="workerPhone">Telefon</label>
+                <input id="workerPhone" type="tel" placeholder="05XX XXX XX XX">
+            </div>
 
-    <label>
-        Görevi
-    </label>
+            <div class="field">
+                <label for="workerWage">Günlük Yevmiye (TL)</label>
+                <input id="workerWage" type="number" min="0" placeholder="Örn: 2000">
+            </div>
 
-    <input
-    id="workerRole"
-    type="text"
-    placeholder="Örn: Kalıp Ustası">
-
-</div>
-
-
-<div class="field">
-
-    <label>
-        Telefon
-    </label>
-
-    <input
-    id="workerPhone"
-    type="tel"
-    placeholder="05XX XXX XX XX">
-
-</div>
-
-
-<div class="field">
-
-    <label>
-        Günlük Yevmiye (TL)
-    </label>
-
-    <input
-    id="workerWage"
-    type="number"
-    placeholder="Örn: 2000">
-
-</div>
-
-            <label>
-                Ekip
-            </label>
-
-            <select
-            id="workerTeam">
-            </select>
-
+            <label for="workerTeam">Ekip</label>
+            <select id="workerTeam"></select>
         </div>
 
+        <!-- ÖDEME ALANLARI -->
         <div id="paymentFields" style="display:none;">
+            <div class="field">
+                <label for="paymentWorker">Çalışan</label>
+                <select id="paymentWorker"></select>
+            </div>
 
-    <div class="field">
-        <label>Çalışan</label>
-        <select id="paymentWorker">
-        </select>
-    </div>
+            <div class="field">
+                <label for="paymentType">Ödeme Türü</label>
+                <select id="paymentType">
+                    <option value="wage">Maaş / Yevmiye</option>
+                    <option value="advance">Avans</option>
+                </select>
+            </div>
 
-    <div class="field">
-        <label>Ödeme Türü</label>
-        <select id="paymentType">
-            <option value="wage">Maaş / Yevmiye</option>
-            <option value="advance">Avans</option>
-        </select>
-    </div>
+            <div class="field">
+                <label for="paymentAmount">Ödeme Tutarı (TL)</label>
+                <input id="paymentAmount" type="number" min="0" placeholder="Örn: 5000">
+            </div>
 
-    <div class="field">
-        <label>Ödeme Tutarı (TL)</label>
-        <input
-            id="paymentAmount"
-            type="number"
-            placeholder="Örn: 5000"
-        >
-    </div>
-
-    <div class="field">
-        <label>Açıklama</label>
-        <input
-            id="paymentNote"
-            type="text"
-            placeholder="Örn: Haftalık ödeme"
-        >
-    </div>
-
+            <div class="field">
+                <label for="paymentNote">Açıklama</label>
+                <input id="paymentNote" type="text" placeholder="Örn: Haftalık ödeme">
+            </div>
         </div>
-
 
         <div class="buttons">
-
-            <button
-            class="cancel"
-            onclick="closeModal()">
-
-                İptal
-
-            </button>
-
-            <button
-            class="save"
-            onclick="saveModal()">
-
-                Kaydet
-
-            </button>
-
+            <button class="cancel" onclick="closeModal()">İptal</button>
+            <button class="save" onclick="saveModal()">Kaydet</button>
         </div>
-
     </div>
-
 </div>
-<script src="kurumsal.js"></script>
-</body>
 
+<!-- AYARLAR PENCERESİ -->
+<div id="settingsModal" class="modal">
+    <div class="modalBox">
+        <div class="modalTitle">Ayarlar</div>
+        <p class="settingsDescription">Uygulama ayarları</p>
+        <div class="buttons">
+            <button class="cancel" onclick="closeSettings()">Kapat</button>
+        </div>
+    </div>
+</div>
+
+<script src="kurumsal.js"></script>
+<script>
+    function openSettings() {
+        document.getElementById("settingsModal").classList.add("show");
+    }
+
+    function closeSettings() {
+        document.getElementById("settingsModal").classList.remove("show");
+    }
+</script>
+</body>
 </html>
