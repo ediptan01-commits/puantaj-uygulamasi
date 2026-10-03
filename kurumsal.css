@@ -1442,7 +1442,7 @@ select:focus-visible {
     height: 36px !important;
 }
 
-/* Şirket kartı */
+/* ŞİRKET KARTI */
 .company small {
     font-size: 13px !important;
 }
@@ -1455,34 +1455,66 @@ select:focus-visible {
     font-size: 16px !important;
 }
 
-/* İstatistik kutuları */
-.stat {
-    font-size: 16px;
+/* İSTATİSTİK KUTULARI */
+.statIcon {
+    font-size: 32px !important;
 }
 
-.stat .stat-icon {
+.stat small {
+    font-size: 13px !important;
+}
+
+.stat strong {
     font-size: 30px !important;
 }
 
-.stat .stat-label {
-    font-size: 14px !important;
-}
-
-.stat .stat-value {
-    font-size: 30px !important;
-}
-
-/* Diğer kartların yazıları */
+/* ŞANTİYE VE EKİP KARTLARI */
 .cardTitle {
-    font-size: 21px !important;
+    font-size: 23px !important;
 }
 
-.card p,
-.card small {
+.sectionIcon {
+    font-size: 34px !important;
+}
+
+.sectionSubtitle {
     font-size: 15px !important;
 }
 
-/* Hızlı işlem kartları */
-.quickIcon {
+.emptyIcon {
+    font-size: 34px !important;
+}
+
+.empty {
+    font-size: 16px !important;
+}
+
+/* YÖNETİM KARTLARI */
+.managementHeading h2 {
     font-size: 28px !important;
+}
+
+.managementHeading p {
+    font-size: 16px !important;
+}
+
+.quickIcon {
+    font-size: 30px !important;
+}
+
+.quickText b {
+    font-size: 17px !important;
+}
+
+.quickText span {
+    font-size: 14px !important;
+}
+
+/* VERİ YÖNETİMİ */
+.backupHeading h2 {
+    font-size: 22px !important;
+}
+
+.backupHeading p {
+    font-size: 15px !important;
 }
