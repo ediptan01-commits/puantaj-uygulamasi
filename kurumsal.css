@@ -892,3 +892,121 @@ body {
         padding: 15px;
     }
 }
+
+
+/* MOBİL EKRANA SIĞDIRMA DÜZENLEMESİ */
+@media (max-width: 600px) {
+
+    .top {
+        height: 56px;
+    }
+
+    .main {
+        padding: 10px;
+    }
+
+    .company {
+        padding: 16px;
+        margin-bottom: 10px;
+        border-radius: 16px;
+    }
+
+    .company h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .company input {
+        height: 38px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .stat {
+        padding: 11px;
+        border-radius: 15px;
+    }
+
+    .stat small {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+
+    .stat strong {
+        font-size: 20px;
+    }
+
+    .card {
+        margin-bottom: 10px;
+        border-radius: 17px;
+    }
+
+    .cardHead {
+        min-height: 52px;
+        padding: 10px 13px;
+    }
+
+    .cardTitle {
+        font-size: 17px;
+    }
+
+    .add {
+        padding: 9px 11px;
+        font-size: 11px;
+    }
+
+    .empty {
+        padding: 22px 12px;
+        font-size: 12px;
+    }
+
+    .emptyIcon {
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+    .quick {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .quick button {
+        padding: 12px;
+        border-radius: 14px;
+    }
+
+    .quickIcon {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .quick b {
+        font-size: 13px;
+    }
+
+    .quick span {
+        font-size: 10px;
+    }
+
+    .teamDetailContent {
+        padding: 10px;
+    }
+}
+
+/* VERİ YÖNETİMİ ALANI */
+#backupSection {
+    padding: 14px;
+    border-radius: 17px;
+    overflow-wrap: anywhere;
+}
+
+#backupSection button {
+    margin-top: 8px;
+    margin-right: 5px;
+    padding: 9px 12px;
+    border-radius: 9px;
+}
