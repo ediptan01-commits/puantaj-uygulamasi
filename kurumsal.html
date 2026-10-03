@@ -50,30 +50,31 @@
 
     <!-- İSTATİSTİKLER -->
     <section class="stats">
-        <div class="stat statSites">
+        <button type="button" class="stat statSites" onclick="toggleStatPanel('sites')" aria-expanded="false">
             <div class="statIcon">🏗️</div>
             <small>ŞANTİYE</small>
             <strong id="siteCount">0</strong>
-        </div>
+        </button>
 
-        <div class="stat statTeams">
+        <button type="button" class="stat statTeams" onclick="toggleStatPanel('teams')" aria-expanded="false">
             <div class="statIcon">👥</div>
             <small>EKİP</small>
             <strong id="teamCount">0</strong>
-        </div>
+        </button>
 
-        <div class="stat statWorkers">
+        <button type="button" class="stat statWorkers" onclick="toggleStatPanel('workers')" aria-expanded="false">
             <div class="statIcon">👷</div>
             <small>ÇALIŞAN</small>
             <strong id="workerCount">0</strong>
-        </div>
+        </button>
 
-        <div class="stat statToday">
+        <button type="button" class="stat statToday" onclick="toggleStatPanel('today')" aria-expanded="false">
             <div class="statIcon">📅</div>
             <small>BUGÜN ÇALIŞAN</small>
             <strong id="todayCount">0</strong>
-        </div>
+        </button>
     </section>
+    <section id="statDetails" class="statDetails" hidden></section>
 
     <!-- ŞANTİYELER -->
     <section class="card">
