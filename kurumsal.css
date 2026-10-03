@@ -1,25 +1,31 @@
 
+/* =========================================
+   KURUMSAL PUANTAJ
+   Temiz ve kompakt arayüz
+========================================= */
+
+:root {
+    --bg: #f2f5fb;
+    --navy: #102744;
+    --blue: #1769ed;
+    --text: #172b49;
+    --muted: #66758b;
+    --border: #e7ebf2;
+    --white: #fff;
+    --shadow: 0 4px 14px rgba(20, 50, 85, .06);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-:root {
-    --bg: #f1f4fa;
-    --navy: #102744;
-    --blue: #1769ed;
-    --text: #172b49;
-    --muted: #66758b;
-    --border: #e7ebf2;
-    --white: #ffffff;
-}
-
 body {
+    min-height: 100vh;
     font-family: Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
 }
 
 button,
@@ -45,29 +51,31 @@ select:focus-visible {
 .top {
     width: 100%;
     max-width: 1100px;
-    min-height: 76px;
+    min-height: 64px;
     margin: auto;
-    padding: 12px 18px;
+    padding: 8px 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .back,
 .settingsBtn {
-    width: 54px;
-    height: 54px;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
-    border: 1px solid #edf0f5;
-    border-radius: 17px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 13px;
     background: white;
     color: var(--navy);
-    font-size: 30px;
-    box-shadow: 0 3px 12px rgba(20, 40, 70, .05);
+    font-size: 27px;
+    box-shadow: var(--shadow);
 }
 
 .settingsBtn {
-    font-size: 25px;
+    font-size: 21px;
 }
 
 .title {
@@ -78,16 +86,16 @@ select:focus-visible {
 .title b {
     display: block;
     color: var(--navy);
-    font-size: 25px;
+    font-size: 21px;
     font-weight: 800;
-    letter-spacing: -.5px;
+    letter-spacing: -.4px;
 }
 
 .title span {
     display: block;
-    margin-top: 5px;
-    color: #64748b;
-    font-size: 15px;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
 }
 
 /* ANA EKRAN */
@@ -96,7 +104,7 @@ select:focus-visible {
     width: 100%;
     max-width: 1100px;
     margin: auto;
-    padding: 12px 18px 24px;
+    padding: 8px 16px 20px;
 }
 
 /* ŞİRKET KARTI */
@@ -105,37 +113,39 @@ select:focus-visible {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: 194px;
-    padding: 26px;
-    margin-bottom: 22px;
+    min-height: 145px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
     color: white;
-    border-radius: 25px;
+    border-radius: 20px;
     background: linear-gradient(115deg, #12365b, #204b78 65%, #173b62);
-    box-shadow: 0 7px 20px rgba(20, 50, 85, .12);
+    box-shadow: 0 5px 16px rgba(20, 50, 85, .12);
 }
 
-.company::after {
-    content: "🏗️";
+.companyDecoration {
     position: absolute;
     z-index: -1;
-    right: 24px;
-    top: 18px;
-    font-size: 90px;
+    top: 15px;
+    right: 20px;
+    font-size: 76px;
     opacity: .13;
     filter: grayscale(1);
+    pointer-events: none;
 }
 
 .company small {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 4px;
     color: #d5e2f1;
-    font-size: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .6px;
 }
 
 .company h1 {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     color: white;
-    font-size: 35px;
+    font-size: 27px;
     font-weight: 800;
 }
 
@@ -147,14 +157,14 @@ select:focus-visible {
 
 .company input {
     width: 100%;
-    height: 54px;
-    padding: 0 52px 0 17px;
-    color: white;
-    background: rgba(255, 255, 255, .11);
+    height: 42px;
+    padding: 0 44px 0 13px;
     border: 1px solid rgba(255, 255, 255, .3);
-    border-radius: 15px;
-    font-size: 17px;
+    border-radius: 12px;
     outline: none;
+    background: rgba(255, 255, 255, .11);
+    color: white;
+    font-size: 14px;
 }
 
 .company input::placeholder {
@@ -163,9 +173,9 @@ select:focus-visible {
 
 .editIcon {
     position: absolute;
-    right: 17px;
+    right: 14px;
     color: white;
-    font-size: 25px;
+    font-size: 21px;
     pointer-events: none;
 }
 
@@ -174,18 +184,18 @@ select:focus-visible {
 .stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-    margin-bottom: 22px;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
 .stat {
     min-width: 0;
-    min-height: 150px;
-    padding: 17px;
+    min-height: 112px;
+    padding: 12px;
     border: 1px solid #e9edf4;
-    border-radius: 23px;
+    border-radius: 17px;
     background: white;
-    box-shadow: 0 5px 16px rgba(20, 50, 85, .05);
+    box-shadow: var(--shadow);
 }
 
 .statSites {
@@ -205,91 +215,96 @@ select:focus-visible {
 }
 
 .statIcon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 47px;
-    height: 47px;
-    margin-bottom: 12px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, .75);
-    font-size: 27px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .8);
+    font-size: 21px;
 }
 
 .stat small {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     color: #475569;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .stat strong {
     display: block;
-    color: #102744;
-    font-size: 31px;
+    color: var(--navy);
+    font-size: 25px;
     font-weight: 800;
+    line-height: 1.1;
 }
 
 /* GENEL KARTLAR */
 
 .card {
     overflow: hidden;
-    margin-bottom: 20px;
-    border: 1px solid #e7ebf2;
-    border-radius: 25px;
+    margin-bottom: 13px;
+    border: 1px solid var(--border);
+    border-radius: 19px;
     background: white;
-    box-shadow: 0 5px 18px rgba(20, 50, 85, .05);
+    box-shadow: var(--shadow);
 }
 
 .cardHead {
-    min-height: 88px;
-    padding: 16px 22px;
+    min-height: 62px;
+    padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     border-bottom: 1px solid #edf0f5;
 }
 
 .sectionHeading {
+    min-width: 0;
     display: flex;
     align-items: center;
-    gap: 14px;
-    min-width: 0;
+    gap: 9px;
 }
 
 .sectionIcon {
     flex-shrink: 0;
-    font-size: 32px;
+    font-size: 25px;
 }
 
 .cardTitle {
     color: var(--navy);
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 800;
+    line-height: 1.2;
 }
 
 .sectionSubtitle {
-    margin-top: 4px;
+    margin-top: 3px;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 11px;
+    line-height: 1.3;
 }
 
 .add {
     flex-shrink: 0;
-    padding: 13px 19px;
+    padding: 9px 11px;
     border: 0;
-    border-radius: 14px;
+    border-radius: 10px;
     background: var(--blue);
     color: white;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
+    white-space: nowrap;
     box-shadow: 0 3px 8px rgba(23, 105, 237, .15);
 }
 
 .add span {
-    font-size: 20px;
+    font-size: 17px;
     vertical-align: -1px;
 }
 
@@ -301,27 +316,28 @@ select:focus-visible {
 /* BOŞ LİSTE */
 
 .empty {
-    min-height: 160px;
-    padding: 27px 15px;
+    min-height: 88px;
+    padding: 14px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: #718096;
-    font-size: 17px;
+    font-size: 12px;
+    line-height: 1.4;
 }
 
 .emptyIcon {
-    margin-bottom: 10px;
-    font-size: 55px;
-    line-height: 1.2;
+    margin-bottom: 5px;
+    font-size: 30px;
+    line-height: 1.1;
 }
 
-/* ŞANTİYE LİSTESİ */
+/* ŞANTİYELER */
 
 .site {
-    padding: 18px 22px;
+    padding: 12px 16px;
     border-bottom: 1px solid #edf0f5;
 }
 
@@ -331,23 +347,23 @@ select:focus-visible {
 
 .siteName {
     color: var(--navy);
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 800;
 }
 
 .siteInfo {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
-    margin-top: 9px;
+    gap: 6px;
+    margin-top: 7px;
 }
 
 .badge {
-    padding: 6px 9px;
+    padding: 5px 8px;
     border-radius: 8px;
     background: #f1f5f9;
     color: #475569;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 /* EKİPLER */
@@ -355,8 +371,8 @@ select:focus-visible {
 .teams {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding: 17px;
+    gap: 9px;
+    padding: 10px;
 }
 
 .teams .empty {
@@ -364,9 +380,10 @@ select:focus-visible {
 }
 
 .team {
-    padding: 16px;
+    min-width: 0;
+    padding: 11px;
     border: 1px solid #e5eaf2;
-    border-radius: 17px;
+    border-radius: 13px;
     background: #fafcff;
     cursor: pointer;
     transition: background .2s, transform .2s;
@@ -374,76 +391,77 @@ select:focus-visible {
 
 .team:hover {
     background: #f1f6ff;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .teamIcon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    margin-bottom: 10px;
-    border-radius: 13px;
+    border-radius: 10px;
     background: #e8f1ff;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .teamName {
     color: var(--navy);
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 800;
+    overflow-wrap: anywhere;
 }
 
 .teamCount {
-    margin-top: 6px;
+    margin-top: 4px;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 11px;
 }
 
 /* YÖNETİM */
 
 .managementCard {
-    padding-bottom: 4px;
+    padding-bottom: 2px;
 }
 
 .managementHeading {
-    padding: 20px 24px 0;
+    padding: 14px 16px 0;
 }
 
 .managementHeading h2,
 .backupHeading h2 {
     color: var(--navy);
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 800;
 }
 
 .managementHeading p,
 .backupHeading p {
-    margin-top: 5px;
+    margin-top: 4px;
     color: var(--muted);
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.4;
 }
 
 .quick {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding: 16px 20px;
+    gap: 9px;
+    padding: 12px;
 }
 
 .quick button {
     position: relative;
     min-width: 0;
-    min-height: 92px;
-    padding: 13px;
+    min-height: 72px;
+    padding: 9px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     text-align: left;
     border: 1px solid #e3eaf2;
-    border-radius: 17px;
+    border-radius: 13px;
     background: #f0f8ff;
     color: var(--navy);
 }
@@ -460,60 +478,62 @@ select:focus-visible {
 
 .quickIcon {
     flex-shrink: 0;
-    width: 62px;
-    height: 62px;
+    width: 39px;
+    height: 39px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, .75);
-    font-size: 34px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .8);
+    font-size: 23px;
 }
 
 .quickText {
     min-width: 0;
-    padding-right: 16px;
+    padding-right: 9px;
 }
 
 .quick b {
     display: block;
     color: var(--navy);
-    font-size: 17px;
+    font-size: 12px;
     font-weight: 800;
+    line-height: 1.25;
 }
 
 .quickText span {
     display: block;
-    margin-top: 5px;
+    margin-top: 3px;
     color: #5c6b80;
-    font-size: 13px;
+    font-size: 10px;
+    line-height: 1.25;
 }
 
 .quickArrow {
     position: absolute;
-    right: 13px;
     top: 50%;
+    right: 6px;
     transform: translateY(-50%);
     color: #2772c7;
-    font-size: 30px;
+    font-size: 22px;
 }
 
 /* VERİ YÖNETİMİ */
 
 .backupSection {
-    padding: 20px;
+    padding: 14px;
 }
 
 .backupHeading {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 16px;
+    gap: 11px;
+    margin-bottom: 11px;
 }
 
 .backupIcon {
     flex-shrink: 0;
-    font-size: 44px;
+    font-size: 34px;
 }
 
 .backupHeading p {
@@ -523,15 +543,16 @@ select:focus-visible {
 .backupActions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 8px;
 }
 
 .backupSection .btn {
-    min-height: 55px;
-    padding: 12px;
+    min-width: 0;
+    min-height: 43px;
+    padding: 8px;
     border: 1px solid var(--blue);
-    border-radius: 14px;
-    font-size: 15px;
+    border-radius: 11px;
+    font-size: 11px;
     font-weight: 800;
 }
 
@@ -546,9 +567,9 @@ select:focus-visible {
 }
 
 .backupSection .btn span {
-    margin-right: 6px;
-    font-size: 22px;
-    vertical-align: -2px;
+    margin-right: 4px;
+    font-size: 17px;
+    vertical-align: -1px;
 }
 
 /* MODAL */
@@ -560,7 +581,7 @@ select:focus-visible {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 18px;
+    padding: 16px;
     background: rgba(15, 23, 42, .55);
 }
 
@@ -573,41 +594,41 @@ select:focus-visible {
     max-width: 430px;
     max-height: 90vh;
     overflow-y: auto;
-    padding: 23px;
-    border-radius: 22px;
+    padding: 20px;
+    border-radius: 19px;
     background: white;
     box-shadow: 0 15px 50px rgba(0, 0, 0, .2);
 }
 
 .modalTitle {
-    margin-bottom: 19px;
+    margin-bottom: 16px;
     color: var(--navy);
-    font-size: 23px;
+    font-size: 21px;
     font-weight: 800;
 }
 
 .field {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .field label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
     color: #475569;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
 }
 
 .field input,
 .field select {
     width: 100%;
-    height: 48px;
-    padding: 0 13px;
+    height: 43px;
+    padding: 0 11px;
     border: 1px solid #d5dce7;
-    border-radius: 11px;
+    border-radius: 10px;
     background: white;
     color: var(--text);
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .field input:focus,
@@ -618,15 +639,15 @@ select:focus-visible {
 
 .buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 9px;
+    margin-top: 17px;
 }
 
 .buttons button {
     flex: 1;
-    min-height: 47px;
+    min-height: 43px;
     border: 0;
-    border-radius: 11px;
+    border-radius: 10px;
     font-weight: 800;
 }
 
@@ -645,7 +666,7 @@ select:focus-visible {
 .settingsDescription {
     margin-bottom: 10px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 /* EKİP DETAY */
@@ -657,91 +678,91 @@ select:focus-visible {
 }
 
 .teamDetailTop {
-    min-height: 76px;
+    min-height: 64px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px max(18px, calc((100% - 1064px) / 2));
+    gap: 12px;
+    padding: 8px max(14px, calc((100% - 1064px) / 2));
     border-bottom: 1px solid var(--border);
     background: white;
 }
 
 .teamBack {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
     border: 0;
-    border-radius: 14px;
+    border-radius: 12px;
     background: #eef2f7;
     color: var(--navy);
-    font-size: 29px;
+    font-size: 26px;
 }
 
 .teamDetailTop b {
     display: block;
     color: var(--navy);
-    font-size: 19px;
+    font-size: 17px;
 }
 
 .teamDetailTop span {
     display: block;
-    margin-top: 4px;
+    margin-top: 3px;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .teamDetailContent {
     max-width: 1100px;
     margin: auto;
-    padding: 18px;
+    padding: 14px;
 }
 
 .attendanceStats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .attendanceStats div {
-    padding: 16px 10px;
+    padding: 12px 8px;
     border: 1px solid var(--border);
-    border-radius: 15px;
+    border-radius: 13px;
     background: white;
     text-align: center;
 }
 
 .attendanceStats small {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .attendanceStats strong {
     color: var(--navy);
-    font-size: 24px;
+    font-size: 21px;
 }
 
 .dateBox {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 13px;
-    border-radius: 17px;
+    margin-bottom: 13px;
+    padding: 10px;
+    border-radius: 14px;
     background: #173b62;
     color: white;
 }
 
 .dateBox button {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     border: 0;
-    border-radius: 11px;
+    border-radius: 9px;
     background: rgba(255, 255, 255, .13);
     color: white;
-    font-size: 26px;
+    font-size: 23px;
 }
 
 .dateBox div {
@@ -750,48 +771,49 @@ select:focus-visible {
 
 .dateBox small {
     display: block;
-    margin-bottom: 5px;
-    font-size: 10px;
+    margin-bottom: 4px;
+    font-size: 9px;
     opacity: .7;
 }
 
 .dateBox b {
-    font-size: 17px;
+    font-size: 15px;
 }
 
 .workerSection {
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 19px;
+    border-radius: 16px;
     background: white;
 }
 
 .workerHead {
-    min-height: 65px;
-    padding: 12px 17px;
+    min-height: 54px;
+    padding: 10px 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 9px;
     border-bottom: 1px solid var(--border);
 }
 
 .workerHead b {
     color: var(--navy);
-    font-size: 19px;
+    font-size: 17px;
 }
 
 .workerHead button {
-    padding: 10px 13px;
+    padding: 8px 10px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 9px;
     background: var(--blue);
     color: white;
+    font-size: 12px;
     font-weight: 700;
 }
 
 .workerRow {
-    padding: 15px 17px;
+    padding: 12px 14px;
     border-bottom: 1px solid #edf0f5;
 }
 
@@ -800,26 +822,26 @@ select:focus-visible {
 }
 
 .workerName {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: var(--navy);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
 }
 
 .statusButtons {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
+    gap: 5px;
 }
 
 .statusButtons button {
-    min-height: 36px;
-    padding: 7px 3px;
+    min-height: 32px;
+    padding: 5px 2px;
     border: 1px solid #d6dce6;
-    border-radius: 8px;
+    border-radius: 7px;
     background: #f8fafc;
     color: #475569;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .statusButtons button.active {
@@ -829,10 +851,10 @@ select:focus-visible {
 }
 
 .noWorkers {
-    padding: 30px 15px;
+    padding: 24px 12px;
     color: var(--muted);
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 /* RAPORLAR */
@@ -842,400 +864,111 @@ select:focus-visible {
     max-width: 1100px;
     min-height: 100vh;
     margin: auto;
-    padding: 18px;
+    padding: 14px;
 }
 
 .reportsHeader {
     display: flex;
     align-items: center;
-    gap: 13px;
-    margin-bottom: 20px;
+    gap: 11px;
+    margin-bottom: 16px;
 }
 
 .reportsHeader h2 {
     color: var(--navy);
-    font-size: 23px;
+    font-size: 20px;
 }
 
 .reportsHeader p {
-    margin-top: 5px;
+    margin-top: 4px;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .reportTabs {
     display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 7px;
+    margin-bottom: 12px;
 }
 
 .reportTabs button,
 .reportBack {
-    min-height: 43px;
-    padding: 10px 16px;
+    min-height: 39px;
+    padding: 8px 13px;
     border: 1px solid #dce3ed;
-    border-radius: 10px;
+    border-radius: 9px;
     background: white;
     color: var(--navy);
+    font-size: 12px;
     font-weight: 700;
 }
 
 .reportContent {
     overflow-x: auto;
-    padding: 17px;
+    padding: 13px;
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 14px;
     background: white;
 }
 
 .reportBack {
-    margin-top: 18px;
+    margin-top: 14px;
     background: var(--blue);
     border-color: var(--blue);
     color: white;
 }
 
-/* TABLET */
+/* TABLET VE GENİŞ EKRAN */
 
-@media (max-width: 800px) {
+@media (min-width: 700px) {
     .main {
-        padding: 12px 15px 22px;
+        padding-top: 12px;
+    }
+
+    .company {
+        min-height: 155px;
     }
 
     .stats {
-        gap: 10px;
-    }
-
-    .stat {
-        min-height: 135px;
-        padding: 14px;
-    }
-
-    .stat strong {
-        font-size: 27px;
-    }
-
-    .cardTitle {
-        font-size: 21px;
-    }
-
-    .quickIcon {
-        width: 52px;
-        height: 52px;
-        font-size: 29px;
-    }
-
-    .quick b {
-        font-size: 15px;
-    }
-}
-
-/* MOBİL */
-
-@media (max-width: 600px) {
-    .top {
-        min-height: 80px;
-        padding: 10px 14px;
         gap: 12px;
     }
 
-    .back,
-    .settingsBtn {
-        width: 48px;
-        height: 48px;
-        border-radius: 15px;
-    }
-
-    .title b {
-        font-size: 21px;
-    }
-
-    .title span {
-        font-size: 12px;
-    }
-
-    .main {
-        padding: 10px 12px 20px;
-    }
-
-    .company {
-        min-height: 190px;
-        padding: 21px;
-        margin-bottom: 14px;
-        border-radius: 22px;
-    }
-
-    .company h1 {
-        margin-bottom: 17px;
-        font-size: 30px;
-    }
-
-    .company input {
-        height: 49px;
-        font-size: 16px;
-    }
-
-    .company::after {
-        right: 12px;
-        top: 25px;
-        font-size: 72px;
-    }
-
-    .stats {
-        gap: 10px;
-        margin: 14px 0 18px;
-    }
-
     .stat {
-        min-height: 150px;
-        padding: 13px;
-        border-radius: 21px;
-    }
-
-    .statIcon {
-        width: 43px;
-        height: 43px;
-        margin-bottom: 10px;
-        font-size: 25px;
-    }
-
-    .stat small {
-        font-size: 12px;
-    }
-
-    .stat strong {
-        font-size: 29px;
-    }
-
-    .card {
-        margin-bottom: 17px;
-        border-radius: 23px;
-    }
-
-    .cardHead {
-        min-height: 78px;
-        padding: 13px 15px;
-        gap: 8px;
-    }
-
-    .sectionHeading {
-        gap: 10px;
-    }
-
-    .sectionIcon {
-        font-size: 28px;
-    }
-
-    .cardTitle {
-        font-size: 21px;
-    }
-
-    .sectionSubtitle {
-        font-size: 13px;
-        line-height: 1.35;
-    }
-
-    .add {
-        padding: 11px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-    }
-
-    .empty {
-        min-height: 155px;
-        padding: 24px 12px;
-        font-size: 16px;
-    }
-
-    .emptyIcon {
-        font-size: 53px;
-    }
-
-    .teams {
-        grid-template-columns: 1fr;
-        padding: 12px;
-    }
-
-    .managementHeading {
-        padding: 18px 18px 0;
-    }
-
-    .managementHeading h2,
-    .backupHeading h2 {
-        font-size: 23px;
-    }
-
-    .managementHeading p,
-    .backupHeading p {
-        font-size: 14px;
-    }
-
-    .quick {
-        gap: 10px;
+        min-height: 120px;
         padding: 14px;
     }
 
+    .card {
+        margin-bottom: 14px;
+    }
+
     .quick button {
-        min-height: 92px;
-        padding: 10px;
-        gap: 8px;
-        border-radius: 15px;
-    }
-
-    .quickIcon {
-        width: 48px;
-        height: 52px;
-        border-radius: 12px;
-        font-size: 27px;
-    }
-
-    .quickText {
-        padding-right: 9px;
-    }
-
-    .quick b {
-        font-size: 14px;
-    }
-
-    .quickText span {
-        font-size: 11px;
-        line-height: 1.3;
-    }
-
-    .quickArrow {
-        right: 7px;
-        font-size: 24px;
-    }
-
-    .backupSection {
-        padding: 16px;
-    }
-
-    .backupHeading {
-        align-items: flex-start;
-        gap: 11px;
-    }
-
-    .backupIcon {
-        font-size: 37px;
-    }
-
-    .backupHeading p {
-        font-size: 12px;
-    }
-
-    .backupActions {
-        gap: 8px;
-    }
-
-    .backupSection .btn {
-        min-height: 51px;
-        padding: 9px 6px;
-        border-radius: 12px;
-        font-size: 12px;
-    }
-
-    .backupSection .btn span {
-        font-size: 18px;
-    }
-
-    .teamDetailTop {
-        min-height: 68px;
-        padding: 10px 14px;
-    }
-
-    .teamDetailContent {
-        padding: 12px;
-    }
-
-    .attendanceStats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-    }
-
-    .attendanceStats div {
-        padding: 12px 8px;
-    }
-
-    .statusButtons {
-        gap: 4px;
-    }
-
-    .statusButtons button {
-        padding: 7px 1px;
-        font-size: 9px;
-    }
-
-    .reportsScreen {
-        padding: 13px;
-    }
-
-    .reportsHeader h2 {
-        font-size: 20px;
+        min-height: 78px;
     }
 }
 
-/* DAR TELEFONLAR */
+/* MOBİL EKRAN */
 
-@media (max-width: 370px) {
-    .title b {
-        font-size: 18px;
-    }
-
-    .title span {
-        font-size: 10px;
+@media (max-width: 600px) {
+    .top {
+        min-height: 58px;
+        padding: 7px 11px;
+        gap: 9px;
     }
 
     .back,
     .settingsBtn {
-        width: 42px;
-        height: 42px;
-    }
-
-    .cardHead {
-        padding: 11px;
-    }
-
-    .cardTitle {
-        font-size: 18px;
-    }
-
-    .sectionSubtitle {
-        font-size: 11px;
-    }
-
-    .add {
-        padding: 9px;
-        font-size: 11px;
-    }
-
-    .quick {
-        grid-template-columns: 1fr;
-    }
-
-    .quick button {
-        min-height: 76px;
-    }
-}
-
-
-/* =====================================
-   KURUMSAL PUANTAJ
-   REFERANS EKRANINA GÖRE KOMPAKT MOBİL
-===================================== */
-
-@media (max-width: 600px) {
-    .top {
-        height: 58px;
-        padding: 0 12px;
-        gap: 9px;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
     }
 
     .back {
-        width: 38px;
-        height: 38px;
         font-size: 24px;
-        border-radius: 12px;
+    }
+
+    .settingsBtn {
+        font-size: 19px;
     }
 
     .title b {
@@ -1243,205 +976,439 @@ select:focus-visible {
     }
 
     .title span {
-        font-size: 11px;
-        margin-top: 2px;
+        font-size: 10px;
     }
 
     .main {
-        padding: 10px;
+        padding: 7px 10px 16px;
     }
 
-    /* Şirket kartı */
     .company {
-        padding: 17px;
-        margin-bottom: 10px;
-        border-radius: 20px;
-    }
-
-    .company small {
-        font-size: 10px;
-        margin-bottom: 3px;
+        min-height: 132px;
+        padding: 14px 16px;
+        margin-bottom: 9px;
+        border-radius: 16px;
     }
 
     .company h1 {
-        font-size: 23px;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
+        font-size: 22px;
+    }
+
+    .company small {
+        font-size: 9px;
     }
 
     .company input {
-        height: 39px;
-        font-size: 14px;
-        border-radius: 12px;
+        height: 36px;
+        font-size: 13px;
     }
 
-    /* Dört istatistik yan yana */
+    .companyDecoration {
+        top: 16px;
+        right: 12px;
+        font-size: 59px;
+    }
+
     .stats {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 7px;
-        margin: 10px 0;
+        gap: 6px;
+        margin: 9px 0 11px;
     }
 
-    .stat,
-    .stats > * {
-        min-width: 0;
-        padding: 10px 7px;
-        border-radius: 15px;
-    }
-
-    .stat small {
-        font-size: 9px;
-        line-height: 1.2;
-        margin-bottom: 5px;
-        overflow-wrap: anywhere;
-    }
-
-    .stat strong {
-        font-size: 20px;
-        line-height: 1.1;
-    }
-
-    /* Ana kartlar */
-    .card {
-        margin-bottom: 10px;
-        border-radius: 18px;
-    }
-
-    .cardHead {
-        min-height: 52px;
-        padding: 9px 12px;
-        gap: 8px;
-    }
-
-    .cardTitle {
-        font-size: 17px;
-        line-height: 1.2;
-    }
-
-    .add {
-        padding: 8px 10px;
-        font-size: 11px;
-        border-radius: 10px;
-        white-space: nowrap;
-    }
-
-    /* Boş şantiye ve ekip alanları */
-    .empty {
-        padding: 17px 10px;
-        font-size: 12px;
-        line-height: 1.35;
-    }
-
-    .emptyIcon {
-        font-size: 27px;
-        margin-bottom: 4px;
-    }
-
-    /* Ekip kartları */
-    .teams {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        padding: 9px;
-    }
-
-    .team {
-        padding: 10px;
-        border-radius: 12px;
-    }
-
-    .teamIcon {
-        width: 34px;
-        height: 34px;
-        font-size: 19px;
-        margin-bottom: 6px;
-    }
-
-    .teamName {
-        font-size: 12px;
-    }
-
-    .teamCount {
-        font-size: 10px;
-    }
-
-    /* Yönetim seçenekleri */
-    .quick {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        padding: 10px;
-    }
-
-    .quick button {
-        min-width: 0;
-        padding: 11px;
+    .stat {
+        min-height: 94px;
+        padding: 8px 6px;
         border-radius: 13px;
     }
 
-    .quickIcon {
-        font-size: 23px;
+    .statIcon {
+        width: 27px;
+        height: 27px;
         margin-bottom: 5px;
-    }
-
-    .quick b {
-        font-size: 12px;
-        line-height: 1.25;
-    }
-
-    .quick span {
-        font-size: 10px;
-        line-height: 1.3;
-        margin-top: 3px;
-    }
-
-    /* Veri yönetimi */
-    #backupSection,
-    .backupSection {
-        padding: 12px;
-        margin-bottom: 10px;
-        border-radius: 17px;
-    }
-
-    .backupSection h2 {
+        border-radius: 8px;
         font-size: 17px;
-        margin-bottom: 5px;
-    }
-
-    .backupSection p {
-        font-size: 11px;
-        line-height: 1.35;
-        margin-bottom: 8px;
-    }
-
-    #backupSection button,
-    .backupSection .btn {
-        padding: 9px 8px;
-        margin-top: 5px;
-        margin-right: 3px;
-        font-size: 11px;
-        border-radius: 10px;
-    }
-
-    /* Ekip detay ekranı */
-    .teamDetailContent {
-        padding: 10px;
-    }
-}
-
-/* Çok dar telefonlarda okunabilirliği koru */
-@media (max-width: 370px) {
-    .stat,
-    .stats > * {
-        padding: 8px 4px;
     }
 
     .stat small {
+        margin-bottom: 3px;
         font-size: 8px;
     }
 
     .stat strong {
+        font-size: 20px;
+    }
+
+    .card {
+        margin-bottom: 9px;
+        border-radius: 15px;
+    }
+
+    .cardHead {
+        min-height: 49px;
+        padding: 7px 9px;
+        gap: 6px;
+    }
+
+    .sectionHeading {
+        gap: 6px;
+    }
+
+    .sectionIcon {
+        font-size: 20px;
+    }
+
+    .cardTitle {
+        font-size: 15px;
+    }
+
+    .sectionSubtitle {
+        margin-top: 2px;
+        font-size: 9px;
+    }
+
+    .add {
+        padding: 7px 8px;
+        border-radius: 8px;
+        font-size: 10px;
+    }
+
+    .add span {
+        font-size: 14px;
+    }
+
+    .empty {
+        min-height: 67px;
+        padding: 9px 7px;
+        font-size: 10px;
+    }
+
+    .emptyIcon {
+        margin-bottom: 3px;
+        font-size: 23px;
+    }
+
+    .site {
+        padding: 9px 11px;
+    }
+
+    .siteName {
+        font-size: 13px;
+    }
+
+    .siteInfo {
+        margin-top: 5px;
+        gap: 4px;
+    }
+
+    .badge {
+        padding: 4px 6px;
+        font-size: 9px;
+    }
+
+    .teams {
+        gap: 6px;
+        padding: 7px;
+    }
+
+    .team {
+        padding: 8px;
+        border-radius: 10px;
+    }
+
+    .teamIcon {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 4px;
         font-size: 17px;
     }
 
+    .teamName {
+        font-size: 11px;
+    }
+
+    .teamCount {
+        margin-top: 3px;
+        font-size: 9px;
+    }
+
+    .managementHeading {
+        padding: 10px 12px 0;
+    }
+
+    .managementHeading h2,
+    .backupHeading h2 {
+        font-size: 17px;
+    }
+
+    .managementHeading p,
+    .backupHeading p {
+        margin-top: 3px;
+        font-size: 10px;
+    }
+
+    .quick {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 8px;
+    }
+
     .quick button {
-        padding: 9px;
+        min-height: 59px;
+        padding: 6px;
+        gap: 5px;
+        border-radius: 10px;
+    }
+
+    .quickIcon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        font-size: 19px;
+    }
+
+    .quickText {
+        padding-right: 5px;
+    }
+
+    .quick b {
+        font-size: 10px;
+    }
+
+    .quickText span {
+        margin-top: 2px;
+        font-size: 8px;
+    }
+
+    .quickArrow {
+        right: 4px;
+        font-size: 18px;
+    }
+
+    .backupSection {
+        padding: 10px;
+    }
+
+    .backupHeading {
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .backupIcon {
+        font-size: 27px;
+    }
+
+    .backupHeading p {
+        font-size: 9px;
+    }
+
+    .backupActions {
+        gap: 6px;
+    }
+
+    .backupSection .btn {
+        min-height: 36px;
+        padding: 6px 4px;
+        border-radius: 8px;
+        font-size: 9px;
+    }
+
+    .backupSection .btn span {
+        margin-right: 2px;
+        font-size: 14px;
+    }
+
+    .teamDetailTop {
+        min-height: 56px;
+        padding: 7px 10px;
+        gap: 8px;
+    }
+
+    .teamBack {
+        width: 37px;
+        height: 37px;
+        font-size: 23px;
+    }
+
+    .teamDetailTop b {
+        font-size: 15px;
+    }
+
+    .teamDetailTop span {
+        font-size: 10px;
+    }
+
+    .teamDetailContent {
+        padding: 10px;
+    }
+
+    .attendanceStats {
+        gap: 6px;
+        margin-bottom: 9px;
+    }
+
+    .attendanceStats div {
+        padding: 9px 5px;
+        border-radius: 10px;
+    }
+
+    .attendanceStats small {
+        font-size: 9px;
+    }
+
+    .attendanceStats strong {
+        font-size: 18px;
+    }
+
+    .dateBox {
+        margin-bottom: 10px;
+        padding: 7px;
+    }
+
+    .dateBox button {
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
+    .dateBox b {
+        font-size: 13px;
+    }
+
+    .workerHead {
+        min-height: 46px;
+        padding: 7px 10px;
+    }
+
+    .workerHead b {
+        font-size: 15px;
+    }
+
+    .workerHead button {
+        padding: 7px 8px;
+        font-size: 10px;
+    }
+
+    .workerRow {
+        padding: 9px 10px;
+    }
+
+    .workerName {
+        margin-bottom: 6px;
+        font-size: 12px;
+    }
+
+    .statusButtons {
+        gap: 3px;
+    }
+
+    .statusButtons button {
+        min-height: 29px;
+        padding: 4px 1px;
+        font-size: 8px;
+    }
+
+    .noWorkers {
+        padding: 18px 10px;
+        font-size: 11px;
+    }
+
+    .reportsScreen {
+        padding: 10px;
+    }
+
+    .reportsHeader {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .reportsHeader h2 {
+        font-size: 17px;
+    }
+
+    .reportsHeader p {
+        font-size: 10px;
+    }
+
+    .reportTabs {
+        gap: 5px;
+        margin-bottom: 9px;
+    }
+
+    .reportTabs button,
+    .reportBack {
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 10px;
+    }
+
+    .reportContent {
+        padding: 10px;
+    }
+}
+
+/* ÇOK DAR TELEFONLAR */
+
+@media (max-width: 370px) {
+    .main {
+        padding-right: 7px;
+        padding-left: 7px;
+    }
+
+    .stats {
+        gap: 4px;
+    }
+
+    .stat {
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+
+    .stat small {
+        font-size: 7px;
+    }
+
+    .stat strong {
+        font-size: 18px;
+    }
+
+    .cardHead {
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+
+    .cardTitle {
+        font-size: 13px;
+    }
+
+    .sectionSubtitle {
+        font-size: 8px;
+    }
+
+    .add {
+        padding: 6px;
+        font-size: 9px;
+    }
+
+    .quick button {
+        gap: 4px;
+        padding: 5px;
+    }
+
+    .quickIcon {
+        width: 26px;
+        height: 26px;
+        font-size: 16px;
+    }
+
+    .quick b {
+        font-size: 9px;
+    }
+
+    .quickText span {
+        font-size: 7px;
+    }
+
+    .backupSection .btn {
+        font-size: 8px;
     }
 }
