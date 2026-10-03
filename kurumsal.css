@@ -1412,3 +1412,10 @@ select:focus-visible {
         font-size: 8px;
     }
 }
+
+/* ŞİRKET KARTINI YATAY DARALT */
+.company {
+    width: calc(100% - 30px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
