@@ -1413,9 +1413,15 @@ select:focus-visible {
     }
 }
 
-/* ŞİRKET KARTINI YATAY DARALT */
 .company {
-    width: calc(100% - 30px) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.company h1 {
+    margin-bottom: 8px !important;
+}
+
+.company input {
+    height: 38px !important;
 }
