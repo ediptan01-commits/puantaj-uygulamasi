@@ -1441,3 +1441,48 @@ select:focus-visible {
 .company input {
     height: 36px !important;
 }
+
+/* Şirket kartı */
+.company small {
+    font-size: 13px !important;
+}
+
+.company h1 {
+    font-size: 29px !important;
+}
+
+.company input {
+    font-size: 16px !important;
+}
+
+/* İstatistik kutuları */
+.stat {
+    font-size: 16px;
+}
+
+.stat .stat-icon {
+    font-size: 30px !important;
+}
+
+.stat .stat-label {
+    font-size: 14px !important;
+}
+
+.stat .stat-value {
+    font-size: 30px !important;
+}
+
+/* Diğer kartların yazıları */
+.cardTitle {
+    font-size: 21px !important;
+}
+
+.card p,
+.card small {
+    font-size: 15px !important;
+}
+
+/* Hızlı işlem kartları */
+.quickIcon {
+    font-size: 28px !important;
+}
