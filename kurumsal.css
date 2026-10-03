@@ -1,1113 +1,1219 @@
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-body{
-    font-family:Arial,sans-serif;
-    background:#f3f5f8;
-    color:#172033;
+:root {
+    --bg: #f1f4fa;
+    --navy: #102744;
+    --blue: #1769ed;
+    --text: #172b49;
+    --muted: #66758b;
+    --border: #e7ebf2;
+    --white: #ffffff;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(23, 105, 237, .25);
+    outline-offset: 2px;
 }
 
 /* ÜST BAR */
 
-.top{
-    height:68px;
-    background:#ffffff;
-    border-bottom:1px solid #e1e5eb;
-
-    display:flex;
-    align-items:center;
-
-    padding:0 15px;
-    gap:12px;
-}
-
-.back{
-    width:42px;
-    height:42px;
-
-    border:0;
-    border-radius:12px;
-
-    background:#eef1f5;
-
-    font-size:28px;
-    color:#172033;
-}
-
-.title{
-    flex:1;
-}
-
-.title b{
-    display:block;
-    font-size:19px;
-}
-
-.title span{
-    display:block;
-    margin-top:3px;
-
-    color:#667085;
-    font-size:11px;
-}
-
-
-/* ANA */
-
-.main{
-    width:100%;
-    max-width:900px;
-    margin:auto;
-    padding:15px;
-}
-
-
-/* ŞİRKET */
-
-.company{
-    background:#17263d;
-    color:white;
-
-    border-radius:20px;
-
-    padding:20px;
-
-    margin-bottom:15px;
-}
-
-.company small{
-    display:block;
-
-    font-size:11px;
-    opacity:.65;
-
-    margin-bottom:5px;
-}
-
-.company h1{
-    font-size:25px;
-    margin-bottom:15px;
-}
-
-.company input{
-    width:100%;
-    height:45px;
-
-    border:1px solid
-    rgba(255,255,255,.2);
-
-    border-radius:10px;
-
-    background:
-    rgba(255,255,255,.1);
-
-    color:white;
-
-    padding:0 12px;
-
-    outline:none;
-
-    font-size:14px;
-}
-
-
-/* İSTATİSTİK */
-
-.stats{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(2,1fr);
-
-    gap:10px;
-
-    margin-bottom:15px;
-}
-
-.stat{
-
-    background:white;
-
-    border:1px solid #e4e7ec;
-
-    border-radius:16px;
-
-    padding:15px;
-}
-
-.stat small{
-
-    display:block;
-
-    color:#667085;
-
-    font-size:11px;
-
-    margin-bottom:7px;
-}
-
-.stat strong{
-
-    font-size:25px;
-
-}
-
-
-/* KART */
-
-.card{
-
-    background:white;
-
-    border:1px solid #e4e7ec;
-
-    border-radius:18px;
-
-    margin-bottom:15px;
-
-    overflow:hidden;
-}
-
-.cardHead{
-
-    min-height:58px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:12px 15px;
-
-    border-bottom:1px solid #eaecf0;
-}
-
-.cardTitle{
-
-    font-size:18px;
-
-    font-weight:bold;
-}
-
-.add{
-
-    border:0;
-
-    background:#2563eb;
-
-    color:white;
-
-    border-radius:9px;
-
-    padding:9px 12px;
-
-    font-size:12px;
-
-    font-weight:bold;
-}
-
-
-/* BOŞ */
-
-.empty{
-
-    text-align:center;
-
-    color:#667085;
-
-    padding:30px 15px;
-
-    font-size:13px;
-}
-
-.emptyIcon{
-
-    font-size:35px;
-
-    margin-bottom:8px;
-}
-
-
-/* ŞANTİYE */
-
-.site{
-
-    padding:15px;
-
-    border-bottom:
-    1px solid #eaecf0;
-}
-
-.site:last-child{
-
-    border-bottom:0;
-}
-
-.siteName{
-
-    font-size:16px;
-
-    font-weight:bold;
-}
-
-.siteInfo{
-
-    display:flex;
-
-    gap:7px;
-
-    margin-top:7px;
-}
-
-.badge{
-
-    background:#f2f4f7;
-
-    color:#475467;
-
-    border-radius:7px;
-
-    padding:5px 8px;
-
-    font-size:10px;
-}
-
-
-/* EKİP */
-
-.teams{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(2,1fr);
-
-    gap:10px;
-
-    padding:12px;
-}
-
-.team{
-
-    border:1px solid #e4e7ec;
-
-    background:#fafbfc;
-
-    border-radius:14px;
-
-    padding:13px;
-}
-
-.teamIcon{
-
-    width:40px;
-    height:40px;
-
-    border-radius:11px;
-
-    background:#e8f0ff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:21px;
-
-    margin-bottom:9px;
-}
-
-.teamName{
-
-    font-size:14px;
-
-    font-weight:bold;
-}
-
-.teamCount{
-
-    margin-top:5px;
-
-    color:#667085;
-
-    font-size:10px;
-}
-
-
-/* HIZLI MENÜ */
-
-.quick{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(2,1fr);
-
-    gap:10px;
-
-    padding:12px;
-}
-
-.quick button{
-
-    background:white;
-
-    border:1px solid #e4e7ec;
-
-    border-radius:13px;
-
-    padding:15px;
-
-    text-align:left;
-}
-
-.quickIcon{
-
-    font-size:23px;
-
-    margin-bottom:8px;
-}
-
-.quick b{
-
-    display:block;
-
-    font-size:13px;
-}
-
-.quick span{
-
-    display:block;
-
-    color:#667085;
-
-    font-size:10px;
-
-    margin-top:4px;
-}
-
-
-/* MODAL */
-
-.modal{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-    rgba(15,23,42,.5);
-
-    display:none;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:18px;
-
-    z-index:9999;
-}
-
-.modal.show{
-
-    display:flex;
-}
-
-.modalBox{
-
-    width:100%;
-
-    max-width:390px;
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:20px;
-}
-
-.modalTitle{
-
-    font-size:21px;
-
-    font-weight:bold;
-
-    margin-bottom:15px;
-}
-
-.field{
-
-    margin-bottom:13px;
-}
-
-.field label{
-
-    display:block;
-
-    color:#667085;
-
-    font-size:11px;
-
-    margin-bottom:5px;
-}
-
-.field input,
-.field select{
-
-    width:100%;
-
-    height:46px;
-
-    border:1px solid #d0d5dd;
-
-    border-radius:10px;
-
-    padding:0 12px;
-
-    font-size:14px;
-
-    outline:none;
-}
-
-.buttons{
-
-    display:flex;
-
-    gap:8px;
-
-    margin-top:18px;
-}
-
-.buttons button{
-
-    flex:1;
-
-    height:45px;
-
-    border:0;
-
-    border-radius:10px;
-
-    font-weight:bold;
-}
-
-.cancel{
-
-    background:#f2f4f7;
-
-    color:#344054;
-}
-
-.save{
-
-    background:#2563eb;
-
-    color:white;
-}
-
-
-/* TELEFON */
-
-@media(max-width:600px){
-
-    .main{
-
-        padding:10px;
-    }
-
-    .company{
-
-        padding:17px;
-
-        border-radius:17px;
-    }
-
-    .company h1{
-
-        font-size:21px;
-    }
-
-    .stat{
-
-        padding:12px;
-    }
-
-    .stat strong{
-
-        font-size:21px;
-    }
-
-}
-
-    /* ==================================================
-   EKİP DETAY
-================================================== */
-
-.teamDetail{
-    display:none;
-    min-height:100vh;
-    background:#f3f5f8;
-}
-
-.teamDetailTop{
-    height:68px;
-    background:white;
-    border-bottom:1px solid #e1e5eb;
-
-    display:flex;
-    align-items:center;
-
-    padding:0 15px;
-    gap:12px;
-}
-
-.teamBack{
-    width:42px;
-    height:42px;
-
-    border:0;
-    border-radius:12px;
-
-    background:#eef1f5;
-
-    font-size:28px;
-}
-
-.teamDetailTop b{
-    display:block;
-    font-size:18px;
-}
-
-.teamDetailTop span{
-    display:block;
-    color:#667085;
-    font-size:11px;
-    margin-top:3px;
-}
-
-.teamDetailContent{
-    max-width:900px;
-    margin:auto;
-    padding:15px;
-}
-
-.attendanceStats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-    margin-bottom:12px;
-}
-
-.attendanceStats div{
-    background:white;
-    border:1px solid #e4e7ec;
-    border-radius:13px;
-    padding:11px;
-    text-align:center;
-}
-
-.attendanceStats small{
-    display:block;
-    color:#667085;
-    font-size:10px;
-    margin-bottom:5px;
-}
-
-.attendanceStats strong{
-    font-size:20px;
-}
-
-.dateBox{
-    background:#17263d;
-    color:white;
-    border-radius:16px;
-    padding:12px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    margin-bottom:15px;
-}
-
-.dateBox button{
-    width:38px;
-    height:38px;
-
-    border:0;
-    border-radius:10px;
-
-    background:rgba(255,255,255,.12);
-    color:white;
-
-    font-size:24px;
-}
-
-.dateBox div{
-    text-align:center;
-}
-
-.dateBox small{
-    display:block;
-    font-size:9px;
-    opacity:.6;
-    margin-bottom:4px;
-}
-
-.dateBox b{
-    font-size:16px;
-}
-
-.workerSection{
-    background:white;
-    border:1px solid #e4e7ec;
-    border-radius:18px;
-    overflow:hidden;
-}
-
-.workerHead{
-    min-height:58px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:12px 15px;
-
-    border-bottom:1px solid #eaecf0;
-}
-
-.workerHead b{
-    font-size:18px;
-}
-
-.workerHead button{
-    border:0;
-    border-radius:9px;
-    background:#2563eb;
-    color:white;
-    padding:9px 12px;
-    font-weight:bold;
-}
-
-.workerRow{
-    padding:13px 15px;
-    border-bottom:1px solid #eaecf0;
-}
-
-.workerRow:last-child{
-    border-bottom:0;
-}
-
-.workerName{
-    font-size:15px;
-    font-weight:bold;
-    margin-bottom:9px;
-}
-
-.statusButtons{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:5px;
-}
-
-.statusButtons button{
-    border:1px solid #d0d5dd;
-    background:#f8fafc;
-    border-radius:8px;
-    padding:7px 3px;
-    font-size:9px;
-    color:#475467;
-}
-
-.statusButtons button.active{
-    background:#2563eb;
-    color:white;
-    border-color:#2563eb;
-}
-
-.noWorkers{
-    padding:30px 15px;
-    text-align:center;
-    color:#667085;
-    font-size:13px;
-}
-
-@media(max-width:600px){
-
-    .attendanceStats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .statusButtons{
-        grid-template-columns:repeat(5,1fr);
-    }
-
-    .statusButtons button{
-        font-size:8px;
-        padding:8px 1px;
-    }
-
-}
-
-/* Mobil görünüm */
-html {
-    font-size: 16px;
-}
-
-body {
-    zoom: 1;
-}
-
-
-/* MODERN ANASAYFA TASARIMI */
-body {
-    background: #f2f5fb;
-    color: #172033;
-    font-family: Arial, sans-serif;
-}
+.top {
+    width: 100%;
+    max-width: 1100px;
+    min-height: 76px;
+    margin: auto;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back,
+.settingsBtn {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border: 1px solid #edf0f5;
+    border-radius: 17px;
+    background: white;
+    color: var(--navy);
+    font-size: 30px;
+    box-shadow: 0 3px 12px rgba(20, 40, 70, .05);
+}
+
+.settingsBtn {
+    font-size: 25px;
+}
+
+.title {
+    flex: 1;
+    min-width: 0;
+}
+
+.title b {
+    display: block;
+    color: var(--navy);
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -.5px;
+}
+
+.title span {
+    display: block;
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* ANA EKRAN */
 
 .main {
+    width: 100%;
     max-width: 1100px;
-    padding: 20px;
+    margin: auto;
+    padding: 12px 18px 24px;
 }
+
+/* ŞİRKET KARTI */
 
 .company {
-    background: linear-gradient(120deg, #12365b, #1e4775);
-    border-radius: 24px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 194px;
     padding: 26px;
-    box-shadow: 0 8px 22px rgba(23, 54, 91, .12);
-}
-
-.stats {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.stat {
-    border: 1px solid #e7edf5;
-    border-radius: 22px;
-    padding: 20px;
-    box-shadow: 0 5px 18px rgba(30, 50, 80, .05);
-}
-
-.card {
-    border: 1px solid #e5eaf2;
-    border-radius: 24px;
-    box-shadow: 0 5px 18px rgba(30, 50, 80, .05);
     margin-bottom: 22px;
+    color: white;
+    border-radius: 25px;
+    background: linear-gradient(115deg, #12365b, #204b78 65%, #173b62);
+    box-shadow: 0 7px 20px rgba(20, 50, 85, .12);
 }
 
-.cardHead {
-    min-height: 76px;
-    padding: 16px 22px;
+.company::after {
+    content: "🏗️";
+    position: absolute;
+    z-index: -1;
+    right: 24px;
+    top: 18px;
+    font-size: 90px;
+    opacity: .13;
+    filter: grayscale(1);
 }
 
-.cardTitle {
-    font-size: 23px;
-}
-
-.add {
-    background: #1769ed;
-    border-radius: 13px;
-    padding: 13px 18px;
+.company small {
+    display: block;
+    margin-bottom: 7px;
+    color: #d5e2f1;
     font-size: 14px;
 }
 
-.quick {
-    padding: 18px;
+.company h1 {
+    margin-bottom: 20px;
+    color: white;
+    font-size: 35px;
+    font-weight: 800;
+}
+
+.companyEdit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.company input {
+    width: 100%;
+    height: 54px;
+    padding: 0 52px 0 17px;
+    color: white;
+    background: rgba(255, 255, 255, .11);
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 15px;
+    font-size: 17px;
+    outline: none;
+}
+
+.company input::placeholder {
+    color: #d8e3f0;
+}
+
+.editIcon {
+    position: absolute;
+    right: 17px;
+    color: white;
+    font-size: 25px;
+    pointer-events: none;
+}
+
+/* İSTATİSTİKLER */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
+    margin-bottom: 22px;
 }
 
-.quick button {
-    border-radius: 18px;
-    padding: 20px;
-    background: #f2f8ff;
-    border: 1px solid #dceafb;
+.stat {
+    min-width: 0;
+    min-height: 150px;
+    padding: 17px;
+    border: 1px solid #e9edf4;
+    border-radius: 23px;
+    background: white;
+    box-shadow: 0 5px 16px rgba(20, 50, 85, .05);
 }
 
-.quick button:nth-child(2) {
-    background: #fff9eb;
-    border-color: #f7e8c5;
+.statSites {
+    background: linear-gradient(145deg, #fff, #fff9ec);
 }
 
-.quick button:nth-child(3) {
-    background: #effbf3;
-    border-color: #d7f2df;
+.statTeams {
+    background: linear-gradient(145deg, #fff, #f0f6ff);
 }
 
-.quickIcon {
-    font-size: 30px;
+.statWorkers {
+    background: linear-gradient(145deg, #fff, #effbf5);
 }
 
-.quick b {
-    font-size: 16px;
+.statToday {
+    background: linear-gradient(145deg, #fff, #f6f1ff);
 }
 
-.quick span {
+.statIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 47px;
+    height: 47px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .75);
+    font-size: 27px;
+}
+
+.stat small {
+    display: block;
+    margin-bottom: 6px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat strong {
+    display: block;
+    color: #102744;
+    font-size: 31px;
+    font-weight: 800;
+}
+
+/* GENEL KARTLAR */
+
+.card {
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid #e7ebf2;
+    border-radius: 25px;
+    background: white;
+    box-shadow: 0 5px 18px rgba(20, 50, 85, .05);
+}
+
+.cardHead {
+    min-height: 88px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.sectionHeading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.sectionIcon {
+    flex-shrink: 0;
+    font-size: 32px;
+}
+
+.cardTitle {
+    color: var(--navy);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.sectionSubtitle {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.add {
+    flex-shrink: 0;
+    padding: 13px 19px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--blue);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 3px 8px rgba(23, 105, 237, .15);
+}
+
+.add span {
+    font-size: 20px;
+    vertical-align: -1px;
+}
+
+.add:active,
+.btn:active {
+    transform: scale(.98);
+}
+
+/* BOŞ LİSTE */
+
+.empty {
+    min-height: 160px;
+    padding: 27px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #718096;
+    font-size: 17px;
+}
+
+.emptyIcon {
+    margin-bottom: 10px;
+    font-size: 55px;
+    line-height: 1.2;
+}
+
+/* ŞANTİYE LİSTESİ */
+
+.site {
+    padding: 18px 22px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.site:last-child {
+    border-bottom: 0;
+}
+
+.siteName {
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.siteInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 9px;
+}
+
+.badge {
+    padding: 6px 9px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
     font-size: 12px;
 }
 
-.empty {
-    padding: 42px 15px;
-    font-size: 16px;
+/* EKİPLER */
+
+.teams {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 17px;
 }
 
-@media (max-width: 600px) {
+.teams .empty {
+    grid-column: 1 / -1;
+}
+
+.team {
+    padding: 16px;
+    border: 1px solid #e5eaf2;
+    border-radius: 17px;
+    background: #fafcff;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.team:hover {
+    background: #f1f6ff;
+    transform: translateY(-2px);
+}
+
+.teamIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+    border-radius: 13px;
+    background: #e8f1ff;
+    font-size: 24px;
+}
+
+.teamName {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.teamCount {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* YÖNETİM */
+
+.managementCard {
+    padding-bottom: 4px;
+}
+
+.managementHeading {
+    padding: 20px 24px 0;
+}
+
+.managementHeading h2,
+.backupHeading h2 {
+    color: var(--navy);
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.managementHeading p,
+.backupHeading p {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.quick {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.quick button {
+    position: relative;
+    min-width: 0;
+    min-height: 92px;
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    border: 1px solid #e3eaf2;
+    border-radius: 17px;
+    background: #f0f8ff;
+    color: var(--navy);
+}
+
+.quick .quickPayment {
+    background: #fff9ec;
+    border-color: #f5e8c9;
+}
+
+.quick .quickReports {
+    background: #effbf2;
+    border-color: #d8f1df;
+}
+
+.quickIcon {
+    flex-shrink: 0;
+    width: 62px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .75);
+    font-size: 34px;
+}
+
+.quickText {
+    min-width: 0;
+    padding-right: 16px;
+}
+
+.quick b {
+    display: block;
+    color: var(--navy);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.quickText span {
+    display: block;
+    margin-top: 5px;
+    color: #5c6b80;
+    font-size: 13px;
+}
+
+.quickArrow {
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2772c7;
+    font-size: 30px;
+}
+
+/* VERİ YÖNETİMİ */
+
+.backupSection {
+    padding: 20px;
+}
+
+.backupHeading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+.backupIcon {
+    flex-shrink: 0;
+    font-size: 44px;
+}
+
+.backupHeading p {
+    overflow-wrap: anywhere;
+}
+
+.backupActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.backupSection .btn {
+    min-height: 55px;
+    padding: 12px;
+    border: 1px solid var(--blue);
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.backupDownload {
+    background: var(--blue);
+    color: white;
+}
+
+.backupRestore {
+    background: white;
+    color: var(--blue);
+}
+
+.backupSection .btn span {
+    margin-right: 6px;
+    font-size: 22px;
+    vertical-align: -2px;
+}
+
+/* MODAL */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(15, 23, 42, .55);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modalBox {
+    width: 100%;
+    max-width: 430px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 23px;
+    border-radius: 22px;
+    background: white;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .2);
+}
+
+.modalTitle {
+    margin-bottom: 19px;
+    color: var(--navy);
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.field {
+    margin-bottom: 14px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    height: 48px;
+    padding: 0 13px;
+    border: 1px solid #d5dce7;
+    border-radius: 11px;
+    background: white;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--blue);
+    outline: none;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.buttons button {
+    flex: 1;
+    min-height: 47px;
+    border: 0;
+    border-radius: 11px;
+    font-weight: 800;
+}
+
+.cancel {
+    background: #eef1f5;
+    color: #344054;
+}
+
+.save {
+    background: var(--blue);
+    color: white;
+}
+
+/* AYARLAR */
+
+.settingsDescription {
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* EKİP DETAY */
+
+.teamDetail {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+}
+
+.teamDetailTop {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px max(18px, calc((100% - 1064px) / 2));
+    border-bottom: 1px solid var(--border);
+    background: white;
+}
+
+.teamBack {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 14px;
+    background: #eef2f7;
+    color: var(--navy);
+    font-size: 29px;
+}
+
+.teamDetailTop b {
+    display: block;
+    color: var(--navy);
+    font-size: 19px;
+}
+
+.teamDetailTop span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.teamDetailContent {
+    max-width: 1100px;
+    margin: auto;
+    padding: 18px;
+}
+
+.attendanceStats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.attendanceStats div {
+    padding: 16px 10px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: white;
+    text-align: center;
+}
+
+.attendanceStats small {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.attendanceStats strong {
+    color: var(--navy);
+    font-size: 24px;
+}
+
+.dateBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 13px;
+    border-radius: 17px;
+    background: #173b62;
+    color: white;
+}
+
+.dateBox button {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .13);
+    color: white;
+    font-size: 26px;
+}
+
+.dateBox div {
+    text-align: center;
+}
+
+.dateBox small {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    opacity: .7;
+}
+
+.dateBox b {
+    font-size: 17px;
+}
+
+.workerSection {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    background: white;
+}
+
+.workerHead {
+    min-height: 65px;
+    padding: 12px 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.workerHead b {
+    color: var(--navy);
+    font-size: 19px;
+}
+
+.workerHead button {
+    padding: 10px 13px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--blue);
+    color: white;
+    font-weight: 700;
+}
+
+.workerRow {
+    padding: 15px 17px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.workerRow:last-child {
+    border-bottom: 0;
+}
+
+.workerName {
+    margin-bottom: 10px;
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.statusButtons {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.statusButtons button {
+    min-height: 36px;
+    padding: 7px 3px;
+    border: 1px solid #d6dce6;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 11px;
+}
+
+.statusButtons button.active {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: white;
+}
+
+.noWorkers {
+    padding: 30px 15px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 14px;
+}
+
+/* RAPORLAR */
+
+.reportsScreen {
+    width: 100%;
+    max-width: 1100px;
+    min-height: 100vh;
+    margin: auto;
+    padding: 18px;
+}
+
+.reportsHeader {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 20px;
+}
+
+.reportsHeader h2 {
+    color: var(--navy);
+    font-size: 23px;
+}
+
+.reportsHeader p {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.reportTabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.reportTabs button,
+.reportBack {
+    min-height: 43px;
+    padding: 10px 16px;
+    border: 1px solid #dce3ed;
+    border-radius: 10px;
+    background: white;
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.reportContent {
+    overflow-x: auto;
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: white;
+}
+
+.reportBack {
+    margin-top: 18px;
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+}
+
+/* TABLET */
+
+@media (max-width: 800px) {
     .main {
-        padding: 12px;
+        padding: 12px 15px 22px;
     }
 
     .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 10px;
     }
 
     .stat {
-        padding: 17px;
-        border-radius: 20px;
+        min-height: 135px;
+        padding: 14px;
     }
 
-    .cardHead {
-        padding: 14px 16px;
+    .stat strong {
+        font-size: 27px;
     }
 
     .cardTitle {
         font-size: 21px;
     }
 
-    .quick {
-        padding: 12px;
-        gap: 10px;
-    }
-
-    .quick button {
-        padding: 15px;
-    }
-}
-
-
-/* MOBİL EKRANA SIĞDIRMA DÜZENLEMESİ */
-@media (max-width: 600px) {
-
-    .top {
-        height: 56px;
-    }
-
-    .main {
-        padding: 10px;
-    }
-
-    .company {
-        padding: 16px;
-        margin-bottom: 10px;
-        border-radius: 16px;
-    }
-
-    .company h1 {
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-
-    .company input {
-        height: 38px;
-    }
-
-    .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        margin-bottom: 10px;
-    }
-
-    .stat {
-        padding: 11px;
-        border-radius: 15px;
-    }
-
-    .stat small {
-        font-size: 10px;
-        margin-bottom: 4px;
-    }
-
-    .stat strong {
-        font-size: 20px;
-    }
-
-    .card {
-        margin-bottom: 10px;
-        border-radius: 17px;
-    }
-
-    .cardHead {
-        min-height: 52px;
-        padding: 10px 13px;
-    }
-
-    .cardTitle {
-        font-size: 17px;
-    }
-
-    .add {
-        padding: 9px 11px;
-        font-size: 11px;
-    }
-
-    .empty {
-        padding: 22px 12px;
-        font-size: 12px;
-    }
-
-    .emptyIcon {
-        font-size: 28px;
-        margin-bottom: 5px;
-    }
-
-    .quick {
-        padding: 10px;
-        gap: 8px;
-    }
-
-    .quick button {
-        padding: 12px;
-        border-radius: 14px;
-    }
-
     .quickIcon {
-        font-size: 24px;
-        margin-bottom: 5px;
+        width: 52px;
+        height: 52px;
+        font-size: 29px;
     }
 
     .quick b {
-        font-size: 13px;
-    }
-
-    .quick span {
-        font-size: 10px;
-    }
-
-    .teamDetailContent {
-        padding: 10px;
+        font-size: 15px;
     }
 }
 
-/* VERİ YÖNETİMİ ALANI */
-#backupSection {
-    padding: 14px;
-    border-radius: 17px;
-    overflow-wrap: anywhere;
-}
-
-#backupSection button {
-    margin-top: 8px;
-    margin-right: 5px;
-    padding: 9px 12px;
-    border-radius: 9px;
-}
-
-/* VERİ YÖNETİMİ MOBİL DÜZEN */
-.backupSection {
-    padding: 15px;
-}
-
-.backupSection h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
-}
-
-.backupSection p {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #475467;
-    margin-bottom: 10px;
-}
-
-.backupSection .btn {
-    border: 0;
-    background: #2563eb;
-    color: white;
-    border-radius: 9px;
-    padding: 10px 12px;
-    font-size: 12px;
-}
+/* MOBİL */
 
 @media (max-width: 600px) {
-    .backupSection {
-        padding: 12px;
-        margin-bottom: 12px;
+    .top {
+        min-height: 80px;
+        padding: 10px 14px;
+        gap: 12px;
     }
 
-    .backupSection h2 {
-        font-size: 16px;
+    .back,
+    .settingsBtn {
+        width: 48px;
+        height: 48px;
+        border-radius: 15px;
     }
 
-    .backupSection p {
+    .title b {
+        font-size: 21px;
+    }
+
+    .title span {
         font-size: 12px;
-    }
-}
-
-
-/* MODERN ANA SAYFA - REFERANS TASARIM */
-
-body {
-    background: #f1f4fa;
-}
-
-.top {
-    background: #f1f4fa;
-    padding: 16px 20px;
-}
-
-.company {
-    background: linear-gradient(135deg, #173b62, #214d78);
-    border-radius: 24px;
-    padding: 24px;
-    color: white;
-    box-shadow: 0 8px 20px rgba(20, 50, 85, 0.15);
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-    margin: 20px 0;
-}
-
-.stats > * {
-    background: white;
-    border-radius: 22px;
-    padding: 18px 14px;
-    box-shadow: 0 5px 16px rgba(20, 50, 85, 0.07);
-    border: 1px solid #edf0f6;
-}
-
-.main {
-    padding: 16px;
-    background: #f1f4fa;
-}
-
-.main > section,
-.main .section,
-.main .card {
-    border-radius: 22px;
-}
-
-@media (max-width: 600px) {
-    .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .company {
-        padding: 22px;
     }
 
     .main {
+        padding: 10px 12px 20px;
+    }
+
+    .company {
+        min-height: 190px;
+        padding: 21px;
+        margin-bottom: 14px;
+        border-radius: 22px;
+    }
+
+    .company h1 {
+        margin-bottom: 17px;
+        font-size: 30px;
+    }
+
+    .company input {
+        height: 49px;
+        font-size: 16px;
+    }
+
+    .company::after {
+        right: 12px;
+        top: 25px;
+        font-size: 72px;
+    }
+
+    .stats {
+        gap: 10px;
+        margin: 14px 0 18px;
+    }
+
+    .stat {
+        min-height: 150px;
+        padding: 13px;
+        border-radius: 21px;
+    }
+
+    .statIcon {
+        width: 43px;
+        height: 43px;
+        margin-bottom: 10px;
+        font-size: 25px;
+    }
+
+    .stat small {
+        font-size: 12px;
+    }
+
+    .stat strong {
+        font-size: 29px;
+    }
+
+    .card {
+        margin-bottom: 17px;
+        border-radius: 23px;
+    }
+
+    .cardHead {
+        min-height: 78px;
+        padding: 13px 15px;
+        gap: 8px;
+    }
+
+    .sectionHeading {
+        gap: 10px;
+    }
+
+    .sectionIcon {
+        font-size: 28px;
+    }
+
+    .cardTitle {
+        font-size: 21px;
+    }
+
+    .sectionSubtitle {
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .add {
+        padding: 11px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .empty {
+        min-height: 155px;
+        padding: 24px 12px;
+        font-size: 16px;
+    }
+
+    .emptyIcon {
+        font-size: 53px;
+    }
+
+    .teams {
+        grid-template-columns: 1fr;
         padding: 12px;
+    }
+
+    .managementHeading {
+        padding: 18px 18px 0;
+    }
+
+    .managementHeading h2,
+    .backupHeading h2 {
+        font-size: 23px;
+    }
+
+    .managementHeading p,
+    .backupHeading p {
+        font-size: 14px;
+    }
+
+    .quick {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .quick button {
+        min-height: 92px;
+        padding: 10px;
+        gap: 8px;
+        border-radius: 15px;
+    }
+
+    .quickIcon {
+        width: 48px;
+        height: 52px;
+        border-radius: 12px;
+        font-size: 27px;
+    }
+
+    .quickText {
+        padding-right: 9px;
+    }
+
+    .quick b {
+        font-size: 14px;
+    }
+
+    .quickText span {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    .quickArrow {
+        right: 7px;
+        font-size: 24px;
+    }
+
+    .backupSection {
+        padding: 16px;
+    }
+
+    .backupHeading {
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .backupIcon {
+        font-size: 37px;
+    }
+
+    .backupHeading p {
+        font-size: 12px;
+    }
+
+    .backupActions {
+        gap: 8px;
+    }
+
+    .backupSection .btn {
+        min-height: 51px;
+        padding: 9px 6px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .backupSection .btn span {
+        font-size: 18px;
+    }
+
+    .teamDetailTop {
+        min-height: 68px;
+        padding: 10px 14px;
+    }
+
+    .teamDetailContent {
+        padding: 12px;
+    }
+
+    .attendanceStats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .attendanceStats div {
+        padding: 12px 8px;
+    }
+
+    .statusButtons {
+        gap: 4px;
+    }
+
+    .statusButtons button {
+        padding: 7px 1px;
+        font-size: 9px;
+    }
+
+    .reportsScreen {
+        padding: 13px;
+    }
+
+    .reportsHeader h2 {
+        font-size: 20px;
+    }
+}
+
+/* DAR TELEFONLAR */
+
+@media (max-width: 370px) {
+    .title b {
+        font-size: 18px;
+    }
+
+    .title span {
+        font-size: 10px;
+    }
+
+    .back,
+    .settingsBtn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .cardHead {
+        padding: 11px;
+    }
+
+    .cardTitle {
+        font-size: 18px;
+    }
+
+    .sectionSubtitle {
+        font-size: 11px;
+    }
+
+    .add {
+        padding: 9px;
+        font-size: 11px;
+    }
+
+    .quick {
+        grid-template-columns: 1fr;
+    }
+
+    .quick button {
+        min-height: 76px;
     }
 }
