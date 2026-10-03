@@ -1444,77 +1444,77 @@ select:focus-visible {
 
 /* ŞİRKET KARTI */
 .company small {
-    font-size: 13px !important;
+    font-size: 12px !important;
 }
 
 .company h1 {
-    font-size: 29px !important;
+    font-size: 25px !important;
 }
 
 .company input {
-    font-size: 16px !important;
+    font-size: 15px !important;
 }
 
 /* İSTATİSTİK KUTULARI */
 .statIcon {
-    font-size: 32px !important;
+    font-size: 25px !important;
 }
 
 .stat small {
-    font-size: 13px !important;
+    font-size: 11px !important;
 }
 
 .stat strong {
-    font-size: 30px !important;
+    font-size: 25px !important;
 }
 
 /* ŞANTİYE VE EKİP KARTLARI */
 .cardTitle {
-    font-size: 23px !important;
+    font-size: 20px !important;
 }
 
 .sectionIcon {
-    font-size: 34px !important;
+    font-size: 27px !important;
 }
 
 .sectionSubtitle {
-    font-size: 15px !important;
+    font-size: 14px !important;
 }
 
 .emptyIcon {
-    font-size: 34px !important;
-}
-
-.empty {
-    font-size: 16px !important;
-}
-
-/* YÖNETİM KARTLARI */
-.managementHeading h2 {
     font-size: 28px !important;
 }
 
+.empty {
+    font-size: 15px !important;
+}
+
+/* YÖNETİM */
+.managementHeading h2 {
+    font-size: 24px !important;
+}
+
 .managementHeading p {
-    font-size: 16px !important;
+    font-size: 15px !important;
 }
 
 .quickIcon {
-    font-size: 30px !important;
+    font-size: 25px !important;
 }
 
 .quickText b {
-    font-size: 17px !important;
+    font-size: 15px !important;
 }
 
 .quickText span {
-    font-size: 14px !important;
+    font-size: 13px !important;
 }
 
 /* VERİ YÖNETİMİ */
 .backupHeading h2 {
-    font-size: 22px !important;
+    font-size: 20px !important;
 }
 
 .backupHeading p {
-    font-size: 15px !important;
+    font-size: 14px !important;
 }
