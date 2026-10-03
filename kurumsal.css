@@ -1,4 +1,3 @@
-
 /* =========================================
    KURUMSAL PUANTAJ
    Temiz ve kompakt arayüz
@@ -114,7 +113,7 @@ select:focus-visible {
     isolation: isolate;
     overflow: hidden;
     min-height: 0;
-    padding: 8px 24px;
+    padding: 10px 24px;
     margin: 0 12px 12px;
     color: white;
     border-radius: 20px;
@@ -984,24 +983,24 @@ select:focus-visible {
     }
 
     .company {
-        min-height: 132px;
-        padding: 14px 16px;
+        min-height: 0;
+        padding: 10px 16px;
         margin-bottom: 9px;
         border-radius: 16px;
     }
 
     .company h1 {
-        margin-bottom: 9px;
-        font-size: 22px;
+        margin-bottom: 6px;
+        font-size: 23px;
     }
 
     .company small {
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .company input {
         height: 36px;
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .companyDecoration {
@@ -1026,16 +1025,16 @@ select:focus-visible {
         height: 27px;
         margin-bottom: 5px;
         border-radius: 8px;
-        font-size: 17px;
+        font-size: 20px;
     }
 
     .stat small {
         margin-bottom: 3px;
-        font-size: 8px;
+        font-size: 10px;
     }
 
     .stat strong {
-        font-size: 20px;
+        font-size: 23px;
     }
 
     .card {
@@ -1054,16 +1053,16 @@ select:focus-visible {
     }
 
     .sectionIcon {
-        font-size: 20px;
+        font-size: 22px;
     }
 
     .cardTitle {
-        font-size: 15px;
+        font-size: 17px;
     }
 
     .sectionSubtitle {
         margin-top: 2px;
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .add {
@@ -1079,12 +1078,12 @@ select:focus-visible {
     .empty {
         min-height: 67px;
         padding: 9px 7px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     .emptyIcon {
         margin-bottom: 3px;
-        font-size: 23px;
+        font-size: 26px;
     }
 
     .site {
@@ -1123,12 +1122,12 @@ select:focus-visible {
     }
 
     .teamName {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .teamCount {
         margin-top: 3px;
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .managementHeading {
@@ -1137,13 +1136,13 @@ select:focus-visible {
 
     .managementHeading h2,
     .backupHeading h2 {
-        font-size: 17px;
+        font-size: 19px;
     }
 
     .managementHeading p,
     .backupHeading p {
         margin-top: 3px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     .quick {
@@ -1163,7 +1162,7 @@ select:focus-visible {
         width: 30px;
         height: 30px;
         border-radius: 8px;
-        font-size: 19px;
+        font-size: 21px;
     }
 
     .quickText {
@@ -1171,12 +1170,12 @@ select:focus-visible {
     }
 
     .quick b {
-        font-size: 10px;
+        font-size: 11px;
     }
 
     .quickText span {
         margin-top: 2px;
-        font-size: 8px;
+        font-size: 9px;
     }
 
     .quickArrow {
@@ -1198,7 +1197,7 @@ select:focus-visible {
     }
 
     .backupHeading p {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .backupActions {
@@ -1411,83 +1410,4 @@ select:focus-visible {
     .backupSection .btn {
         font-size: 8px;
     }
-}
-
-/* SON BOYUT AYARLARI */
-
-/* Şirket kartı */
-.company small {
-    font-size: 11px !important;
-}
-
-.company h1 {
-    font-size: 23px !important;
-}
-
-.company input {
-    font-size: 14px !important;
-}
-
-/* İstatistik kutuları */
-.statIcon {
-    font-size: 20px !important;
-}
-
-.stat small {
-    font-size: 9px !important;
-}
-
-.stat strong {
-    font-size: 21px !important;
-}
-
-/* Şantiye ve ekip kartları */
-.cardTitle {
-    font-size: 17px !important;
-}
-
-.sectionIcon {
-    font-size: 23px !important;
-}
-
-.sectionSubtitle {
-    font-size: 11px !important;
-}
-
-.emptyIcon {
-    font-size: 25px !important;
-}
-
-.empty {
-    font-size: 12px !important;
-}
-
-/* Yönetim kartları */
-.managementHeading h2 {
-    font-size: 19px !important;
-}
-
-.managementHeading p {
-    font-size: 12px !important;
-}
-
-.quickIcon {
-    font-size: 21px !important;
-}
-
-.quickText b {
-    font-size: 12px !important;
-}
-
-.quickText span {
-    font-size: 10px !important;
-}
-
-/* Veri yönetimi */
-.backupHeading h2 {
-    font-size: 18px !important;
-}
-
-.backupHeading p {
-    font-size: 11px !important;
 }
