@@ -238,7 +238,7 @@ select:focus-visible {
 .stat strong {
     display: block;
     color: var(--navy);
-    font-size: 25px;
+    font-size: 28px;
     font-weight: 800;
     line-height: 1.1;
 }
