@@ -1361,6 +1361,50 @@ function setWorkerStatus(
 
 /* EKİP EKRANI */
 
+function changeCalendarMonth(amount) {
+    teamDate = new Date(teamDate.getFullYear(), teamDate.getMonth() + amount, 1);
+    renderTeamDetail();
+}
+
+function selectCalendarDay(day) {
+    teamDate = new Date(teamDate.getFullYear(), teamDate.getMonth(), day);
+    renderTeamDetail();
+}
+
+function renderMonthlyCalendar(workers) {
+    const grid = document.getElementById("monthlyCalendarGrid");
+    const title = document.getElementById("calendarMonthTitle");
+    if (!grid || !title) return;
+
+    const year = teamDate.getFullYear();
+    const month = teamDate.getMonth();
+    title.textContent = new Intl.DateTimeFormat("tr-TR", { month: "long", year: "numeric" }).format(teamDate);
+
+    const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    const selectedDay = teamDate.getDate();
+    let cells = "";
+    for (let i = 0; i < firstWeekday; i++) cells += '<div class="calendarEmpty" aria-hidden="true"></div>';
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const counts = { worked: 0, absent: 0, leave: 0 };
+        workers.forEach(worker => {
+            const status = worker.attendance && worker.attendance[key];
+            if (status === "worked" || status === "half") counts.worked++;
+            else if (status === "absent") counts.absent++;
+            else if (status === "leave" || status === "report") counts.leave++;
+        });
+        const hasRecord = counts.worked + counts.absent + counts.leave > 0;
+        const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+        const classes = ["calendarDay", day === selectedDay ? "selected" : "", isToday ? "today" : ""].filter(Boolean).join(" ");
+        const dots = hasRecord ? `<span class="calendarDots">${counts.worked ? '<i class="dotWorked"></i>' : ''}${counts.absent ? '<i class="dotAbsent"></i>' : ''}${counts.leave ? '<i class="dotLeave"></i>' : ''}</span>` : '<span class="calendarDots"></span>';
+        cells += `<button type="button" class="${classes}" onclick="selectCalendarDay(${day})" aria-label="${day} ${title.textContent}">${day}${dots}</button>`;
+    }
+    grid.innerHTML = cells;
+}
+
 function renderTeamDetail(){
 
     const team =
@@ -1385,6 +1429,8 @@ function renderTeamDetail(){
             currentTeamId
         );
 
+
+    renderMonthlyCalendar(workers);
 
     let worked=0;
     let absent=0;
