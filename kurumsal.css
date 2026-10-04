@@ -1569,3 +1569,34 @@ body.darkTheme .settingsDanger h3, body.darkTheme .settingsDanger p { color: #ff
 .resetSuccessNotice { position: fixed; z-index: 10000; left: 50%; bottom: 24px; transform: translateX(-50%); background: #167647; color: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 8px 24px #0003; font-weight: 600; }
 body.darkTheme .resetConfirmBox p { color: #c2cede; }
 body.darkTheme .resetConfirmBox .resetConfirmHint { background: #3b3021; color: #ffe0a3; }
+
+
+/* AYLIK PUANTAJ TAKVİMİ */
+.monthlyCalendar { margin: 0 0 14px; padding: 12px; border: 1px solid var(--border); border-radius: 15px; background: #fff; }
+.calendarHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.calendarHeader strong { color: var(--navy); font-size: 16px; text-transform: capitalize; }
+.calendarHeader button { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 9px; background: #f3f6fb; color: var(--navy); font-size: 22px; cursor: pointer; }
+.calendarWeekdays, .calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.calendarWeekdays { margin-bottom: 5px; }
+.calendarWeekdays span { text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; padding: 4px 0; }
+.calendarDay { min-width: 0; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 5px 2px; border: 1px solid transparent; border-radius: 9px; background: #f6f8fb; color: #24364b; font: inherit; font-size: 13px; cursor: pointer; }
+.calendarDay.selected { background: #eaf2ff; border-color: var(--blue); color: #1459c7; font-weight: 800; }
+.calendarDay.today:not(.selected) { border-color: #8baee8; }
+.calendarEmpty { min-height: 48px; }
+.calendarDots { display: flex; align-items: center; justify-content: center; gap: 3px; min-height: 5px; }
+.calendarDots i, .calendarLegend i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; }
+.dotWorked, .legendWorked { background: #16a36a; }
+.dotAbsent, .legendAbsent { background: #e5484d; }
+.dotLeave, .legendLeave { background: #e4a126; }
+.calendarLegend { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; color: var(--muted); font-size: 10px; }
+.calendarLegend span { display: inline-flex; align-items: center; gap: 5px; }
+body.darkTheme .monthlyCalendar { background: #1b293b; border-color: #2d3b50; }
+body.darkTheme .calendarHeader strong { color: #e8eef8; }
+body.darkTheme .calendarHeader button { background: #26364b; color: #e8eef8; border-color: #3b4b62; }
+body.darkTheme .calendarDay { background: #25354a; color: #e8eef8; }
+body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; border-color: #5b9aff; }
+@media (max-width: 420px) {
+ .calendarWeekdays, .calendarGrid { gap: 3px; }
+ .calendarDay { min-height: 42px; border-radius: 7px; }
+ .calendarLegend { gap: 8px; }
+}
