@@ -1600,3 +1600,13 @@ body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; bord
  .calendarDay { min-height: 42px; border-radius: 7px; }
  .calendarLegend { gap: 8px; }
 }
+
+/* Gelişmiş raporlama */
+.reportToolbar{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:16px 0;padding:14px;background:#f4f7fb;border-radius:12px}
+.reportToolbar label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:#34516f}
+.reportToolbar select,.reportToolbar button{min-height:40px;padding:8px 12px;border:1px solid #d8e1ed;border-radius:9px;background:#fff;color:#173b61;font:inherit}
+.reportToolbar button{background:#1769ee;color:#fff;border-color:#1769ee;font-weight:700;cursor:pointer}
+.reportTable{width:100%;border-collapse:collapse;text-align:left;margin:12px 0}
+.reportTable th,.reportTable td{padding:11px;border-bottom:1px solid #e3eaf2}
+.reportTable th{background:#edf3fa;color:#173b61}
+@media print{body *{visibility:hidden!important}.reportsScreen,.reportsScreen *{visibility:visible!important}.reportsScreen{position:absolute!important;inset:0!important;width:100%!important;background:#fff!important}.reportsHeader,.reportTabs,.reportBack,.noPrint{display:none!important}#printableReport,#printableReport *{visibility:visible!important}#printableReport{position:absolute;left:0;top:0;width:100%;padding:12px;color:#111}.reportTable th,.reportTable td{border:1px solid #999!important} }
