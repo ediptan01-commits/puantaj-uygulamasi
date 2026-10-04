@@ -778,6 +778,117 @@ function renderStatDetails() {
     panel.appendChild(list);
 }
 
+/* ÖDEME GEÇMİŞİ */
+
+let paymentHistoryMode = "paid";
+
+function moneyTL(value) {
+    return (Number(value) || 0).toLocaleString("tr-TR", {
+        style: "currency", currency: "TRY", maximumFractionDigits: 2
+    });
+}
+
+function getWorkerPaymentSummary(worker) {
+    let earnedDays = 0;
+    Object.values(worker.attendance || {}).forEach(status => {
+        if (status === "worked") earnedDays += 1;
+        else if (status === "half") earnedDays += 0.5;
+    });
+
+    const earned = earnedDays * (Number(worker.dailyWage) || 0);
+    const paid = (data.payments || [])
+        .filter(payment => payment.workerId === worker.id)
+        .reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+
+    return { earnedDays, earned, paid, remaining: earned - paid };
+}
+
+function showPaymentHistory(mode) {
+    paymentHistoryMode = mode;
+    renderPaymentHistory();
+}
+
+function renderPaymentHistory() {
+    const content = document.getElementById("paymentHistoryContent");
+    if (!content) return;
+
+    const paidTab = document.getElementById("paidTab");
+    const remainingTab = document.getElementById("remainingTab");
+    if (paidTab) {
+        paidTab.classList.toggle("active", paymentHistoryMode === "paid");
+        paidTab.setAttribute("aria-selected", String(paymentHistoryMode === "paid"));
+    }
+    if (remainingTab) {
+        remainingTab.classList.toggle("active", paymentHistoryMode === "remaining");
+        remainingTab.setAttribute("aria-selected", String(paymentHistoryMode === "remaining"));
+    }
+
+    if (paymentHistoryMode === "paid") {
+        const payments = [...(data.payments || [])].sort((a, b) =>
+            new Date(b.date || 0) - new Date(a.date || 0)
+        );
+        const totalPaid = payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+        let html = `<div class="paymentSummary"><span>Toplam yapılan ödeme</span><strong>${moneyTL(totalPaid)}</strong></div>`;
+        if (!payments.length) {
+            html += `<div class="empty"><div class="emptyIcon">💸</div>Henüz ödeme kaydı bulunmuyor.</div>`;
+        } else {
+            html += `<div class="paymentRows">`;
+            payments.forEach(payment => {
+                const worker = data.workers.find(w => w.id === payment.workerId);
+                const date = payment.date ? new Date(payment.date).toLocaleDateString("tr-TR") : "Tarih yok";
+                const type = payment.type === "advance" ? "Avans" : "Maaş / Yevmiye";
+                html += `<article class="paymentRow">
+                    <div class="paymentRowMain">
+                        <strong>${escapePaymentText(worker ? worker.name : "Silinmiş çalışan")}</strong>
+                        <span>${type} · ${date}</span>
+                        ${payment.note ? `<small>${escapePaymentText(payment.note)}</small>` : ""}
+                    </div>
+                    <b>${moneyTL(payment.amount)}</b>
+                </article>`;
+            });
+            html += `</div>`;
+        }
+        content.innerHTML = html;
+        return;
+    }
+
+    const summaries = data.workers.map(worker => ({
+        worker, ...getWorkerPaymentSummary(worker)
+    }));
+    const totalEarned = summaries.reduce((sum, item) => sum + item.earned, 0);
+    const totalPaid = summaries.reduce((sum, item) => sum + item.paid, 0);
+    const totalRemaining = summaries.reduce((sum, item) => sum + item.remaining, 0);
+
+    let html = `<div class="paymentTotals">
+        <div><span>Hak edilen</span><strong>${moneyTL(totalEarned)}</strong></div>
+        <div><span>Ödenen</span><strong>${moneyTL(totalPaid)}</strong></div>
+        <div class="remainingTotal"><span>Kalan</span><strong>${moneyTL(totalRemaining)}</strong></div>
+    </div>`;
+    if (!summaries.length) {
+        html += `<div class="empty"><div class="emptyIcon">👷</div>Önce çalışan ekleyin.</div>`;
+    } else {
+        html += `<div class="paymentRows">`;
+        summaries.forEach(item => {
+            html += `<article class="paymentRow remainingRow">
+                <div class="paymentRowMain">
+                    <strong>${escapePaymentText(item.worker.name)}</strong>
+                    <span>${item.earnedDays.toLocaleString("tr-TR")} gün · Yevmiye ${moneyTL(item.worker.dailyWage)}</span>
+                    <small>Hak edilen: ${moneyTL(item.earned)} · Ödenen: ${moneyTL(item.paid)}</small>
+                </div>
+                <b class="${item.remaining > 0 ? "debtAmount" : "settledAmount"}">${moneyTL(item.remaining)}</b>
+            </article>`;
+        });
+        html += `</div>`;
+    }
+    content.innerHTML = html;
+}
+
+function escapePaymentText(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+}
+
 function render(){
 
     document
@@ -824,6 +935,7 @@ function render(){
     renderSites();
 
     renderTeams();
+    renderPaymentHistory();
 
 }
 
