@@ -1437,3 +1437,96 @@ select:focus-visible {
 .statDetails ul { margin: 0; padding-left: 20px; }
 .statDetails li { padding: 5px 0; }
 .statDetails p { margin: 0; }
+
+/* ÖDEME GEÇMİŞİ */
+.paymentHistoryCard { padding-bottom: 2px; }
+.paymentHistoryHeading {
+    padding: 14px 15px 11px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.paymentHistoryTabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    padding: 0 12px 11px;
+    border-bottom: 1px solid #edf0f5;
+}
+.paymentHistoryTabs button {
+    min-height: 39px;
+    padding: 8px 5px;
+    border: 1px solid #dfe7f2;
+    border-radius: 10px;
+    background: #f6f8fb;
+    color: #52627a;
+    font-size: 12px;
+    font-weight: 700;
+}
+.paymentHistoryTabs button.active {
+    border-color: #1769ed;
+    background: #eaf2ff;
+    color: #1456c4;
+}
+.paymentHistoryContent { padding: 0 12px 10px; }
+.paymentSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 3px;
+    color: #5f6f84;
+    font-size: 12px;
+}
+.paymentSummary strong { color: #102744; font-size: 16px; }
+.paymentTotals {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    padding: 12px 0;
+}
+.paymentTotals div {
+    min-width: 0;
+    padding: 10px 7px;
+    border: 1px solid #e7ebf2;
+    border-radius: 11px;
+    background: #f8fafc;
+}
+.paymentTotals span {
+    display: block;
+    margin-bottom: 5px;
+    color: #66758b;
+    font-size: 10px;
+}
+.paymentTotals strong {
+    display: block;
+    color: #172b49;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+.paymentTotals .remainingTotal { background: #fff8eb; border-color: #f2e4c5; }
+.paymentTotals .remainingTotal strong { color: #a45a00; }
+.paymentRows { border-top: 1px solid #edf0f5; }
+.paymentRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 3px;
+    border-bottom: 1px solid #edf0f5;
+}
+.paymentRow:last-child { border-bottom: 0; }
+.paymentRowMain { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.paymentRowMain strong { color: #172b49; font-size: 13px; overflow-wrap: anywhere; }
+.paymentRowMain span, .paymentRowMain small { color: #66758b; font-size: 11px; overflow-wrap: anywhere; }
+.paymentRow > b { flex-shrink: 0; color: #1769ed; font-size: 13px; text-align: right; }
+.paymentRow > b.debtAmount { color: #b45309; }
+.paymentRow > b.settledAmount { color: #16803c; }
+@media (max-width: 420px) {
+    .paymentHistoryHeading { align-items: flex-start; }
+    .paymentHistoryHeading .add { padding: 8px; font-size: 11px; }
+    .paymentTotals { gap: 5px; }
+    .paymentTotals div { padding: 9px 5px; }
+    .paymentTotals strong { font-size: 11px; }
+}
