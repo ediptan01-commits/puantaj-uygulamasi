@@ -1530,3 +1530,31 @@ select:focus-visible {
     .paymentTotals div { padding: 9px 5px; }
     .paymentTotals strong { font-size: 11px; }
 }
+
+
+/* AYARLAR PENCERESİ */
+.settingsBox { max-height: 88vh; overflow-y: auto; }
+.settingsSection { display: grid; gap: 7px; margin: 16px 0; }
+.settingsSection h3 { margin: 0 0 4px; font-size: 15px; color: var(--text, #123); }
+.settingsSection label { font-size: 13px; color: var(--muted); font-weight: 600; }
+.settingsSection input, .settingsSection textarea, .settingsSection select {
+    box-sizing: border-box; width: 100%; border: 1px solid var(--border, #d9e2ef);
+    border-radius: 10px; padding: 11px 12px; font: inherit; color: #172b4d; background: #fff;
+}
+.settingsSection textarea { resize: vertical; }
+body.darkTheme { --bg: #101827; --border: #2d3b50; --muted: #a8b5c8; color: #e8eef8; background: var(--bg); }
+body.darkTheme .card, body.darkTheme .panel, body.darkTheme .modalBox,
+body.darkTheme .stat, body.darkTheme .teamDetailTop { background: #1b293b; color: #e8eef8; border-color: #2d3b50; }
+body.darkTheme .settingsSection input, body.darkTheme .settingsSection textarea,
+body.darkTheme .settingsSection select { background: #101827; color: #e8eef8; border-color: #3b4b62; }
+body.darkTheme .company { filter: brightness(.88); }
+body.darkTheme .paymentRow, body.darkTheme .workerRow { border-color: #2d3b50; }
+
+
+/* VERİ SIFIRLAMA */
+.settingsDanger { margin: 18px 0 8px; padding: 13px; border: 1px solid #f2b7b7; border-radius: 12px; background: #fff7f7; }
+.settingsDanger h3 { margin: 0 0 6px; color: #9f2222; font-size: 15px; }
+.settingsDanger p { margin: 0 0 10px; color: #7b4545; font-size: 12px; line-height: 1.45; }
+.resetDataBtn { border: 0; border-radius: 9px; padding: 10px 13px; background: #d92d20; color: white; font-weight: 700; cursor: pointer; }
+body.darkTheme .settingsDanger { background: #342126; border-color: #754047; }
+body.darkTheme .settingsDanger h3, body.darkTheme .settingsDanger p { color: #ffd9d9; }
