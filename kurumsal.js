@@ -891,6 +891,40 @@ function renderSites() {
     }).join("");
 }
 
+function renderTeams() {
+    const box = document.getElementById("teams");
+    if (!box) return;
+
+    if (data.teams.length === 0) {
+        box.innerHTML = `
+            <div class="empty" style="grid-column:1/3;">
+                <div class="emptyIcon">👷</div>
+                Henüz ekip eklenmedi.
+            </div>
+        `;
+        return;
+    }
+
+    box.innerHTML = data.teams.map(team => {
+        const workerCount = data.workers.filter(
+            worker => worker.teamId === team.id
+        ).length;
+
+        const site = data.sites.find(
+            item => item.id === team.siteId
+        );
+
+        return `
+            <div class="team"
+                 onclick="openTeam('${team.id}')">
+                <div class="teamIcon">👷</div>
+                <div class="teamName">${team.name}</div>
+                <div class="teamCount">${workerCount} çalışan</div>
+                <div>${site ? site.name : "Şantiye belirtilmedi"}</div>
+            </div>
+        `;
+    }).join("");
+}
    
 function deleteSite(siteId) {
     const site = data.sites.find(s => s.id === siteId);
