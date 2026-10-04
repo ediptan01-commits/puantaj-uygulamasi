@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -159,6 +158,25 @@
                 <span class="quickArrow">›</span>
             </button>
         </div>
+    </section>
+
+    <!-- ÖDEME GEÇMİŞİ -->
+    <section class="card paymentHistoryCard">
+        <div class="paymentHistoryHeading">
+            <div class="sectionHeading">
+                <div class="sectionIcon">💳</div>
+                <div>
+                    <div class="cardTitle">Ödeme Geçmişi</div>
+                    <p class="sectionSubtitle">Yapılan ve kalan ödemeleri takip edin</p>
+                </div>
+            </div>
+            <button class="add" type="button" onclick="openModal('payment')">＋ Ödeme Ekle</button>
+        </div>
+        <div class="paymentHistoryTabs" role="tablist" aria-label="Ödeme geçmişi">
+            <button type="button" id="paidTab" class="active" onclick="showPaymentHistory('paid')">Yapılan Ödemeler</button>
+            <button type="button" id="remainingTab" onclick="showPaymentHistory('remaining')">Kalan Ödemeler</button>
+        </div>
+        <div id="paymentHistoryContent" class="paymentHistoryContent"></div>
     </section>
 
     <!-- VERİ YÖNETİMİ -->
