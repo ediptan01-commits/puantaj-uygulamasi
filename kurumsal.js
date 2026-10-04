@@ -809,24 +809,96 @@ function deleteSite(siteId) {
     const site = data.sites.find(s => s.id === siteId);
     if (!site) return;
 
-    const onay = confirm(
-        site.name + " şantiyesini silmek istediğine emin misin?"
-    );
+    showDeleteConfirm(site.name, function () {
+        data.sites = data.sites.filter(s => s.id !== siteId);
+        data.teams = data.teams.filter(t => t.siteId !== siteId);
 
-    if (!onay) return;
+        if (selectedSiteId === siteId) {
+            selectedSiteId = null;
+        }
 
-    data.sites = data.sites.filter(s => s.id !== siteId);
-    data.teams = data.teams.filter(t => t.siteId !== siteId);
-
-    if (selectedSiteId === siteId) {
-        selectedSiteId = null;
-    }
-
-    saveData();
-    renderSites();
-    renderTeams();
+        saveData();
+        renderSites();
+        renderTeams();
+    });
 }
 
+function showDeleteConfirm(siteName, onConfirm) {
+    const overlay = document.createElement("div");
+
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: 20px;
+    `;
+
+    const modal = document.createElement("div");
+
+    modal.style.cssText = `
+        background: #fff;
+        color: #222;
+        padding: 24px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 360px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    `;
+
+    const title = document.createElement("h3");
+    title.textContent = "Kurumsal Puantaj";
+
+    const message = document.createElement("p");
+    message.textContent = `"${siteName}" şantiyesini silmek istediğine emin misin?`;
+
+    const buttons = document.createElement("div");
+    buttons.style.cssText = `
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    `;
+
+    const cancel = document.createElement("button");
+    cancel.textContent = "Vazgeç";
+
+    const confirm = document.createElement("button");
+    confirm.textContent = "Şantiyeyi Sil";
+
+    cancel.style.cssText = `
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #ddd;
+        color: #222;
+    `;
+
+    confirm.style.cssText = `
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #d93025;
+        color: white;
+    `;
+
+    cancel.onclick = () => overlay.remove();
+
+    confirm.onclick = () => {
+        overlay.remove();
+        onConfirm();
+    };
+
+    buttons.append(cancel, confirm);
+    modal.append(title, message, buttons);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+}
    function toggleSite(siteId) {
     selectedSiteId =
         selectedSiteId === siteId ? null : siteId;
