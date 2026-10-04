@@ -629,6 +629,23 @@ function toggleStatPanel(type) {
     });
 }
 
+function deleteWorker(workerId) {
+    const worker = data.workers.find(w => w.id === workerId);
+    if (!worker) return;
+
+    showDeleteConfirm(worker.name, function () {
+        data.workers = data.workers.filter(w => w.id !== workerId);
+        data.payments = data.payments.filter(p => p.workerId !== workerId);
+
+        saveData();
+        render();
+
+        if (currentTeamId) {
+            renderTeamDetail();
+        }
+    });
+}
+
 function renderStatDetails() {
     const panel = document.getElementById("statDetails");
     if (!panel) return;
@@ -640,42 +657,87 @@ function renderStatDetails() {
     }
 
     let heading = "";
-    let rows = [];
+    let workers = [];
 
     if (openStatPanel === "sites") {
         heading = "Şantiyeler";
-        rows = data.sites.map(site => site.name);
-    } else if (openStatPanel === "teams") {
+        panel.innerHTML = "";
+        const rows = data.sites.map(site => site.name);
+        workers = [];
+
+        // Şantiye listesi
+        panel.hidden = false;
+        const title = document.createElement("h3");
+        title.textContent = heading;
+        panel.appendChild(title);
+
+        if (rows.length === 0) {
+            panel.append("Henüz kayıt bulunmuyor.");
+            return;
+        }
+
+        const list = document.createElement("ul");
+        rows.forEach(name => {
+            const item = document.createElement("li");
+            item.textContent = name;
+            list.appendChild(item);
+        });
+        panel.appendChild(list);
+        return;
+    }
+
+    if (openStatPanel === "teams") {
         heading = "Ekipler";
-        rows = data.teams.map(team => {
+        panel.innerHTML = "";
+        const rows = data.teams.map(team => {
             const site = data.sites.find(item => item.id === team.siteId);
             return team.name + " — " + (site ? site.name : "Şantiye belirtilmedi");
         });
-    } else if (openStatPanel === "workers") {
-        heading = "Çalışanlar";
-        rows = data.workers.map(worker => {
-            const team = data.teams.find(item => item.id === worker.teamId);
-            return worker.name + " — " + (team ? team.name : "Ekip yok");
+
+        panel.hidden = false;
+        const title = document.createElement("h3");
+        title.textContent = heading;
+        panel.appendChild(title);
+
+        if (rows.length === 0) {
+            panel.append("Henüz kayıt bulunmuyor.");
+            return;
+        }
+
+        const list = document.createElement("ul");
+        rows.forEach(name => {
+            const item = document.createElement("li");
+            item.textContent = name;
+            list.appendChild(item);
         });
+        panel.appendChild(list);
+        return;
+    }
+
+    if (openStatPanel === "workers") {
+        heading = "Çalışanlar";
+        workers = data.workers;
     } else if (openStatPanel === "today") {
         heading = "Bugün Çalışanlar";
+
         const today = new Date();
         const todayKey = today.getFullYear() + "-" +
             String(today.getMonth() + 1).padStart(2, "0") + "-" +
             String(today.getDate()).padStart(2, "0");
 
-        rows = data.workers
-            .filter(worker => (worker.attendance && worker.attendance[todayKey] || "worked") === "worked")
-            .map(worker => worker.name);
+        workers = data.workers.filter(worker =>
+            (worker.attendance && worker.attendance[todayKey] || "worked") === "worked"
+        );
     }
 
     panel.hidden = false;
     panel.innerHTML = "";
+
     const title = document.createElement("h3");
     title.textContent = heading;
     panel.appendChild(title);
 
-    if (rows.length === 0) {
+    if (workers.length === 0) {
         const empty = document.createElement("p");
         empty.textContent = "Henüz kayıt bulunmuyor.";
         panel.appendChild(empty);
@@ -683,11 +745,35 @@ function renderStatDetails() {
     }
 
     const list = document.createElement("ul");
-    rows.forEach(row => {
+
+    workers.forEach(worker => {
         const item = document.createElement("li");
-        item.textContent = row;
+        item.style.marginBottom = "12px";
+
+        const name = document.createElement("span");
+        name.textContent = worker.name;
+
+        const team = data.teams.find(t => t.id === worker.teamId);
+        if (openStatPanel === "workers") {
+            name.textContent += " — " + (team ? team.name : "Ekip yok");
+        }
+
+        const button = document.createElement("button");
+        button.textContent = "🗑️ Sil";
+        button.style.cssText = `
+            margin-left: 12px;
+            padding: 5px 10px;
+            border: 0;
+            border-radius: 7px;
+            background: #d93025;
+            color: white;
+        `;
+        button.onclick = () => deleteWorker(worker.id);
+
+        item.append(name, button);
         list.appendChild(item);
     });
+
     panel.appendChild(list);
 }
 
@@ -853,8 +939,7 @@ function showDeleteConfirm(siteName, onConfirm) {
     const title = document.createElement("h3");
     title.textContent = "Kurumsal Puantaj";
 
-    const message = document.createElement("p");
-    message.textContent = `"${siteName}" şantiyesini silmek istediğine emin misin?`;
+    message.textContent = `"${siteName}" kaydını silmek istediğine emin misin?`;
 
     const buttons = document.createElement("div");
     buttons.style.cssText = `
@@ -867,7 +952,7 @@ function showDeleteConfirm(siteName, onConfirm) {
     cancel.textContent = "Vazgeç";
 
     const confirm = document.createElement("button");
-    confirm.textContent = "Şantiyeyi Sil";
+    confirm.textContent = "Sil";
 
     cancel.style.cssText = `
         flex: 1;
