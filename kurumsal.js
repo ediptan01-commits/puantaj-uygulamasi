@@ -1672,16 +1672,34 @@ function restoreData(event) {
       }
 
       const confirmed = confirm(
-        "Mevcut veriler yedekteki verilerle değiştirilecek. Devam edilsin mi?"
+        "Yedekteki kayıtlar mevcut verilerinizle birleştirilecek. Mevcut kayıtlar silinmeyecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak. Devam edilsin mi?"
       );
 
       if (!confirmed) return;
 
-      data = restored;
+      // Yedek verilerini mevcut kayıtlarla birleştir; mevcut kayıtları silme.
+      const merged = { ...data };
+      ["sites", "teams", "workers", "payments"].forEach(key => {
+        const currentItems = Array.isArray(data[key]) ? data[key] : [];
+        const backupItems = Array.isArray(restored[key]) ? restored[key] : [];
+        const seen = new Set(currentItems.map(item => item && item.id).filter(id => id != null).map(String));
+        const additions = backupItems.filter(item => {
+          if (!item || item.id == null) return true;
+          const id = String(item.id);
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+        merged[key] = [...currentItems, ...additions];
+      });
+      // Yedekteki şirket adı yalnızca mevcut ad boşsa alınır.
+      if (!merged.company) merged.company = restored.company || "";
+
+      data = merged;
       saveData();
       render();
 
-      alert("Yedek başarıyla geri yüklendi.");
+      alert("Yedek verileri mevcut kayıtlar korunarak birleştirildi.");
     } catch (error) {
       
         alert("Hata: " + error.message);
