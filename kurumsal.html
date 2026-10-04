@@ -356,6 +356,20 @@
     </div>
 </div>
 
+<!-- VERİ SIFIRLAMA ONAY PENCERESİ -->
+<div id="resetConfirmModal" class="modal resetConfirmModal" role="dialog" aria-modal="true" aria-labelledby="resetConfirmTitle">
+    <div class="modalBox resetConfirmBox">
+        <div class="resetConfirmIcon">⚠️</div>
+        <div class="modalTitle" id="resetConfirmTitle">Tüm veriler silinsin mi?</div>
+        <p>Şirket, şantiye, ekip, çalışan, puantaj ve ödeme kayıtlarının tamamı silinecek. Bu işlem geri alınamaz.</p>
+        <p class="resetConfirmHint">Devam etmeden önce yedek aldığınızdan emin olun.</p>
+        <div class="buttons">
+            <button type="button" class="cancel" onclick="closeResetConfirm()">Vazgeç</button>
+            <button type="button" class="resetConfirmAction" onclick="confirmResetAllData()">Evet, verileri sil</button>
+        </div>
+    </div>
+</div>
+
 <!-- AYARLAR PENCERESİ -->
 <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modalBox settingsBox">
@@ -421,10 +435,14 @@
     }
 
     function resetAllData() {
-        const confirmed = confirm("DİKKAT: Şirket, şantiye, ekip, çalışan, puantaj ve ödeme kayıtlarının tamamı silinecek. Bu işlem geri alınamaz. Önce yedek aldığınızdan emin misiniz?");
-        if (!confirmed) return;
-        const second = confirm("Son kez onaylıyor musunuz? Tüm uygulama kayıtları kalıcı olarak sıfırlanacak.");
-        if (!second) return;
+        document.getElementById("resetConfirmModal").classList.add("show");
+    }
+
+    function closeResetConfirm() {
+        document.getElementById("resetConfirmModal").classList.remove("show");
+    }
+
+    function confirmResetAllData() {
         data = { company: "", sites: [], teams: [], workers: [], payments: [] };
         saveData();
         const prefs = JSON.parse(localStorage.getItem("kurumsalPuantajSettings") || "{}");
@@ -436,8 +454,14 @@
         document.getElementById("settingsPhone").value = "";
         document.getElementById("settingsAddress").value = "";
         render();
+        closeResetConfirm();
         closeSettings();
-        alert("Tüm veriler sıfırlandı.");
+        // Uygulama içi mesaj; tarayıcıya ait yerel uyarı penceresi gösterilmez.
+        const notice = document.createElement("div");
+        notice.className = "resetSuccessNotice";
+        notice.textContent = "Tüm veriler sıfırlandı.";
+        document.body.appendChild(notice);
+        setTimeout(() => notice.remove(), 3500);
     }
 
     function applyPuantajTheme(theme) {
