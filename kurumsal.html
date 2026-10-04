@@ -251,6 +251,23 @@
             <button onclick="changeTeamDate(1)" aria-label="Sonraki gün">›</button>
         </div>
 
+        <section class="monthlyCalendar" aria-label="Aylık puantaj takvimi">
+            <div class="calendarHeader">
+                <button type="button" onclick="changeCalendarMonth(-1)" aria-label="Önceki ay">‹</button>
+                <strong id="calendarMonthTitle">Ay Yıl</strong>
+                <button type="button" onclick="changeCalendarMonth(1)" aria-label="Sonraki ay">›</button>
+            </div>
+            <div class="calendarWeekdays" aria-hidden="true">
+                <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+            </div>
+            <div id="monthlyCalendarGrid" class="calendarGrid"></div>
+            <div class="calendarLegend">
+                <span><i class="legendWorked"></i> Çalıştı</span>
+                <span><i class="legendAbsent"></i> Gelmedi</span>
+                <span><i class="legendLeave"></i> İzinli / Raporlu</span>
+            </div>
+        </section>
+
         <div class="workerSection">
             <div class="workerHead">
                 <b>Çalışanlar</b>
