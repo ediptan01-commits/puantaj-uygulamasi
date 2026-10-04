@@ -357,12 +357,35 @@
 </div>
 
 <!-- AYARLAR PENCERESİ -->
-<div id="settingsModal" class="modal">
-    <div class="modalBox">
-        <div class="modalTitle">Ayarlar</div>
-        <p class="settingsDescription">Uygulama ayarları</p>
+<div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modalBox settingsBox">
+        <div class="modalTitle" id="settingsTitle">⚙️ Ayarlar</div>
+        <p class="settingsDescription">Şirket bilgilerinizi ve uygulama görünümünü düzenleyin.</p>
+        <div class="settingsSection">
+            <h3>🏢 Şirket Bilgileri</h3>
+            <label for="settingsCompany">Şirket adı</label>
+            <input id="settingsCompany" type="text" placeholder="Şirket adı">
+            <label for="settingsPhone">Telefon</label>
+            <input id="settingsPhone" type="tel" placeholder="05xx xxx xx xx">
+            <label for="settingsAddress">Adres</label>
+            <textarea id="settingsAddress" rows="2" placeholder="Şirket adresi"></textarea>
+        </div>
+        <div class="settingsSection">
+            <h3>🎨 Görünüm</h3>
+            <label for="settingsTheme">Tema</label>
+            <select id="settingsTheme">
+                <option value="light">Açık tema</option>
+                <option value="dark">Koyu tema</option>
+            </select>
+        </div>
+        <div class="settingsDanger">
+            <h3>🧹 Veri Yönetimi</h3>
+            <p>Uygulamadaki puantaj, ekip, şantiye ve ödeme kayıtlarını tamamen temizler.</p>
+            <button type="button" class="resetDataBtn" onclick="resetAllData()">Tüm Verileri Sıfırla</button>
+        </div>
         <div class="buttons">
-            <button class="cancel" onclick="closeSettings()">Kapat</button>
+            <button class="cancel" onclick="closeSettings()">İptal</button>
+            <button class="save" onclick="saveSettings()">Kaydet</button>
         </div>
     </div>
 </div>
@@ -370,12 +393,63 @@
 <script src="kurumsal.js"></script>
 <script>
     function openSettings() {
+        const prefs = JSON.parse(localStorage.getItem("kurumsalPuantajSettings") || "{}");
+        document.getElementById("settingsCompany").value = prefs.companyName || data.company || "";
+        document.getElementById("settingsPhone").value = prefs.phone || "";
+        document.getElementById("settingsAddress").value = prefs.address || "";
+        document.getElementById("settingsTheme").value = prefs.theme || "light";
         document.getElementById("settingsModal").classList.add("show");
     }
 
     function closeSettings() {
         document.getElementById("settingsModal").classList.remove("show");
     }
+
+    function saveSettings() {
+        const prefs = {
+            companyName: document.getElementById("settingsCompany").value.trim(),
+            phone: document.getElementById("settingsPhone").value.trim(),
+            address: document.getElementById("settingsAddress").value.trim(),
+            theme: document.getElementById("settingsTheme").value
+        };
+        localStorage.setItem("kurumsalPuantajSettings", JSON.stringify(prefs));
+        data.company = prefs.companyName;
+        saveData();
+        applyPuantajTheme(prefs.theme);
+        render();
+        closeSettings();
+    }
+
+    function resetAllData() {
+        const confirmed = confirm("DİKKAT: Şirket, şantiye, ekip, çalışan, puantaj ve ödeme kayıtlarının tamamı silinecek. Bu işlem geri alınamaz. Önce yedek aldığınızdan emin misiniz?");
+        if (!confirmed) return;
+        const second = confirm("Son kez onaylıyor musunuz? Tüm uygulama kayıtları kalıcı olarak sıfırlanacak.");
+        if (!second) return;
+        data = { company: "", sites: [], teams: [], workers: [], payments: [] };
+        saveData();
+        const prefs = JSON.parse(localStorage.getItem("kurumsalPuantajSettings") || "{}");
+        prefs.companyName = "";
+        prefs.phone = "";
+        prefs.address = "";
+        localStorage.setItem("kurumsalPuantajSettings", JSON.stringify(prefs));
+        document.getElementById("settingsCompany").value = "";
+        document.getElementById("settingsPhone").value = "";
+        document.getElementById("settingsAddress").value = "";
+        render();
+        closeSettings();
+        alert("Tüm veriler sıfırlandı.");
+    }
+
+    function applyPuantajTheme(theme) {
+        document.body.classList.toggle("darkTheme", theme === "dark");
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = theme === "dark" ? "#101827" : "#f2f5fb";
+    }
+
+    (function initPuantajSettings() {
+        const prefs = JSON.parse(localStorage.getItem("kurumsalPuantajSettings") || "{}");
+        applyPuantajTheme(prefs.theme || "light");
+    })();
 </script>
 </body>
 </html>
