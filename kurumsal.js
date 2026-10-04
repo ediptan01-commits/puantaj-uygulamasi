@@ -921,11 +921,28 @@ function renderTeams() {
                 <div class="teamName">${team.name}</div>
                 <div class="teamCount">${workerCount} çalışan</div>
                 <div>${site ? site.name : "Şantiye belirtilmedi"}</div>
+                <button onclick="event.stopPropagation(); deleteTeam('${team.id}')">
+    🗑️ Sil
+</button>
             </div>
         `;
     }).join("");
 }
-   
+
+function deleteTeam(teamId) {
+    const team = data.teams.find(t => t.id === teamId);
+    if (!team) return;
+
+    showDeleteConfirm(team.name, function () {
+        data.teams = data.teams.filter(t => t.id !== teamId);
+
+        saveData();
+        renderTeams();
+        renderTeamSelect();
+        renderStats();
+    });
+}
+
 function deleteSite(siteId) {
     const site = data.sites.find(s => s.id === siteId);
     if (!site) return;
