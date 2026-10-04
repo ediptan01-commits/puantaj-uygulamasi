@@ -29,150 +29,65 @@ function closeReports(){
     document.getElementById("mainScreen").style.display = "block";
 }
 
-function showReport(type){
+let activeReportType = "monthly";
+let reportSiteFilter = "all";
+let reportTeamFilter = "all";
 
+function showReport(type){
+    activeReportType = type;
     const content = document.getElementById("reportContent");
     const today = new Date();
-
-    let startDate = new Date(today);
-    let endDate = new Date(today);
-
+    let startDate = new Date(today), endDate = new Date(today);
     if(type === "weekly"){
         const day = today.getDay();
         const diff = day === 0 ? -6 : 1 - day;
-
         startDate.setDate(today.getDate() + diff);
-        endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 6);
+        endDate = new Date(startDate); endDate.setDate(startDate.getDate() + 6);
     }
-
     if(type === "monthly"){
         startDate = new Date(today.getFullYear(), today.getMonth(), 1);
         endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     }
-
-    const dateKey = date =>
-        date.getFullYear() + "-" +
-        String(date.getMonth() + 1).padStart(2,"0") + "-" +
-        String(date.getDate()).padStart(2,"0");
-
-    const startKey = dateKey(startDate);
-    const endKey = dateKey(endDate);
-
+    const dateKey = date => date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+    const startKey=dateKey(startDate), endKey=dateKey(endDate);
     const workerTotals = data.workers.map(worker => {
-        let days = 0;
-
-        Object.entries(worker.attendance || {}).forEach(([date, status]) => {
-            if(date >= startKey && date <= endKey && status === "worked"){
-                days++;
-            }
+        const team=data.teams.find(t=>t.id===worker.teamId);
+        const site=team?data.sites.find(s=>s.id===team.siteId):null;
+        const statuses={worked:0,absent:0,leave:0};
+        Object.entries(worker.attendance||{}).forEach(([date,status])=>{
+            if(date>=startKey && date<=endKey && Object.prototype.hasOwnProperty.call(statuses,status)) statuses[status]++;
         });
-
-        const team = data.teams.find(t => t.id === worker.teamId);
-        const site = team
-            ? data.sites.find(s => s.id === team.siteId)
-            : null;
-
-        return {
-            name: worker.name,
-            team: team ? team.name : "Ekip yok",
-            site: site ? site.name : "Şantiye yok",
-            days: days
-        };
-    });
-
-    const teamTotals = {};
-    const siteTotals = {};
-
-    workerTotals.forEach(worker => {
-        if(!teamTotals[worker.team]){
-            teamTotals[worker.team] = 0;
-        }
-
-        if(!siteTotals[worker.site]){
-            siteTotals[worker.site] = 0;
-        }
-
-        teamTotals[worker.team] += worker.days;
-        siteTotals[worker.site] += worker.days;
-    });
-
-    const totalDays = workerTotals.reduce(
-        (sum, worker) => sum + worker.days, 0
-    );
-
-    const periodName = {
-        daily: "Günlük",
-        weekly: "Haftalık",
-        monthly: "Aylık"
-    };
-
-    let html = `
-        <h3>${periodName[type]} Raporu</h3>
-        <p>${startKey} - ${endKey}</p>
-
-        <h2>Toplam çalışma günü: ${totalDays}</h2>
-
-        <h3>Çalışan Raporu</h3>
-        <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;text-align:left">
-            <tr>
-                <th>Çalışan</th>
-                <th>Ekip</th>
-                <th>Şantiye</th>
-                <th>Gün</th>
-            </tr>
-    `;
-
-    workerTotals.forEach(worker => {
-        html += `
-            <tr>
-                <td>${worker.name}</td>
-                <td>${worker.team}</td>
-                <td>${worker.site}</td>
-                <td>${worker.days}</td>
-            </tr>
-        `;
-    });
-
-    html += `
-        </table>
-        </div>
-
-        <h3>Ekip Raporu</h3>
-        <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;text-align:left">
-            <tr>
-                <th>Ekip</th>
-                <th>Toplam gün</th>
-            </tr>
-    `;
-
-    Object.entries(teamTotals).forEach(([name, days]) => {
-        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
-    });
-
-    html += `
-        </table>
-        </div>
-
-        <h3>Şantiye Raporu</h3>
-        <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;text-align:left">
-            <tr>
-                <th>Şantiye</th>
-                <th>Toplam gün</th>
-            </tr>
-    `;
-
-    Object.entries(siteTotals).forEach(([name, days]) => {
-        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
-    });
-
-    html += `</table></div>`;
-
-    content.innerHTML = html;
+        return {name:worker.name,team:team?team.name:"Ekip yok",site:site?site.name:"Şantiye yok",teamId:team?team.id:"",siteId:site?site.id:"",...statuses,days:statuses.worked+statuses.absent+statuses.leave};
+    }).filter(w=>(reportSiteFilter==="all"||w.siteId===reportSiteFilter)&&(reportTeamFilter==="all"||w.teamId===reportTeamFilter));
+    const totalDays=workerTotals.reduce((sum,w)=>sum+w.worked,0);
+    const siteOptions=data.sites.map(x=>`<option value="${x.id}" ${reportSiteFilter===x.id?'selected':''}>${x.name}</option>`).join("");
+    const teamOptions=data.teams.filter(t=>reportSiteFilter==="all"||t.siteId===reportSiteFilter).map(x=>`<option value="${x.id}" ${reportTeamFilter===x.id?'selected':''}>${x.name}</option>`).join("");
+    const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const company=esc(data.company||"Şirket Adı");
+    const rows=workerTotals.map(w=>`<tr><td>${esc(w.name)}</td><td>${esc(w.team)}</td><td>${esc(w.site)}</td><td>${w.worked}</td><td>${w.absent}</td><td>${w.leave}</td></tr>`).join("");
+    content.innerHTML=`<div class="reportToolbar noPrint">
+        <label>Şantiye <select id="reportSiteFilter"><option value="all">Tüm şantiyeler</option>${siteOptions}</select></label>
+        <label>Ekip <select id="reportTeamFilter"><option value="all">Tüm ekipler</option>${teamOptions}</select></label>
+        <button type="button" onclick="exportReportCSV()">Excel'e Aktar</button>
+        <button type="button" onclick="printReport()">PDF / Yazdır</button>
+    </div>
+    <div id="printableReport" class="printableReport">
+      <h2>${company}</h2><h3>${type==='daily'?'Günlük':type==='weekly'?'Haftalık':'Aylık'} Puantaj Raporu</h3>
+      <p>${startKey} – ${endKey}</p><h3>Toplam çalışılan gün: ${totalDays}</h3>
+      <div style="overflow-x:auto"><table class="reportTable"><thead><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli / Raporlu</th></tr></thead><tbody>${rows||'<tr><td colspan="6">Bu filtrelerde kayıt bulunamadı.</td></tr>'}</tbody></table></div>
+    </div>`;
+    document.getElementById("reportSiteFilter").addEventListener("change",e=>{reportSiteFilter=e.target.value;reportTeamFilter="all";showReport(activeReportType);});
+    document.getElementById("reportTeamFilter").addEventListener("change",e=>{reportTeamFilter=e.target.value;showReport(activeReportType);});
 }
+
+function exportReportCSV(){
+    const table=document.querySelector("#printableReport table"); if(!table)return;
+    const csv=[...table.rows].map(row=>[...row.cells].map(cell=>'"'+cell.innerText.replace(/"/g,'""')+'"').join(";")).join("\r\n");
+    const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);const link=document.createElement("a");
+    link.href=url;link.download="puantaj-raporu-"+activeReportType+".csv";document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+}
+function printReport(){window.print();}
 
 function loadData(){
 
