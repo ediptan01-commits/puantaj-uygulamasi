@@ -759,6 +759,7 @@ function renderStatDetails() {
         }
 
         const button = document.createElement("button");
+        button.type= "button"
         button.textContent = "🗑️ Sil";
         button.style.cssText = `
             margin-left: 12px;
