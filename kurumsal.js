@@ -939,7 +939,7 @@ function showDeleteConfirm(siteName, onConfirm) {
 
     const title = document.createElement("h3");
     title.textContent = "Kurumsal Puantaj";
-
+    const message = document.createElement("p");
     message.textContent = `"${siteName}" kaydını silmek istediğine emin misin?`;
 
     const buttons = document.createElement("div");
