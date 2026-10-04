@@ -1558,3 +1558,14 @@ body.darkTheme .paymentRow, body.darkTheme .workerRow { border-color: #2d3b50; }
 .resetDataBtn { border: 0; border-radius: 9px; padding: 10px 13px; background: #d92d20; color: white; font-weight: 700; cursor: pointer; }
 body.darkTheme .settingsDanger { background: #342126; border-color: #754047; }
 body.darkTheme .settingsDanger h3, body.darkTheme .settingsDanger p { color: #ffd9d9; }
+
+
+/* UYGULAMA İÇİ VERİ SIFIRLAMA ONAYI */
+.resetConfirmBox { text-align: left; max-width: 440px; }
+.resetConfirmIcon { font-size: 30px; margin-bottom: 8px; }
+.resetConfirmBox p { color: var(--muted, #667085); font-size: 14px; line-height: 1.5; }
+.resetConfirmBox .resetConfirmHint { padding: 10px 12px; background: #fff7e8; color: #8a4b08; border-radius: 9px; font-size: 12px; }
+.resetConfirmAction { background: #d92d20; color: #fff; border: 0; border-radius: 9px; padding: 11px 14px; font-weight: 700; cursor: pointer; }
+.resetSuccessNotice { position: fixed; z-index: 10000; left: 50%; bottom: 24px; transform: translateX(-50%); background: #167647; color: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 8px 24px #0003; font-weight: 600; }
+body.darkTheme .resetConfirmBox p { color: #c2cede; }
+body.darkTheme .resetConfirmBox .resetConfirmHint { background: #3b3021; color: #ffe0a3; }
