@@ -28,22 +28,32 @@
 <!-- ANA EKRAN -->
 <main class="main" id="mainScreen">
 
-    <!-- ŞİRKET KARTI -->
-    <section class="company">
-        <div class="companyDecoration" aria-hidden="true">🏗️</div>
-
-        <small>ŞİRKET</small>
-        <h1 id="companyName">Şirket Adı</h1>
-
-        <div class="companyEdit">
-            <input
-                id="companyInput"
-                type="text"
-                placeholder="Şirket adını yazın"
-                onchange="saveCompany()"
-                aria-label="Şirket adı"
-            >
-            <span class="editIcon" aria-hidden="true">✎</span>
+    <!-- BU AY ÖZETİ -->
+    <section class="monthlyOverview" aria-label="Bu ay özeti">
+        <div class="monthlyOverviewHead">
+            <div>
+                <small>PUANTAJ ÖZETİ</small>
+                <h2>Bu Ay</h2>
+            </div>
+            <div class="monthlyOverviewCompany" id="monthlyOverviewCompany">Kurumsal Puantaj</div>
+        </div>
+        <div class="monthlyOverviewGrid">
+            <div class="monthlyOverviewItem">
+                <span class="monthlyOverviewIcon">📅</span>
+                <div><small>ÇALIŞMA KAYDI</small><strong id="monthlyWorked">0</strong></div>
+            </div>
+            <div class="monthlyOverviewItem">
+                <span class="monthlyOverviewIcon">👷</span>
+                <div><small>TOPLAM PERSONEL</small><strong id="monthlyWorkers">0</strong></div>
+            </div>
+            <div class="monthlyOverviewItem">
+                <span class="monthlyOverviewIcon">🔴</span>
+                <div><small>DEVAMSIZLIK</small><strong id="monthlyAbsent">0</strong></div>
+            </div>
+            <div class="monthlyOverviewItem">
+                <span class="monthlyOverviewIcon">🟠</span>
+                <div><small>İZİN / RAPOR</small><strong id="monthlyLeave">0</strong></div>
+            </div>
         </div>
     </section>
 
