@@ -1567,6 +1567,17 @@ body.darkTheme .settingsDanger h3, body.darkTheme .settingsDanger p { color: #ff
 .resetConfirmBox .resetConfirmHint { padding: 10px 12px; background: #fff7e8; color: #8a4b08; border-radius: 9px; font-size: 12px; }
 .resetConfirmAction { background: #d92d20; color: #fff; border: 0; border-radius: 9px; padding: 11px 14px; font-weight: 700; cursor: pointer; }
 .resetSuccessNotice { position: fixed; z-index: 10000; left: 50%; bottom: 24px; transform: translateX(-50%); background: #167647; color: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 8px 24px #0003; font-weight: 600; }
+.appNoticeBox { text-align: center; max-width: 470px; }
+.appNoticeIcon { width: 48px; height: 48px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #fde7f5; color: #8f2f74; font-size: 25px; font-weight: 800; }
+.appNoticeMessage { margin: 0 0 18px; color: var(--muted, #667085); font-size: 14px; line-height: 1.55; white-space: pre-line; }
+.appNoticeBox .buttons { justify-content: center; }
+.appNoticeBox .buttons button { min-width: 112px; }
+.appNoticeModal.confirm .appNoticeIcon { background: #fff1db; color: #a15c00; }
+.appNoticeModal.error .appNoticeIcon { background: #ffe6e6; color: #b42318; }
+body.darkTheme .appNoticeBox { background: #171b26; }
+body.darkTheme .appNoticeMessage { color: #c2cede; }
+body.darkTheme .appNoticeIcon { background: #392638; color: #ffb3e1; }
+
 body.darkTheme .resetConfirmBox p { color: #c2cede; }
 body.darkTheme .resetConfirmBox .resetConfirmHint { background: #3b3021; color: #ffe0a3; }
 
@@ -1601,12 +1612,15 @@ body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; bord
  .calendarLegend { gap: 8px; }
 }
 
-/* Gelişmiş raporlama */
-.reportToolbar{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:16px 0;padding:14px;background:#f4f7fb;border-radius:12px}
-.reportToolbar label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:#34516f}
-.reportToolbar select,.reportToolbar button{min-height:40px;padding:8px 12px;border:1px solid #d8e1ed;border-radius:9px;background:#fff;color:#173b61;font:inherit}
-.reportToolbar button{background:#1769ee;color:#fff;border-color:#1769ee;font-weight:700;cursor:pointer}
-.reportTable{width:100%;border-collapse:collapse;text-align:left;margin:12px 0}
-.reportTable th,.reportTable td{padding:11px;border-bottom:1px solid #e3eaf2}
-.reportTable th{background:#edf3fa;color:#173b61}
-@media print{body *{visibility:hidden!important}.reportsScreen,.reportsScreen *{visibility:visible!important}.reportsScreen{position:absolute!important;inset:0!important;width:100%!important;background:#fff!important}.reportsHeader,.reportTabs,.reportBack,.noPrint{display:none!important}#printableReport,#printableReport *{visibility:visible!important}#printableReport{position:absolute;left:0;top:0;width:100%;padding:12px;color:#111}.reportTable th,.reportTable td{border:1px solid #999!important} }
+.quickPro{width:100%;border:1px solid #e4d8ff;background:linear-gradient(135deg,#fff,#f8f2ff);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;margin-top:10px}
+.quickPro .quickIcon{background:#efe3ff;border-radius:14px;width:44px;height:44px;display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+.proBox{max-width:430px}
+.proFeatureList{display:grid;gap:10px;background:#f7f8fb;border-radius:14px;padding:14px;margin:12px 0}
+.proStatus{padding:10px 12px;border-radius:12px;background:#eef6ff;font-weight:700;margin-bottom:12px}
+.proRestoreBtn{width:100%;border:0;background:transparent;text-decoration:underline;padding:10px;cursor:pointer}
+.proLegal{display:block;text-align:center;line-height:1.45;opacity:.7;margin-top:8px}
+.darkTheme .quickPro{background:#17132a;border-color:#3b2a56}
+.darkTheme .proFeatureList{background:#171d2a}
+.reportExportActions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.reportExportActions button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:#edf3ff}
+.darkTheme .reportExportActions button{background:#1e2a3b;color:#fff}
