@@ -770,6 +770,47 @@ body{
 
 
 /* ==================================================
+   YÖNETİM
+================================================== */
+.managementCard{
+    margin-bottom:28px;
+}
+.managementGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px;
+}
+.managementButton{
+    min-height:54px;
+    border:1px solid #b9a984;
+    border-radius:12px;
+    background:#e3d5b7;
+    color:#40372b;
+    font-size:13px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+}
+.managementButton span{display:inline-block;}
+.managementButton.danger{color:#a33f38;}
+.wideModal{max-width:520px;}
+.inlineAddRow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;}
+.managementList{display:grid;gap:8px;margin-top:14px;max-height:300px;overflow:auto;}
+.managementItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#e3d5b7;border-radius:12px;}
+.managementItem strong{font-size:14px;}
+.managementItem small{display:block;color:#786d5b;margin-top:3px;}
+.managementActions{display:flex;gap:6px;}
+.managementActions button{border:1px solid #b9a984;border-radius:9px;padding:7px 9px;background:#f4ead5;color:#40372b;cursor:pointer;}
+.managementActions .danger{color:#a33f38;}
+.selectInput{margin-top:9px;}
+.statusChoiceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0 12px;}
+.statusChoiceGrid button{border:1px solid #b9a984;border-radius:10px;padding:11px;background:#e3d5b7;color:#40372b;font-weight:bold;cursor:pointer;}
+.noteInput{min-height:90px;padding:12px;resize:vertical;}
+.dangerButton{border:0;border-radius:11px;padding:12px 20px;font-size:15px;font-weight:bold;background:#b94d46;color:white;}
+/* ==================================================
    TELEFON
 ================================================== */
 
@@ -804,6 +845,14 @@ body{
    /* ==========================================
    KOMPAKT TELEFON GÖRÜNÜMÜ
 ========================================== */
+
+.toast{
+    position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);
+    background:#3d3428;color:#fff;padding:11px 15px;border-radius:12px;
+    font-size:13px;opacity:0;visibility:hidden;transition:.2s;z-index:10001;
+    max-width:calc(100vw - 30px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.22);
+}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
 
 @media (max-width: 600px){
 
@@ -991,6 +1040,13 @@ body{
         padding:9px 15px;
         font-size:13px;
     }
+
+    .managementGrid{grid-template-columns:1fr 1fr;gap:6px;}
+    .managementButton{min-height:48px;font-size:11px;}
+    .wideModal{max-width:350px;}
+    .inlineAddRow{grid-template-columns:1fr;}
+    .managementItem{padding:8px;}
+    .managementActions button{padding:6px 8px;font-size:11px;}
 
 }
 
@@ -1245,6 +1301,15 @@ class="main">
 
             </div>
 
+            <div class="box">
+                <small>İzinli Gün</small>
+                <strong id="leaveCount">0</strong>
+            </div>
+
+            <div class="box">
+                <small>Raporlu Gün</small>
+                <strong id="reportCount">0</strong>
+            </div>
 
         </div>
 
@@ -1319,6 +1384,23 @@ class="main">
     </div>
 
 
+    <!-- ==================================================
+         YÖNETİM
+    ================================================== -->
+
+    <div class="card managementCard">
+        <div class="cardTitle">Yönetim</div>
+
+        <div class="managementGrid">
+            <button class="managementButton" onclick="openSiteManager()">🏗️<span>Şantiyeler</span></button>
+            <button class="managementButton" onclick="openEmployeeManager()">👷<span>Çalışanlar</span></button>
+            <button class="managementButton" onclick="downloadBackup()">💾<span>Yedek İndir</span></button>
+            <button class="managementButton" onclick="openRestorePicker()">📥<span>Yedekten Yükle</span></button>
+            <button class="managementButton danger" onclick="openResetDataModal()">🗑️<span>Verileri Sıfırla</span></button>
+        </div>
+    </div>
+
+
 </div>
 
 
@@ -1354,6 +1436,10 @@ class="modal">
         placeholder="Ad Soyad"
         autocomplete="off">
 
+        <select id="employeeSiteInput" class="employeeInput selectInput">
+            <option value="">Şantiye seçin (isteğe bağlı)</option>
+        </select>
+
 
         <div class="modalButtons">
 
@@ -1384,6 +1470,86 @@ class="modal">
 </div>
 
 
+
+<!-- ==================================================
+     ŞANTİYE YÖNETİMİ MODALI
+================================================== -->
+<div id="siteManagerModal" class="modal">
+    <div class="modalBox wideModal">
+        <div class="modalTitle">Şantiyeler</div>
+        <div class="modalText">Şantiyelerinizi ekleyin, düzenleyin veya silin.</div>
+        <div class="inlineAddRow">
+            <input id="siteNameInput" class="employeeInput" type="text" placeholder="Şantiye adı">
+            <button class="saveEmployeeButton" onclick="saveSite()">Ekle</button>
+        </div>
+        <div id="siteList" class="managementList"></div>
+        <div class="modalButtons"><button class="cancelButton" onclick="closeSiteManager()">Kapat</button></div>
+    </div>
+</div>
+
+<!-- ==================================================
+     ÇALIŞAN YÖNETİMİ MODALI
+================================================== -->
+<div id="employeeManagerModal" class="modal">
+    <div class="modalBox wideModal">
+        <div class="modalTitle">Çalışanlar</div>
+        <div class="modalText">Çalışanı düzenleyin veya silin.</div>
+        <div id="employeeManagerList" class="managementList"></div>
+        <div class="modalButtons"><button class="cancelButton" onclick="closeEmployeeManager()">Kapat</button></div>
+    </div>
+</div>
+
+<!-- ==================================================
+     GÜN DETAY MODALI
+================================================== -->
+<div id="dayModal" class="modal">
+    <div class="modalBox">
+        <div class="modalTitle" id="dayModalTitle">Gün</div>
+        <div class="modalText">Puantaj durumunu ve günlük notu belirleyin.</div>
+        <div class="statusChoiceGrid">
+            <button onclick="setDayStatusFromModal('worked')">✓ Çalıştı</button>
+            <button onclick="setDayStatusFromModal('absent')">✕ Gelmedi</button>
+            <button onclick="setDayStatusFromModal('leave')">İzinli</button>
+            <button onclick="setDayStatusFromModal('report')">Raporlu</button>
+            <button onclick="setDayStatusFromModal('half')">½ Gün</button>
+            <button onclick="setDayStatusFromModal(null)">Temizle</button>
+        </div>
+        <textarea id="dayNoteInput" class="employeeInput noteInput" placeholder="Günlük not (isteğe bağlı)"></textarea>
+        <div class="modalButtons">
+            <button class="cancelButton" onclick="closeDayModal()">Kapat</button>
+            <button class="saveEmployeeButton" onclick="saveDayNote()">Kaydet</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================
+     VERİ SIFIRLAMA MODALI
+================================================== -->
+<div id="resetDataModal" class="modal">
+    <div class="modalBox">
+        <div class="modalTitle">Tüm Verileri Sıfırla</div>
+        <div class="modalText">Tüm çalışan, şantiye, puantaj ve ödeme kayıtları silinecek. Bu işlem geri alınamaz.</div>
+        <div class="modalButtons">
+            <button class="cancelButton" onclick="closeResetDataModal()">İptal</button>
+            <button class="dangerButton" onclick="resetAllData()">Tümünü Sil</button>
+        </div>
+    </div>
+</div>
+
+<input id="restoreFileInput" type="file" accept="application/json,.json" style="display:none" onchange="restoreBackup(event)">
+
+<div id="confirmModal" class="modal">
+    <div class="modalBox">
+        <div class="modalTitle" id="confirmTitle">Onay</div>
+        <div class="modalText" id="confirmText"></div>
+        <div class="modalButtons">
+            <button class="cancelButton" onclick="closeConfirm()">İptal</button>
+            <button class="dangerButton" id="confirmActionButton">Devam Et</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script>
 
@@ -1429,6 +1595,11 @@ let employees = [];
 ================================================== */
 
 let currentEmployee = null;
+let sites = [];
+let activeDay = null;
+let editingEmployeeId = null;
+let editingSiteId = null;
+let confirmCallback = null;
 
 
 /* ==================================================
@@ -1437,59 +1608,31 @@ let currentEmployee = null;
 
 function loadData(){
 
-    const saved =
-        localStorage.getItem(
-            "puantajEmployees"
-        );
+    const saved = localStorage.getItem("puantajEmployees");
+    const savedSites = localStorage.getItem("puantajIndividualSites");
 
     if(saved){
-
-        try{
-
-            employees =
-                JSON.parse(saved);
-
-        }catch(error){
-
-            employees = [];
-
-        }
-
+        try { employees = JSON.parse(saved); } catch(error){ employees = []; }
     }
+    if(!Array.isArray(employees)) employees = [];
 
-    if(!Array.isArray(employees)){
-
-        employees = [];
-
+    if(savedSites){
+        try { sites = JSON.parse(savedSites); } catch(error){ sites = []; }
     }
+    if(!Array.isArray(sites)) sites = [];
 
     employees.forEach(employee => {
-
-        if(!employee.months){
-
-            employee.months = {};
-
-        }
-
+        if(!employee.months) employee.months = {};
+        if(typeof employee.siteId === "undefined") employee.siteId = "";
     });
 
+    saveData();
 }
 
 
-/* ==================================================
-   KAYDET
-================================================== */
-
 function saveData(){
-
-    localStorage.setItem(
-
-        "puantajEmployees",
-
-        JSON.stringify(employees)
-
-    );
-
+    localStorage.setItem("puantajEmployees", JSON.stringify(employees));
+    localStorage.setItem("puantajIndividualSites", JSON.stringify(sites));
 }
 
 
@@ -1592,8 +1735,9 @@ function renderEmployeeBar(){
         }
 
 
-        button.textContent =
-            employee.name;
+        button.textContent = employee.name;
+        const employeeSite = sites.find(site => site.id === employee.siteId);
+        if(employeeSite) button.title = employeeSite.name;
 
 
         button.onclick =
@@ -2099,122 +2243,59 @@ function createOtherDay(day){
    DURUM DEĞİŞTİR
 ================================================== */
 
-function changeDayStatus(day){
+function openDayModal(day){
+    if(!currentEmployee) return;
+    activeDay = day;
+    const data = getMonthData();
+    const dayData = data.days[String(day)] || {};
+    document.getElementById("dayModalTitle").textContent = `${day} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    document.getElementById("dayNoteInput").value = dayData.note || "";
+    document.getElementById("dayModal").classList.add("show");
+}
 
-    const data =
-        getMonthData();
+function closeDayModal(){
+    document.getElementById("dayModal").classList.remove("show");
+    activeDay = null;
+}
 
-
-    const key =
-        String(day);
-
-
-    const current =
-        data.days[key]
-        ?
-        data.days[key].status
-        :
-        null;
-
-
-    let next = null;
-
-
-    if(current === null){
-
-        next = "worked";
-
-    }
-
-    else if(
-        current === "worked"
-    ){
-
-        next = "absent";
-
-    }
-
-    else if(
-        current === "absent"
-    ){
-
-        next = "leave";
-
-    }
-
-    else if(
-        current === "leave"
-    ){
-
-        next = "report";
-
-    }
-
-    else if(
-        current === "report"
-    ){
-
-        next = "half";
-
-    }
-
-    else if(
-        current === "half"
-    ){
-
-        next = null;
-
-    }
-
-
+function setDayStatusFromModal(next){
+    if(!currentEmployee || activeDay === null) return;
+    const data = getMonthData();
+    const key = String(activeDay);
     if(next === null){
-
         delete data.days[key];
-
-    }
-
-    else{
-
-        let hours = 0;
-
-        let wage = 0;
-
-
-        if(next === "worked"){
-
-            hours = 8;
-
-            wage = 1;
-
-        }
-
-
-        if(next === "half"){
-
-            hours = 4;
-
-            wage = 0.5;
-
-        }
-
-
+    } else {
+        const previous = data.days[key] || {};
         data.days[key] = {
-
-            status:next,
-
-            hours:hours,
-
-            wage:wage
-
+            status: next,
+            hours: next === "worked" ? 8 : next === "half" ? 4 : 0,
+            wage: next === "worked" ? 1 : next === "half" ? 0.5 : 0,
+            note: previous.note || ""
         };
-
     }
-
-
     saveData();
-
     renderCalendar();
+    document.getElementById("dayNoteInput").value = (data.days[key] && data.days[key].note) || "";
+}
 
+function saveDayNote(){
+    if(!currentEmployee || activeDay === null) return;
+    const data = getMonthData();
+    const key = String(activeDay);
+    const note = document.getElementById("dayNoteInput").value.trim();
+    if(data.days[key]){
+        data.days[key].note = note;
+    } else if(note){
+        data.days[key] = {status:"note", hours:0, wage:0, note};
+    }
+    saveData();
+    closeDayModal();
+    renderCalendar();
+    showToast("Gün kaydı güncellendi.");
+}
+
+function changeDayStatus(day){
+    openDayModal(day);
 }
 
 
@@ -2288,6 +2369,8 @@ function updateSummary(){
     let wage = 0;
 
     let absent = 0;
+    let leave = 0;
+    let report = 0;
 
 
     Object.values(
@@ -2333,9 +2416,13 @@ function updateSummary(){
             day.status ===
             "absent"
         ){
-
             absent++;
-
+        }
+        else if(day.status === "leave"){
+            leave++;
+        }
+        else if(day.status === "report"){
+            report++;
         }
 
     });
@@ -2360,10 +2447,9 @@ function updateSummary(){
         wage;
 
 
-    document.getElementById(
-        "absent"
-    ).textContent =
-        absent;
+    document.getElementById("absent").textContent = absent;
+    document.getElementById("leaveCount").textContent = leave;
+    document.getElementById("reportCount").textContent = report;
 
 }
 
@@ -2457,109 +2543,210 @@ function paymentChanged(){
    ÇALIŞAN EKLE PENCERESİNİ AÇ
 ================================================== */
 
-function openAddEmployee(){
-
-    document.getElementById(
-        "addEmployeeModal"
-    ).classList.add(
-        "show"
-    );
-
-
-    document.getElementById(
-        "employeeNameInput"
-    ).value = "";
-
-
-    setTimeout(
-
-        function(){
-
-            document.getElementById(
-                "employeeNameInput"
-            ).focus();
-
-        },
-
-        100
-
-    );
-
+function populateEmployeeSiteSelect(selected){
+    const select = document.getElementById("employeeSiteInput");
+    if(!select) return;
+    select.innerHTML = '<option value="">Şantiye seçin (isteğe bağlı)</option>';
+    sites.forEach(site => {
+        const option = document.createElement("option");
+        option.value = site.id;
+        option.textContent = site.name;
+        option.selected = site.id === selected;
+        select.appendChild(option);
+    });
 }
 
-
-/* ==================================================
-   PENCEREYİ KAPAT
-================================================== */
+function openAddEmployee(editId = null){
+    editingEmployeeId = editId;
+    const modal = document.getElementById("addEmployeeModal");
+    const input = document.getElementById("employeeNameInput");
+    const button = modal.querySelector(".saveEmployeeButton");
+    const title = modal.querySelector(".modalTitle");
+    const text = modal.querySelector(".modalText");
+    if(editId){
+        const employee = employees.find(e => e.id === editId);
+        if(!employee) return;
+        title.textContent = "Çalışanı Düzenle";
+        text.textContent = "Çalışan bilgilerini güncelleyin.";
+        input.value = employee.name || "";
+        populateEmployeeSiteSelect(employee.siteId || "");
+        button.textContent = "Kaydet";
+    } else {
+        title.textContent = "Yeni Çalışan";
+        text.textContent = "Çalışanın adı ve soyadını girin";
+        input.value = "";
+        populateEmployeeSiteSelect("");
+        button.textContent = "Ekle";
+    }
+    modal.classList.add("show");
+    setTimeout(() => input.focus(), 100);
+}
 
 function closeAddEmployee(){
-
-    document.getElementById(
-        "addEmployeeModal"
-    ).classList.remove(
-        "show"
-    );
-
+    document.getElementById("addEmployeeModal").classList.remove("show");
+    editingEmployeeId = null;
 }
 
-
-/* ==================================================
-   YENİ ÇALIŞANI KAYDET
-================================================== */
-
 function saveNewEmployee(){
-
-    const input =
-        document.getElementById(
-            "employeeNameInput"
-        );
-
-
-    const name =
-        input.value.trim();
-
-
-    if(!name){
-
-        input.focus();
-
-        return;
-
+    const input = document.getElementById("employeeNameInput");
+    const name = input.value.trim();
+    if(!name){ showToast("Çalışan adı boş bırakılamaz."); input.focus(); return; }
+    const siteId = document.getElementById("employeeSiteInput").value || "";
+    if(editingEmployeeId){
+        const employee = employees.find(e => e.id === editingEmployeeId);
+        if(employee){ employee.name = name; employee.siteId = siteId; currentEmployee = employee; }
+        showToast("Çalışan güncellendi.");
+    } else {
+        const newEmployee = {id: Date.now(), name, siteId, months:{}};
+        employees.push(newEmployee);
+        currentEmployee = newEmployee;
+        showToast("Çalışan eklendi.");
     }
-
-
-    const newEmployee = {
-
-        id:
-            Date.now(),
-
-        name:
-            name,
-
-        months:{}
-
-    };
-
-
-    employees.push(
-        newEmployee
-    );
-
-
     saveData();
-
     closeAddEmployee();
+    if(currentEmployee) openEmployee(currentEmployee.id);
+    renderEmployeeManager();
+}
 
+function openEmployeeManager(){
+    renderEmployeeManager();
+    document.getElementById("employeeManagerModal").classList.add("show");
+}
+function closeEmployeeManager(){ document.getElementById("employeeManagerModal").classList.remove("show"); }
+function renderEmployeeManager(){
+    const list = document.getElementById("employeeManagerList");
+    if(!list) return;
+    if(!employees.length){ list.innerHTML = '<div class="managementItem"><strong>Henüz çalışan yok.</strong></div>'; return; }
+    list.innerHTML = employees.map(employee => {
+        const site = sites.find(s => s.id === employee.siteId);
+        return `<div class="managementItem"><div><strong>${escapeHtml(employee.name)}</strong><small>${escapeHtml(site ? site.name : "Şantiye atanmadı")}</small></div><div class="managementActions"><button onclick="openAddEmployee(${employee.id})">Düzenle</button><button class="danger" onclick="deleteIndividualEmployee(${employee.id})">Sil</button></div></div>`;
+    }).join("");
+}
+function deleteIndividualEmployee(id){
+    const employee = employees.find(e => e.id === id);
+    if(!employee) return;
+    openConfirm("Çalışanı Sil", `"${employee.name}" silinecek. Puantaj ve ödeme geçmişi de silinir. Devam edilsin mi?`, () => {
+        employees = employees.filter(e => e.id !== id);
+        if(currentEmployee && currentEmployee.id === id) currentEmployee = employees[0] || null;
+        saveData();
+        closeConfirm();
+        closeEmployeeManager();
+        if(currentEmployee) openEmployee(currentEmployee.id);
+        else { document.getElementById("employeeName").textContent = "Çalışan Yok"; renderEmployeeBar(); renderCalendar(); }
+        showToast("Çalışan silindi.");
+    });
+}
 
-    /*
-       Yeni eklenen çalışanı
-       otomatik seç
-    */
+function openSiteManager(){
+    editingSiteId = null;
+    document.getElementById("siteNameInput").value = "";
+    document.getElementById("siteManagerModal").classList.add("show");
+    renderSiteList();
+    setTimeout(() => document.getElementById("siteNameInput").focus(), 100);
+}
+function closeSiteManager(){ document.getElementById("siteManagerModal").classList.remove("show"); editingSiteId = null; }
+function saveSite(){
+    const input = document.getElementById("siteNameInput");
+    const name = input.value.trim();
+    if(!name){ showToast("Şantiye adı boş bırakılamaz."); return; }
+    if(editingSiteId){
+        const site = sites.find(s => s.id === editingSiteId);
+        if(site) site.name = name;
+        showToast("Şantiye güncellendi.");
+    } else {
+        sites.push({id:"site_"+Date.now(), name});
+        showToast("Şantiye eklendi.");
+    }
+    editingSiteId = null; input.value = ""; saveData(); renderSiteList();
+}
+function editSite(id){
+    const site = sites.find(s => s.id === id); if(!site) return;
+    editingSiteId = id;
+    document.getElementById("siteNameInput").value = site.name;
+    renderSiteList();
+    document.getElementById("siteNameInput").focus();
+}
+function deleteIndividualSite(id){
+    const site = sites.find(s => s.id === id); if(!site) return;
+    openConfirm("Şantiyeyi Sil", `"${site.name}" silinecek. Bu şantiyeye bağlı çalışanların kayıtları korunacak ancak şantiye bağlantıları kaldırılacak. Devam edilsin mi?`, () => {
+        sites = sites.filter(s => s.id !== id);
+        employees.forEach(e => { if(e.siteId === id) e.siteId = ""; });
+        saveData(); renderSiteList(); populateEmployeeSiteSelect(currentEmployee ? currentEmployee.siteId : ""); closeConfirm(); showToast("Şantiye silindi.");
+    });
+}
+function renderSiteList(){
+    const list = document.getElementById("siteList"); if(!list) return;
+    if(!sites.length){ list.innerHTML = '<div class="managementItem"><strong>Henüz şantiye yok.</strong></div>'; return; }
+    list.innerHTML = sites.map(site => {
+        const count = employees.filter(e => e.siteId === site.id).length;
+        return `<div class="managementItem"><div><strong>${escapeHtml(site.name)}</strong><small>${count} çalışan</small></div><div class="managementActions"><button onclick="editSite('${site.id}')">Düzenle</button><button class="danger" onclick="deleteIndividualSite('${site.id}')">Sil</button></div></div>`;
+    }).join("");
+}
 
-    openEmployee(
-        newEmployee.id
-    );
+function downloadBackup(){
+    const payload = {version:2, exportedAt:new Date().toISOString(), employees, sites};
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob); const a = document.createElement("a");
+    a.href=url; a.download=`bireysel-puantaj-yedek-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showToast("Yedek dosyası indirildi.");
+}
+function openRestorePicker(){ document.getElementById("restoreFileInput").click(); }
+function restoreBackup(event){
+    const file = event.target.files && event.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const payload = JSON.parse(reader.result);
+            const incomingEmployees = Array.isArray(payload) ? payload : payload.employees;
+            const incomingSites = Array.isArray(payload.sites) ? payload.sites : [];
+            if(!Array.isArray(incomingEmployees)) throw new Error("Geçersiz yedek");
+            openConfirm("Yedekten Geri Yükle", "Yedekteki kayıtlar mevcut verilerinizle birleştirilecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak. Devam edilsin mi?", () => {
+                const employeeIds = new Set(employees.map(e => e.id));
+                incomingEmployees.forEach(e => { if(e && !employeeIds.has(e.id)) employees.push(e); });
+                const siteIds = new Set(sites.map(s => s.id));
+                incomingSites.forEach(site => { if(site && !siteIds.has(site.id)) sites.push(site); });
+                saveData(); renderEmployeeBar(); if(currentEmployee) renderCalendar(); closeConfirm(); showToast("Yedek verileri mevcut kayıtlarla birleştirildi.");
+            });
+        } catch(e){ showToast("Yedek dosyası geçersiz."); }
+        event.target.value = "";
+    };
+    reader.readAsText(file);
+}
+function openResetDataModal(){ document.getElementById("resetDataModal").classList.add("show"); }
+function closeResetDataModal(){ document.getElementById("resetDataModal").classList.remove("show"); }
+function resetAllData(){
+    employees=[]; sites=[]; currentEmployee=null;
+    saveData();
+    closeResetDataModal();
+    document.getElementById("employeeName").textContent="Çalışan Yok";
+    document.getElementById("calendar").innerHTML="";
+    document.getElementById("monthName").textContent = monthNames[currentDate.getMonth()] + " " + currentDate.getFullYear();
+    document.getElementById("worked").textContent="0";
+    document.getElementById("hours").textContent="0 saat";
+    document.getElementById("wage").textContent="0";
+    document.getElementById("absent").textContent="0";
+    document.getElementById("leaveCount").textContent="0";
+    document.getElementById("reportCount").textContent="0";
+    document.getElementById("salary").value="";
+    document.getElementById("received").value="";
+    document.getElementById("balance").textContent="0 TL";
+    renderEmployeeBar();
+    showToast("Tüm bireysel veriler sıfırlandı.");
+}
 
+function openConfirm(title,text,callback){
+    document.getElementById("confirmTitle").textContent=title;
+    document.getElementById("confirmText").textContent=text;
+    confirmCallback=callback;
+    document.getElementById("confirmActionButton").onclick=function(){ if(confirmCallback) confirmCallback(); };
+    document.getElementById("confirmModal").classList.add("show");
+}
+function closeConfirm(){ confirmCallback=null; document.getElementById("confirmModal").classList.remove("show"); }
+function showToast(message){
+    const toast=document.getElementById("toast"); if(!toast) return;
+    toast.textContent=message; toast.classList.add("show");
+    clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>toast.classList.remove("show"),2400);
 }
 
 
@@ -2651,6 +2838,19 @@ function escapeHtml(value){
 }
 
 
+function updateSummaryEmpty(){
+    document.getElementById("worked").textContent="0";
+    document.getElementById("hours").textContent="0 saat";
+    document.getElementById("wage").textContent="0";
+    document.getElementById("absent").textContent="0";
+    document.getElementById("leaveCount").textContent="0";
+    document.getElementById("reportCount").textContent="0";
+    document.getElementById("salary").value="";
+    document.getElementById("received").value="";
+    document.getElementById("balance").textContent="0 TL";
+}
+
+
 /* ==================================================
    BAŞLAT
 ================================================== */
@@ -2670,14 +2870,8 @@ if (employees.length > 0) {
     }
 
     renderEmployeeBar();
-
-    if (typeof renderCalendar === "function") {
-        renderCalendar();
-    }
-
-    if (typeof renderSummary === "function") {
-        renderSummary();
-    }
+    document.getElementById("calendar").innerHTML = "";
+    updateSummaryEmpty();
 }
 
 </script>
