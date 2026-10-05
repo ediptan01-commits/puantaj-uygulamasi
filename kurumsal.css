@@ -1624,3 +1624,95 @@ body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; bord
 .reportExportActions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
 .reportExportActions button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:#edf3ff}
 .darkTheme .reportExportActions button{background:#1e2a3b;color:#fff}
+
+/* BU AY ÖZETİ */
+.monthlyOverview {
+    margin: 0 12px 12px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    background: linear-gradient(115deg, #12365b, #204b78 65%, #173b62);
+    color: #fff;
+    box-shadow: 0 5px 16px rgba(20, 50, 85, .12);
+}
+
+.monthlyOverviewHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.monthlyOverviewHead small {
+    display: block;
+    color: #d5e2f1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .6px;
+}
+
+.monthlyOverviewHead h2 {
+    margin: 3px 0 0;
+    color: #fff;
+    font-size: 24px;
+}
+
+.monthlyOverviewCompany {
+    max-width: 45%;
+    color: #d5e2f1;
+    font-size: 13px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.monthlyOverviewGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.monthlyOverviewItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 14px;
+    background: rgba(255,255,255,.09);
+}
+
+.monthlyOverviewIcon {
+    flex: 0 0 auto;
+    font-size: 21px;
+}
+
+.monthlyOverviewItem small {
+    display: block;
+    color: #d5e2f1;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.monthlyOverviewItem strong {
+    display: block;
+    margin-top: 2px;
+    color: #fff;
+    font-size: 20px;
+}
+
+@media (max-width: 760px) {
+    .monthlyOverviewGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .monthlyOverviewCompany { max-width: 42%; }
+}
+
+@media (max-width: 430px) {
+    .monthlyOverview { padding: 15px; }
+    .monthlyOverviewHead h2 { font-size: 21px; }
+    .monthlyOverviewItem { padding: 9px; }
+    .monthlyOverviewItem small { font-size: 8px; }
+    .monthlyOverviewItem strong { font-size: 18px; }
+}
