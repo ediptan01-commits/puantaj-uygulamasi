@@ -1009,20 +1009,36 @@ function escapePaymentText(value) {
     }[char]));
 }
 
+function renderMonthlyOverview(){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const prefix = `${year}-${String(month + 1).padStart(2, "0")}-`;
+    let worked = 0, absent = 0, leave = 0;
+
+    data.workers.forEach(worker => {
+        Object.entries(worker.attendance || {}).forEach(([date, status]) => {
+            if (!date.startsWith(prefix)) return;
+            if (status === "worked" || status === "half") worked++;
+            else if (status === "absent") absent++;
+            else if (status === "leave" || status === "report") leave++;
+        });
+    });
+
+    const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
+    set("monthlyWorked", worked);
+    set("monthlyWorkers", data.workers.length);
+    set("monthlyAbsent", absent);
+    set("monthlyLeave", leave);
+    set("monthlyOverviewCompany", data.company || "Kurumsal Puantaj");
+}
+
 function render(){
 
-    document
-    .getElementById("companyName")
-    .textContent=
-        data.company ||
-        "Şirket Adı";
-
-
-    document
-    .getElementById("companyInput")
-    .value=
-        data.company || "";
-
+    renderMonthlyOverview();
 
     document
     .getElementById("siteCount")
@@ -1796,9 +1812,11 @@ function showAppNotice(message, options = {}) {
   const cancel = document.getElementById("appNoticeCancel");
   const buttons = document.getElementById("appNoticeButtons");
   if (!modal || !title || !text || !icon || !ok || !cancel || !buttons) return;
+
   modal.classList.remove("confirm", "error");
   if (options.type === "confirm") modal.classList.add("confirm");
   if (options.type === "error") modal.classList.add("error");
+
   title.textContent = options.title || "Kurumsal Puantaj";
   text.textContent = message || "";
   icon.textContent = options.type === "error" ? "!" : (options.type === "confirm" ? "?" : "✓");
@@ -1806,12 +1824,17 @@ function showAppNotice(message, options = {}) {
   cancel.textContent = options.cancelText || "İptal";
   cancel.style.display = options.type === "confirm" ? "inline-flex" : "none";
   modal.classList.add("show");
+
   const close = () => {
     modal.classList.remove("show", "confirm", "error");
     ok.onclick = null;
     cancel.onclick = null;
   };
-  ok.onclick = () => { close(); if (typeof options.onOk === "function") options.onOk(); };
+
+  ok.onclick = () => {
+    close();
+    if (typeof options.onOk === "function") options.onOk();
+  };
   cancel.onclick = close;
 }
 
@@ -1820,14 +1843,23 @@ function backupData() {
     backupDate: new Date().toISOString(),
     data: data
   };
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
+
   link.href = url;
-  link.download = "puantaj-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
+  link.download = "puantaj-yedek-" +
+    new Date().toISOString().slice(0, 10) + ".json";
+
   document.body.appendChild(link);
   link.click();
   link.remove();
+
   URL.revokeObjectURL(url);
   showAppNotice("Yedek dosyanız başarıyla indirildi.", { title: "Yedekleme Tamamlandı" });
 }
@@ -1836,47 +1868,73 @@ function backupData() {
 function restoreData(event) {
   const file = event.target.files[0];
   if (!file) return;
+
   const reader = new FileReader();
+
   reader.onload = function(e) {
     try {
       const backup = JSON.parse(e.target.result);
       const restored = backup.data;
-      if (!restored || !Array.isArray(restored.sites) || !Array.isArray(restored.teams) || !Array.isArray(restored.workers) || !Array.isArray(restored.payments)) {
+        console.log("Yedek içeriği:", backup);
+
+      if (
+        !restored ||
+        !Array.isArray(restored.sites) ||
+        !Array.isArray(restored.teams) ||
+        !Array.isArray(restored.workers) ||
+        !Array.isArray(restored.payments)
+      ) {
         showAppNotice("Yedek dosyasının biçimi geçerli değil. Lütfen uygulamadan alınmış bir .json yedek dosyası seçin.", { title: "Yedek Dosyası Geçersiz", type: "error" });
         return;
       }
-      showAppNotice("Yedekteki kayıtlar mevcut verilerinizle birleştirilecek.\n\nMevcut kayıtlar silinmeyecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak.", {
-        title: "Yedekten Geri Yükle", type: "confirm", okText: "Devam Et", cancelText: "İptal",
-        onOk: () => restoreMergedData(restored)
-      });
+
+      showAppNotice(
+        "Yedekteki kayıtlar mevcut verilerinizle birleştirilecek.\n\nMevcut kayıtlar silinmeyecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak.",
+        {
+          title: "Yedekten Geri Yükle",
+          type: "confirm",
+          okText: "Devam Et",
+          cancelText: "İptal",
+          onOk: () => restoreMergedData(restored)
+        }
+      );
     } catch (error) {
       showAppNotice("Yedek yüklenirken bir hata oluştu.\n\n" + error.message, { title: "Yükleme Hatası", type: "error" });
     } finally {
       event.target.value = "";
     }
   };
+
   reader.readAsText(file);
 }
 
 function restoreMergedData(restored) {
-  const merged = { ...data };
-  ["sites", "teams", "workers", "payments"].forEach(key => {
-    const currentItems = Array.isArray(data[key]) ? data[key] : [];
-    const backupItems = Array.isArray(restored[key]) ? restored[key] : [];
-    const seen = new Set(currentItems.map(item => item && item.id).filter(id => id != null).map(String));
-    const additions = backupItems.filter(item => {
-      if (!item || item.id == null) return true;
-      const id = String(item.id);
-      if (seen.has(id)) return false;
-      seen.add(id);
-      return true;
-    });
-    merged[key] = [...currentItems, ...additions];
-  });
-  if (!merged.company) merged.company = restored.company || "";
-  data = merged;
-  saveData();
-  render();
-  showAppNotice("Yedek verileri mevcut kayıtlar korunarak başarıyla birleştirildi.", { title: "Geri Yükleme Tamamlandı" });
+      // Yedek verilerini mevcut kayıtlarla birleştir; mevcut kayıtları silme.
+      const merged = { ...data };
+      ["sites", "teams", "workers", "payments"].forEach(key => {
+        const currentItems = Array.isArray(data[key]) ? data[key] : [];
+        const backupItems = Array.isArray(restored[key]) ? restored[key] : [];
+        const seen = new Set(currentItems.map(item => item && item.id).filter(id => id != null).map(String));
+        const additions = backupItems.filter(item => {
+          if (!item || item.id == null) return true;
+          const id = String(item.id);
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+        merged[key] = [...currentItems, ...additions];
+      });
+      // Yedekteki şirket adı yalnızca mevcut ad boşsa alınır.
+      if (!merged.company) merged.company = restored.company || "";
+
+      data = merged;
+      saveData();
+      render();
+
+      showAppNotice("Yedek verileri mevcut kayıtlar korunarak başarıyla birleştirildi.", { title: "Geri Yükleme Tamamlandı" });
 }
 
+
+loadData();
+
+render();
