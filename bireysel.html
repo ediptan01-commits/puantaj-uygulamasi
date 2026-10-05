@@ -1084,9 +1084,7 @@ class="main">
 
             <b id="employeeName"></b>
 
-            <span>
-                Puantaj
-            </span>
+            <span id="employeeSiteName">Şantiye seçilmedi</span>
 
         </div>
 
@@ -1814,6 +1812,11 @@ function openEmployee(id){
     ).textContent =
         currentEmployee.name;
 
+    const site = sites.find(s => s.id === currentEmployee.siteId);
+    const siteNameElement = document.getElementById("employeeSiteName");
+    if (siteNameElement) {
+        siteNameElement.textContent = site ? site.name : "Şantiye seçilmedi";
+    }
 
     renderEmployeeBar();
 
