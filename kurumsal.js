@@ -17,6 +17,122 @@ let data = {
 let modalType="";
 
 
+const PRO_PRODUCT_ID = "kurumsal_puantaj_pro";
+let reportCache = { type: "monthly", startKey: "", endKey: "", rows: [] };
+
+function isProUnlocked(){
+    return localStorage.getItem("kurumsalPuantajPro") === "1";
+}
+
+function openPro(){
+    const modal = document.getElementById("proModal");
+    if(!modal) return;
+    updateProStatus();
+    modal.classList.add("show");
+}
+
+function closePro(){
+    const modal = document.getElementById("proModal");
+    if(modal) modal.classList.remove("show");
+}
+
+function updateProStatus(){
+    const el=document.getElementById("proStatus");
+    const buy=document.querySelector(".proBuyBtn");
+    if(!el) return;
+    if(isProUnlocked()){
+        el.textContent="✓ Pro aktif — tüm Pro özellikleri açık.";
+        if(buy) buy.style.display="none";
+    }else{
+        el.textContent="Pro henüz aktif değil.";
+        if(buy) buy.style.display="block";
+    }
+}
+
+function onProEntitlementChanged(active){
+    localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0");
+    updateProStatus();
+    if(active) closePro();
+}
+
+function buyPro(){
+    if(isProUnlocked()){ updateProStatus(); return; }
+    if(window.PlayBilling && typeof window.PlayBilling.buyPro === "function"){
+        window.PlayBilling.buyPro();
+    }else{
+        alert("Satın alma ekranı yalnızca Google Play sürümünde kullanılabilir.");
+    }
+}
+
+function restoreProPurchase(){
+    if(window.PlayBilling && typeof window.PlayBilling.restorePurchases === "function"){
+        window.PlayBilling.restorePurchases();
+    }else{
+        alert("Satın alma geri yükleme yalnızca Google Play sürümünde kullanılabilir.");
+    }
+}
+
+function requirePro(action){
+    if(isProUnlocked()) return true;
+    openPro();
+    return false;
+}
+
+function buildReportRows(type){
+    const today=new Date();
+    let start=new Date(today), end=new Date(today);
+    if(type==="weekly"){
+        const day=today.getDay(); const diff=day===0?-6:1-day;
+        start.setDate(today.getDate()+diff); end=new Date(start); end.setDate(start.getDate()+6);
+    } else if(type==="monthly"){
+        start=new Date(today.getFullYear(),today.getMonth(),1); end=new Date(today.getFullYear(),today.getMonth()+1,0);
+    }
+    const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const startKey=key(start), endKey=key(end);
+    const rows=data.workers.map(worker=>{
+        let worked=0, absent=0, leave=0, report=0;
+        Object.entries(worker.attendance||{}).forEach(([date,status])=>{
+            if(date<startKey||date>endKey) return;
+            if(status==="worked") worked++; else if(status==="absent") absent++; else if(status==="leave") leave++; else if(status==="report") report++;
+        });
+        const team=data.teams.find(t=>t.id===worker.teamId);
+        const site=team?data.sites.find(s=>s.id===team.siteId):null;
+        return {name:worker.name||"-",team:team?.name||"Ekip yok",site:site?.name||"Şantiye yok",worked,absent,leave,report};
+    });
+    reportCache={type,startKey,endKey,rows};
+    return reportCache;
+}
+
+function exportReportCSV(){
+    if(!requirePro()) return;
+    const r=buildReportRows(reportCache.type||"monthly");
+    const company=(data.company||"Kurumsal Puantaj").replaceAll('"','""');
+    const lines=[
+      ["Kurumsal Puantaj",company].map(v=>`"${v}"`).join(";"),
+      ["Dönem",`${r.startKey} - ${r.endKey}`].map(v=>`"${v}"`).join(";"),
+      "",
+      ["Çalışan","Ekip","Şantiye","Çalıştı","Gelmedi","İzinli","Raporlu"].join(";"),
+      ...r.rows.map(x=>[x.name,x.team,x.site,x.worked,x.absent,x.leave,x.report].map(v=>`"${String(v).replaceAll('"','""')}"`).join(";"))
+    ];
+    const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download=`puantaj-${r.type}-${r.startKey}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+function printReportPDF(){
+    if(!requirePro()) return;
+    const r=buildReportRows(reportCache.type||"monthly");
+    const company=(data.company||"Kurumsal Puantaj");
+    const rows=r.rows.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.team)}</td><td>${escapeHtml(x.site)}</td><td>${x.worked}</td><td>${x.absent}</td><td>${x.leave}</td><td>${x.report}</td></tr>`).join("");
+    const w=window.open("","_blank","width=1100,height=800");
+    if(!w){ alert("PDF/print penceresi tarayıcı tarafından engellendi. Açılır pencerelere izin verin."); return; }
+    w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Puantaj Raporu</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#18202a}h1{margin:0 0 6px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f1f3f6}@media print{button{display:none}}</style></head><body><h1>${escapeHtml(company)}</h1><p>Puantaj Raporu · ${escapeHtml(r.startKey)} - ${escapeHtml(r.endKey)}</p><button onclick="window.print()">PDF olarak kaydet / Yazdır</button><table><thead><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli</th><th>Raporlu</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
+}
+
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
+
+
 /* YÜKLE */
 
     function openReports(){
@@ -29,65 +145,154 @@ function closeReports(){
     document.getElementById("mainScreen").style.display = "block";
 }
 
-let activeReportType = "monthly";
-let reportSiteFilter = "all";
-let reportTeamFilter = "all";
-
 function showReport(type){
-    activeReportType = type;
+
     const content = document.getElementById("reportContent");
     const today = new Date();
-    let startDate = new Date(today), endDate = new Date(today);
+
+    let startDate = new Date(today);
+    let endDate = new Date(today);
+
     if(type === "weekly"){
         const day = today.getDay();
         const diff = day === 0 ? -6 : 1 - day;
+
         startDate.setDate(today.getDate() + diff);
-        endDate = new Date(startDate); endDate.setDate(startDate.getDate() + 6);
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
     }
+
     if(type === "monthly"){
         startDate = new Date(today.getFullYear(), today.getMonth(), 1);
         endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     }
-    const dateKey = date => date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
-    const startKey=dateKey(startDate), endKey=dateKey(endDate);
-    const workerTotals = data.workers.map(worker => {
-        const team=data.teams.find(t=>t.id===worker.teamId);
-        const site=team?data.sites.find(s=>s.id===team.siteId):null;
-        const statuses={worked:0,absent:0,leave:0};
-        Object.entries(worker.attendance||{}).forEach(([date,status])=>{
-            if(date>=startKey && date<=endKey && Object.prototype.hasOwnProperty.call(statuses,status)) statuses[status]++;
-        });
-        return {name:worker.name,team:team?team.name:"Ekip yok",site:site?site.name:"Şantiye yok",teamId:team?team.id:"",siteId:site?site.id:"",...statuses,days:statuses.worked+statuses.absent+statuses.leave};
-    }).filter(w=>(reportSiteFilter==="all"||w.siteId===reportSiteFilter)&&(reportTeamFilter==="all"||w.teamId===reportTeamFilter));
-    const totalDays=workerTotals.reduce((sum,w)=>sum+w.worked,0);
-    const siteOptions=data.sites.map(x=>`<option value="${x.id}" ${reportSiteFilter===x.id?'selected':''}>${x.name}</option>`).join("");
-    const teamOptions=data.teams.filter(t=>reportSiteFilter==="all"||t.siteId===reportSiteFilter).map(x=>`<option value="${x.id}" ${reportTeamFilter===x.id?'selected':''}>${x.name}</option>`).join("");
-    const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const company=esc(data.company||"Şirket Adı");
-    const rows=workerTotals.map(w=>`<tr><td>${esc(w.name)}</td><td>${esc(w.team)}</td><td>${esc(w.site)}</td><td>${w.worked}</td><td>${w.absent}</td><td>${w.leave}</td></tr>`).join("");
-    content.innerHTML=`<div class="reportToolbar noPrint">
-        <label>Şantiye <select id="reportSiteFilter"><option value="all">Tüm şantiyeler</option>${siteOptions}</select></label>
-        <label>Ekip <select id="reportTeamFilter"><option value="all">Tüm ekipler</option>${teamOptions}</select></label>
-        <button type="button" onclick="exportReportCSV()">Excel'e Aktar</button>
-        <button type="button" onclick="printReport()">PDF / Yazdır</button>
-    </div>
-    <div id="printableReport" class="printableReport">
-      <h2>${company}</h2><h3>${type==='daily'?'Günlük':type==='weekly'?'Haftalık':'Aylık'} Puantaj Raporu</h3>
-      <p>${startKey} – ${endKey}</p><h3>Toplam çalışılan gün: ${totalDays}</h3>
-      <div style="overflow-x:auto"><table class="reportTable"><thead><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli / Raporlu</th></tr></thead><tbody>${rows||'<tr><td colspan="6">Bu filtrelerde kayıt bulunamadı.</td></tr>'}</tbody></table></div>
-    </div>`;
-    document.getElementById("reportSiteFilter").addEventListener("change",e=>{reportSiteFilter=e.target.value;reportTeamFilter="all";showReport(activeReportType);});
-    document.getElementById("reportTeamFilter").addEventListener("change",e=>{reportTeamFilter=e.target.value;showReport(activeReportType);});
-}
 
-function exportReportCSV(){
-    const table=document.querySelector("#printableReport table"); if(!table)return;
-    const csv=[...table.rows].map(row=>[...row.cells].map(cell=>'"'+cell.innerText.replace(/"/g,'""')+'"').join(";")).join("\r\n");
-    const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
-    const url=URL.createObjectURL(blob);const link=document.createElement("a");
-    link.href=url;link.download="puantaj-raporu-"+activeReportType+".csv";document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+    const dateKey = date =>
+        date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2,"0") + "-" +
+        String(date.getDate()).padStart(2,"0");
+
+    const startKey = dateKey(startDate);
+    const endKey = dateKey(endDate);
+
+    const workerTotals = data.workers.map(worker => {
+        let days = 0;
+
+        Object.entries(worker.attendance || {}).forEach(([date, status]) => {
+            if(date >= startKey && date <= endKey && status === "worked"){
+                days++;
+            }
+        });
+
+        const team = data.teams.find(t => t.id === worker.teamId);
+        const site = team
+            ? data.sites.find(s => s.id === team.siteId)
+            : null;
+
+        return {
+            name: worker.name,
+            team: team ? team.name : "Ekip yok",
+            site: site ? site.name : "Şantiye yok",
+            days: days
+        };
+    });
+
+    const teamTotals = {};
+    const siteTotals = {};
+
+    workerTotals.forEach(worker => {
+        if(!teamTotals[worker.team]){
+            teamTotals[worker.team] = 0;
+        }
+
+        if(!siteTotals[worker.site]){
+            siteTotals[worker.site] = 0;
+        }
+
+        teamTotals[worker.team] += worker.days;
+        siteTotals[worker.site] += worker.days;
+    });
+
+    const totalDays = workerTotals.reduce(
+        (sum, worker) => sum + worker.days, 0
+    );
+
+    const periodName = {
+        daily: "Günlük",
+        weekly: "Haftalık",
+        monthly: "Aylık"
+    };
+
+    let html = `
+        <h3>${periodName[type]} Raporu</h3>
+        <p>${startKey} - ${endKey}</p>
+
+        <h2>Toplam çalışma günü: ${totalDays}</h2>
+
+        <h3>Çalışan Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Çalışan</th>
+                <th>Ekip</th>
+                <th>Şantiye</th>
+                <th>Gün</th>
+            </tr>
+    `;
+
+    workerTotals.forEach(worker => {
+        html += `
+            <tr>
+                <td>${worker.name}</td>
+                <td>${worker.team}</td>
+                <td>${worker.site}</td>
+                <td>${worker.days}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+        </table>
+        </div>
+
+        <h3>Ekip Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Ekip</th>
+                <th>Toplam gün</th>
+            </tr>
+    `;
+
+    Object.entries(teamTotals).forEach(([name, days]) => {
+        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+    });
+
+    html += `
+        </table>
+        </div>
+
+        <h3>Şantiye Raporu</h3>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;text-align:left">
+            <tr>
+                <th>Şantiye</th>
+                <th>Toplam gün</th>
+            </tr>
+    `;
+
+    Object.entries(siteTotals).forEach(([name, days]) => {
+        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+    });
+
+    html += `</table></div>
+        <div class="reportExportActions">
+            <button type="button" onclick="exportReportCSV()">📊 Excel / CSV Dışa Aktar</button>
+            <button type="button" onclick="printReportPDF()">📄 PDF / Yazdır</button>
+        </div>`;
+
+    content.innerHTML = html;
 }
-function printReport(){window.print();}
 
 function loadData(){
 
@@ -1582,97 +1787,96 @@ window.addEventListener("popstate", function () {
 
     
 // VERİLERİ YEDEKLE
+function showAppNotice(message, options = {}) {
+  const modal = document.getElementById("appNoticeModal");
+  const title = document.getElementById("appNoticeTitle");
+  const text = document.getElementById("appNoticeMessage");
+  const icon = document.getElementById("appNoticeIcon");
+  const ok = document.getElementById("appNoticeOk");
+  const cancel = document.getElementById("appNoticeCancel");
+  const buttons = document.getElementById("appNoticeButtons");
+  if (!modal || !title || !text || !icon || !ok || !cancel || !buttons) return;
+  modal.classList.remove("confirm", "error");
+  if (options.type === "confirm") modal.classList.add("confirm");
+  if (options.type === "error") modal.classList.add("error");
+  title.textContent = options.title || "Kurumsal Puantaj";
+  text.textContent = message || "";
+  icon.textContent = options.type === "error" ? "!" : (options.type === "confirm" ? "?" : "✓");
+  ok.textContent = options.okText || "Tamam";
+  cancel.textContent = options.cancelText || "İptal";
+  cancel.style.display = options.type === "confirm" ? "inline-flex" : "none";
+  modal.classList.add("show");
+  const close = () => {
+    modal.classList.remove("show", "confirm", "error");
+    ok.onclick = null;
+    cancel.onclick = null;
+  };
+  ok.onclick = () => { close(); if (typeof options.onOk === "function") options.onOk(); };
+  cancel.onclick = close;
+}
+
 function backupData() {
   const backup = {
     backupDate: new Date().toISOString(),
     data: data
   };
-
-  const blob = new Blob(
-    [JSON.stringify(backup, null, 2)],
-    { type: "application/json" }
-  );
-
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-
   link.href = url;
-  link.download = "puantaj-yedek-" +
-    new Date().toISOString().slice(0, 10) + ".json";
-
+  link.download = "puantaj-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
   document.body.appendChild(link);
   link.click();
   link.remove();
-
   URL.revokeObjectURL(url);
-  alert("Yedek dosyası indirildi.");
+  showAppNotice("Yedek dosyanız başarıyla indirildi.", { title: "Yedekleme Tamamlandı" });
 }
 
 // YEDEKTEN GERİ YÜKLE
 function restoreData(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
-
   reader.onload = function(e) {
     try {
       const backup = JSON.parse(e.target.result);
       const restored = backup.data;
-        console.log("Yedek içeriği:", backup);
-
-      if (
-        !restored ||
-        !Array.isArray(restored.sites) ||
-        !Array.isArray(restored.teams) ||
-        !Array.isArray(restored.workers) ||
-        !Array.isArray(restored.payments)
-      ) {
-        alert("Yedek dosyasının biçimi geçerli değil.");
+      if (!restored || !Array.isArray(restored.sites) || !Array.isArray(restored.teams) || !Array.isArray(restored.workers) || !Array.isArray(restored.payments)) {
+        showAppNotice("Yedek dosyasının biçimi geçerli değil. Lütfen uygulamadan alınmış bir .json yedek dosyası seçin.", { title: "Yedek Dosyası Geçersiz", type: "error" });
         return;
       }
-
-      const confirmed = confirm(
-        "Yedekteki kayıtlar mevcut verilerinizle birleştirilecek. Mevcut kayıtlar silinmeyecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak. Devam edilsin mi?"
-      );
-
-      if (!confirmed) return;
-
-      // Yedek verilerini mevcut kayıtlarla birleştir; mevcut kayıtları silme.
-      const merged = { ...data };
-      ["sites", "teams", "workers", "payments"].forEach(key => {
-        const currentItems = Array.isArray(data[key]) ? data[key] : [];
-        const backupItems = Array.isArray(restored[key]) ? restored[key] : [];
-        const seen = new Set(currentItems.map(item => item && item.id).filter(id => id != null).map(String));
-        const additions = backupItems.filter(item => {
-          if (!item || item.id == null) return true;
-          const id = String(item.id);
-          if (seen.has(id)) return false;
-          seen.add(id);
-          return true;
-        });
-        merged[key] = [...currentItems, ...additions];
+      showAppNotice("Yedekteki kayıtlar mevcut verilerinizle birleştirilecek.\n\nMevcut kayıtlar silinmeyecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak.", {
+        title: "Yedekten Geri Yükle", type: "confirm", okText: "Devam Et", cancelText: "İptal",
+        onOk: () => restoreMergedData(restored)
       });
-      // Yedekteki şirket adı yalnızca mevcut ad boşsa alınır.
-      if (!merged.company) merged.company = restored.company || "";
-
-      data = merged;
-      saveData();
-      render();
-
-      alert("Yedek verileri mevcut kayıtlar korunarak birleştirildi.");
     } catch (error) {
-      
-        alert("Hata: " + error.message);
+      showAppNotice("Yedek yüklenirken bir hata oluştu.\n\n" + error.message, { title: "Yükleme Hatası", type: "error" });
     } finally {
       event.target.value = "";
     }
   };
-
   reader.readAsText(file);
 }
 
+function restoreMergedData(restored) {
+  const merged = { ...data };
+  ["sites", "teams", "workers", "payments"].forEach(key => {
+    const currentItems = Array.isArray(data[key]) ? data[key] : [];
+    const backupItems = Array.isArray(restored[key]) ? restored[key] : [];
+    const seen = new Set(currentItems.map(item => item && item.id).filter(id => id != null).map(String));
+    const additions = backupItems.filter(item => {
+      if (!item || item.id == null) return true;
+      const id = String(item.id);
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+    merged[key] = [...currentItems, ...additions];
+  });
+  if (!merged.company) merged.company = restored.company || "";
+  data = merged;
+  saveData();
+  render();
+  showAppNotice("Yedek verileri mevcut kayıtlar korunarak başarıyla birleştirildi.", { title: "Geri Yükleme Tamamlandı" });
+}
 
-loadData();
-
-render();
