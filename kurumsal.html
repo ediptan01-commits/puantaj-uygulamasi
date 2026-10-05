@@ -157,6 +157,15 @@
                 </div>
                 <span class="quickArrow">›</span>
             </button>
+
+            <button class="quickPro" onclick="openPro()">
+                <div class="quickIcon">⭐</div>
+                <div class="quickText">
+                    <b>Kurumsal Pro</b>
+                    <span>PDF/Excel dışa aktarma ve Pro özellikleri</span>
+                </div>
+                <span class="quickArrow">›</span>
+            </button>
         </div>
     </section>
 
@@ -387,6 +396,40 @@
     </div>
 </div>
 
+<!-- UYGULAMA BİLDİRİM / ONAY PENCERESİ -->
+<div id="appNoticeModal" class="modal appNoticeModal" role="dialog" aria-modal="true" aria-labelledby="appNoticeTitle">
+    <div class="modalBox appNoticeBox">
+        <div id="appNoticeIcon" class="appNoticeIcon">✓</div>
+        <div class="modalTitle" id="appNoticeTitle">Kurumsal Puantaj</div>
+        <p id="appNoticeMessage" class="appNoticeMessage"></p>
+        <div id="appNoticeButtons" class="buttons">
+            <button type="button" class="cancel" id="appNoticeCancel">İptal</button>
+            <button type="button" class="save" id="appNoticeOk">Tamam</button>
+        </div>
+    </div>
+</div>
+
+<!-- PRO SATIN ALMA PENCERESİ -->
+<div id="proModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="proTitle">
+    <div class="modalBox proBox">
+        <div class="modalTitle" id="proTitle">⭐ Kurumsal Puantaj Pro</div>
+        <p class="settingsDescription">Tek seferlik satın alma ile Pro özelliklerini açın.</p>
+        <div class="proFeatureList">
+            <div>✓ PDF raporu oluşturma</div>
+            <div>✓ Excel/CSV dışa aktarma</div>
+            <div>✓ Gelişmiş rapor filtreleri</div>
+            <div>✓ Gelecekte eklenecek Pro özellikleri</div>
+        </div>
+        <div id="proStatus" class="proStatus">Pro durumu kontrol ediliyor…</div>
+        <div class="buttons">
+            <button class="cancel" type="button" onclick="closePro()">Kapat</button>
+            <button class="save proBuyBtn" type="button" onclick="buyPro()">⭐ Pro'yu Satın Al</button>
+        </div>
+        <button class="proRestoreBtn" type="button" onclick="restoreProPurchase()">Satın almayı geri yükle</button>
+        <small class="proLegal">Satın alma Google Play üzerinden gerçekleştirilir. Fiyat Google Play'de, ülkenize göre gösterilir.</small>
+    </div>
+</div>
+
 <!-- AYARLAR PENCERESİ -->
 <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modalBox settingsBox">
@@ -408,6 +451,11 @@
                 <option value="light">Açık tema</option>
                 <option value="dark">Koyu tema</option>
             </select>
+        </div>
+        <div class="settingsSection">
+            <h3>🔐 Gizlilik</h3>
+            <p class="settingsDescription">Verilerinizin nasıl işlendiğini görmek için gizlilik politikasını açabilirsiniz.</p>
+            <a href="privacy-policy.html" target="_blank" rel="noopener">Gizlilik Politikası</a>
         </div>
         <div class="settingsDanger">
             <h3>🧹 Veri Yönetimi</h3>
