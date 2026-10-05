@@ -60,7 +60,7 @@ function buyPro(){
     if(window.PlayBilling && typeof window.PlayBilling.buyPro === "function"){
         window.PlayBilling.buyPro();
     }else{
-        alert("Satın alma ekranı yalnızca Google Play sürümünde kullanılabilir.");
+        showAppNotice("Satın alma ekranı yalnızca Google Play sürümünde kullanılabilir.", {title: "Pro Satın Alma", type: "error"});
     }
 }
 
@@ -68,7 +68,7 @@ function restoreProPurchase(){
     if(window.PlayBilling && typeof window.PlayBilling.restorePurchases === "function"){
         window.PlayBilling.restorePurchases();
     }else{
-        alert("Satın alma geri yükleme yalnızca Google Play sürümünde kullanılabilir.");
+        showAppNotice("Satın alma geri yükleme yalnızca Google Play sürümünde kullanılabilir.", {title: "Satın Alma", type: "error"});
     }
 }
 
@@ -125,7 +125,7 @@ function printReportPDF(){
     const company=(data.company||"Kurumsal Puantaj");
     const rows=r.rows.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.team)}</td><td>${escapeHtml(x.site)}</td><td>${x.worked}</td><td>${x.absent}</td><td>${x.leave}</td><td>${x.report}</td></tr>`).join("");
     const w=window.open("","_blank","width=1100,height=800");
-    if(!w){ alert("PDF/print penceresi tarayıcı tarafından engellendi. Açılır pencerelere izin verin."); return; }
+    if(!w){ showAppNotice("PDF / yazdırma penceresi tarayıcı tarafından engellendi. Açılır pencerelere izin verin.", {title: "PDF / Yazdırma", type: "error"}); return; }
     w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Puantaj Raporu</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#18202a}h1{margin:0 0 6px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f1f3f6}@media print{button{display:none}}</style></head><body><h1>${escapeHtml(company)}</h1><p>Puantaj Raporu · ${escapeHtml(r.startKey)} - ${escapeHtml(r.endKey)}</p><button onclick="window.print()">PDF olarak kaydet / Yazdır</button><table><thead><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli</th><th>Raporlu</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
     w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
 }
@@ -563,12 +563,12 @@ function saveModal(){
         document.getElementById("paymentNote").value.trim();
 
     if(!workerId){
-        alert("Lütfen çalışan seçin.");
+        showAppNotice("Lütfen önce ödeme yapılacak çalışanı seçin.", {title: "Ödeme Bilgisi Eksik", type: "error"});
         return;
     }
 
     if(!amount || amount <= 0){
-        alert("Lütfen geçerli bir ödeme tutarı girin.");
+        showAppNotice("Lütfen 0'dan büyük geçerli bir ödeme tutarı girin.", {title: "Ödeme Bilgisi Eksik", type: "error"});
         return;
     }
 
@@ -604,11 +604,10 @@ function saveModal(){
     }
 
     if(!name){
-
-        alert("Lütfen isim girin.");
-
+        showAppNotice("Lütfen ad alanını doldurun.", {title: modalType === "site" ? "Şantiye Adı Eksik" : modalType === "team" ? "Ekip Adı Eksik" : "Çalışan Adı Eksik", type: "error"});
+        const nameInput = document.getElementById("modalName");
+        if (nameInput) { nameInput.focus(); nameInput.classList.add("inputError"); setTimeout(() => nameInput.classList.remove("inputError"), 1400); }
         return;
-
     }
 
 
@@ -631,7 +630,8 @@ function saveModal(){
        const selectedSiteId = document.getElementById("teamSite").value;
 
 if (!selectedSiteId) {
-    alert("Lütfen şantiye seçin.");
+    showAppNotice("Yeni ekip oluşturmak için önce bir şantiye seçin.", {title: "Şantiye Seçilmedi", type: "error"});
+    document.getElementById("teamSite")?.focus();
     return;
 }
 
@@ -674,13 +674,8 @@ if(modalType==="worker"){
 
 
     if(!team){
-
-        alert(
-            "Önce bir ekip seçin."
-        );
-
+        showAppNotice("Önce bir ekip seçin.", {title: "Ekip Seçilmedi", type: "error"});
         return;
-
     }
 
 
