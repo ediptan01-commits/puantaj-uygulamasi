@@ -45,6 +45,31 @@ jobs:
 
           set -e
 
+          echo "=== İMZA KONTROLÜ ==="
+
+          if [[ -z "$SIGNING_KEY_BASE64" ]]; then
+            echo "HATA: SIGNING_KEY_BASE64 bulunamadı!"
+            echo "Release APK/AAB imzasız oluşturulmayacak."
+            exit 1
+          fi
+
+          if [[ -z "$SIGNING_STORE_PASSWORD" ]]; then
+            echo "HATA: SIGNING_STORE_PASSWORD bulunamadı!"
+            exit 1
+          fi
+
+          if [[ -z "$SIGNING_KEY_ALIAS" ]]; then
+            echo "HATA: SIGNING_KEY_ALIAS bulunamadı!"
+            exit 1
+          fi
+
+          if [[ -z "$SIGNING_KEY_PASSWORD" ]]; then
+            echo "HATA: SIGNING_KEY_PASSWORD bulunamadı!"
+            exit 1
+          fi
+
+          echo "İmza Secret'ları mevcut."
+
           mkdir -p android/app/src/main/java/com/ediptan/kurumsalpuantaj
           mkdir -p android/app/src/main/res/values
           mkdir -p android/app/src/main/res/drawable
@@ -58,6 +83,17 @@ jobs:
 
           cp assets/icon_puantaj.webp \
             android/app/src/main/res/drawable/icon_puantaj.webp
+
+          echo "Signing key hazırlanıyor..."
+
+          echo "$SIGNING_KEY_BASE64" | base64 --decode > android/app/release-key.jks
+
+          if [[ ! -s android/app/release-key.jks ]]; then
+            echo "HATA: Signing key oluşturulamadı!"
+            exit 1
+          fi
+
+          echo "Signing key başarıyla hazırlandı."
 
           cat > android/settings.gradle <<'EOF'
           pluginManagement {
@@ -94,22 +130,12 @@ jobs:
           android.nonTransitiveRClass=true
           EOF
 
-          if [[ -n "$SIGNING_KEY_BASE64" ]]; then
-
-            echo "Signing key hazırlanıyor..."
-
-            echo "$SIGNING_KEY_BASE64" | base64 --decode > android/app/release-key.jks
-
-            echo "RELEASE_STORE_FILE=release-key.jks" >> android/gradle.properties
-            echo "RELEASE_STORE_PASSWORD=$SIGNING_STORE_PASSWORD" >> android/gradle.properties
-            echo "RELEASE_KEY_ALIAS=$SIGNING_KEY_ALIAS" >> android/gradle.properties
-            echo "RELEASE_KEY_PASSWORD=$SIGNING_KEY_PASSWORD" >> android/gradle.properties
-
-          else
-
-            echo "UYARI: SIGNING_KEY_BASE64 bulunamadı."
-
-          fi
+          cat >> android/gradle.properties <<EOF
+          RELEASE_STORE_FILE=release-key.jks
+          RELEASE_STORE_PASSWORD=$SIGNING_STORE_PASSWORD
+          RELEASE_KEY_ALIAS=$SIGNING_KEY_ALIAS
+          RELEASE_KEY_PASSWORD=$SIGNING_KEY_PASSWORD
+          EOF
 
           cat > android/app/build.gradle <<'EOF'
           plugins {
@@ -137,14 +163,11 @@ jobs:
 
               signingConfigs {
 
-                  if (project.hasProperty("RELEASE_STORE_FILE")) {
-
-                      release {
-                          storeFile file(RELEASE_STORE_FILE)
-                          storePassword RELEASE_STORE_PASSWORD
-                          keyAlias RELEASE_KEY_ALIAS
-                          keyPassword RELEASE_KEY_PASSWORD
-                      }
+                  release {
+                      storeFile file(RELEASE_STORE_FILE)
+                      storePassword RELEASE_STORE_PASSWORD
+                      keyAlias RELEASE_KEY_ALIAS
+                      keyPassword RELEASE_KEY_PASSWORD
                   }
               }
 
@@ -159,9 +182,7 @@ jobs:
                       minifyEnabled false
                       shrinkResources false
 
-                      if (project.hasProperty("RELEASE_STORE_FILE")) {
-                          signingConfig signingConfigs.release
-                      }
+                      signingConfig signingConfigs.release
                   }
               }
 
@@ -205,25 +226,16 @@ jobs:
               xmlns:android="http://schemas.android.com/apk/res/android">
 
               <application
-
                   android:allowBackup="true"
-
                   android:label="Kurumsal Puantaj"
-
                   android:icon="@drawable/icon_puantaj"
-
                   android:roundIcon="@drawable/icon_puantaj"
-
                   android:supportsRtl="true"
-
                   android:theme="@style/AppTheme">
 
                   <activity
-
                       android:name=".MainActivity"
-
                       android:exported="true"
-
                       android:enableOnBackInvokedCallback="true">
 
                       <intent-filter>
@@ -274,7 +286,6 @@ jobs:
                   window.setNavigationBarColor(Color.WHITE);
 
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
                       window.getDecorView().setSystemUiVisibility(
                               View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                       );
@@ -287,11 +298,9 @@ jobs:
                   setupWebView();
 
                   if (Build.VERSION.SDK_INT >= 33) {
-
                       getOnBackInvokedDispatcher()
                               .registerOnBackInvokedCallback(
-                                      android.window
-                                              .OnBackInvokedDispatcher
+                                      android.window.OnBackInvokedDispatcher
                                               .PRIORITY_DEFAULT,
                                       this::handleBack
                               );
@@ -302,8 +311,7 @@ jobs:
 
                   webView = new WebView(this);
 
-                  WebSettings settings =
-                          webView.getSettings();
+                  WebSettings settings = webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
@@ -326,20 +334,12 @@ jobs:
                                       RenderProcessGoneDetail detail
                               ) {
 
-                                  /*
-                                   * WebView motoru çökerse
-                                   * uygulamanın tamamını kapatma.
-                                   */
-
                                   try {
-
                                       root.removeView(view);
 
                                       view.stopLoading();
 
-                                      view.loadUrl(
-                                              "about:blank"
-                                      );
+                                      view.loadUrl("about:blank");
 
                                       view.destroy();
 
@@ -359,10 +359,7 @@ jobs:
                                   FrameLayout.LayoutParams.MATCH_PARENT
                           );
 
-                  root.addView(
-                          webView,
-                          params
-                  );
+                  root.addView(webView, params);
 
                   root.setOnApplyWindowInsetsListener(
                           (view, insets) -> {
@@ -422,7 +419,6 @@ jobs:
                       );
 
                   } catch (Exception ignored) {
-                      // Açılış hatasında uygulamanın kapanmasını engelle.
                   }
               }
 
@@ -438,8 +434,7 @@ jobs:
 
                   if (webView != null) {
 
-                      String url =
-                              webView.getUrl();
+                      String url = webView.getUrl();
 
                       if (url != null &&
                               (
@@ -462,11 +457,8 @@ jobs:
               public void onBackPressed() {
 
                   if (Build.VERSION.SDK_INT < 33) {
-
                       handleBack();
-
                   } else {
-
                       super.onBackPressed();
                   }
               }
@@ -495,31 +487,37 @@ jobs:
           }
           EOF
 
-      # Eski build dosyalarını temizle
       - name: Temiz build
         working-directory: android
         run: |
           gradle --no-daemon clean
 
-      # Debug APK
       - name: Debug APK
         working-directory: android
         run: |
           gradle --no-daemon :app:assembleDebug
 
-      # Release APK
       - name: Release APK
         working-directory: android
         run: |
           gradle --no-daemon :app:assembleRelease
 
-      # Release AAB
       - name: Release AAB
         working-directory: android
         run: |
           gradle --no-daemon :app:bundleRelease
 
-      # Artifact
+      - name: İmzayı doğrula
+        working-directory: android
+        run: |
+          echo "=== RELEASE APK İMZA KONTROLÜ ==="
+
+          $ANDROID_HOME/build-tools/36.0.0/apksigner verify \
+            --verbose \
+            app/build/outputs/apk/release/app-release.apk
+
+          echo "APK imzası geçerli."
+
       - name: APK ve AAB dosyalarını yükle
         uses: actions/upload-artifact@v6
         with:
