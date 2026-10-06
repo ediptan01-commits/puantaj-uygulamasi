@@ -130,9 +130,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 4
+                  versionCode 5
 
-                  versionName "1.0.3"
+                  versionName "1.0.4"
               }
 
               signingConfigs {
@@ -253,6 +253,7 @@ jobs:
           import android.view.View;
           import android.view.Window;
           import android.view.WindowInsets;
+          import android.webkit.RenderProcessGoneDetail;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
@@ -261,6 +262,7 @@ jobs:
           public class MainActivity extends Activity {
 
               private WebView webView;
+              private FrameLayout root;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -278,24 +280,78 @@ jobs:
                       );
                   }
 
-                  FrameLayout root = new FrameLayout(this);
+                  root = new FrameLayout(this);
+
+                  setContentView(root);
+
+                  setupWebView();
+
+                  if (Build.VERSION.SDK_INT >= 33) {
+
+                      getOnBackInvokedDispatcher()
+                              .registerOnBackInvokedCallback(
+                                      android.window
+                                              .OnBackInvokedDispatcher
+                                              .PRIORITY_DEFAULT,
+                                      this::handleBack
+                              );
+                  }
+              }
+
+              private void setupWebView() {
 
                   webView = new WebView(this);
 
-                  WebSettings settings = webView.getSettings();
+                  WebSettings settings =
+                          webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
                   settings.setAllowFileAccess(true);
                   settings.setAllowContentAccess(true);
 
-                  // Eski HTML/CSS/JS önbelleğini kullanma
-                  settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+                  settings.setCacheMode(
+                          WebSettings.LOAD_NO_CACHE
+                  );
 
                   webView.clearCache(true);
                   webView.clearHistory();
 
-                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebViewClient(
+                          new WebViewClient() {
+
+                              @Override
+                              public boolean onRenderProcessGone(
+                                      WebView view,
+                                      RenderProcessGoneDetail detail
+                              ) {
+
+                                  /*
+                                   * WebView motoru çökerse
+                                   * uygulamanın tamamını kapatma.
+                                   */
+
+                                  try {
+
+                                      root.removeView(view);
+
+                                      view.stopLoading();
+
+                                      view.loadUrl(
+                                              "about:blank"
+                                      );
+
+                                      view.destroy();
+
+                                  } catch (Exception ignored) {
+                                  }
+
+                                  setupWebView();
+
+                                  return true;
+                              }
+                          }
+                  );
 
                   FrameLayout.LayoutParams params =
                           new FrameLayout.LayoutParams(
@@ -303,9 +359,10 @@ jobs:
                                   FrameLayout.LayoutParams.MATCH_PARENT
                           );
 
-                  root.addView(webView, params);
-
-                  setContentView(root);
+                  root.addView(
+                          webView,
+                          params
+                  );
 
                   root.setOnApplyWindowInsetsListener(
                           (view, insets) -> {
@@ -315,7 +372,8 @@ jobs:
                               int right = 0;
                               int bottom = 0;
 
-                              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                              if (Build.VERSION.SDK_INT >=
+                                      Build.VERSION_CODES.R) {
 
                                   android.graphics.Insets systemBars =
                                           insets.getInsets(
@@ -331,10 +389,17 @@ jobs:
 
                               } else {
 
-                                  top = insets.getSystemWindowInsetTop();
-                                  bottom = insets.getSystemWindowInsetBottom();
-                                  left = insets.getSystemWindowInsetLeft();
-                                  right = insets.getSystemWindowInsetRight();
+                                  top =
+                                          insets.getSystemWindowInsetTop();
+
+                                  bottom =
+                                          insets.getSystemWindowInsetBottom();
+
+                                  left =
+                                          insets.getSystemWindowInsetLeft();
+
+                                  right =
+                                          insets.getSystemWindowInsetRight();
                               }
 
                               root.setPadding(
@@ -350,25 +415,21 @@ jobs:
 
                   root.requestApplyInsets();
 
-                  webView.loadUrl(
-                          "file:///android_asset/index.html"
-                  );
+                  try {
 
-                  if (Build.VERSION.SDK_INT >= 33) {
+                      webView.loadUrl(
+                              "file:///android_asset/index.html"
+                      );
 
-                      getOnBackInvokedDispatcher()
-                              .registerOnBackInvokedCallback(
-                                      android.window
-                                              .OnBackInvokedDispatcher
-                                              .PRIORITY_DEFAULT,
-                                      this::handleBack
-                              );
+                  } catch (Exception ignored) {
+                      // Açılış hatasında uygulamanın kapanmasını engelle.
                   }
               }
 
               private void handleBack() {
 
-                  if (webView != null && webView.canGoBack()) {
+                  if (webView != null &&
+                          webView.canGoBack()) {
 
                       webView.goBack();
 
@@ -377,7 +438,8 @@ jobs:
 
                   if (webView != null) {
 
-                      String url = webView.getUrl();
+                      String url =
+                              webView.getUrl();
 
                       if (url != null &&
                               (
@@ -407,6 +469,28 @@ jobs:
 
                       super.onBackPressed();
                   }
+              }
+
+              @Override
+              protected void onDestroy() {
+
+                  if (webView != null) {
+
+                      try {
+
+                          webView.stopLoading();
+
+                          webView.setWebViewClient(null);
+
+                          webView.destroy();
+
+                      } catch (Exception ignored) {
+                      }
+
+                      webView = null;
+                  }
+
+                  super.onDestroy();
               }
           }
           EOF
@@ -440,7 +524,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
 
-          name: kurumsal-puantaj-android-v1.0.3
+          name: kurumsal-puantaj-android-v1.0.4
 
           if-no-files-found: error
 
