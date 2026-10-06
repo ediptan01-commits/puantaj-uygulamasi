@@ -70,6 +70,7 @@ jobs:
 
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
               repositories {
                   google()
                   mavenCentral()
@@ -77,6 +78,7 @@ jobs:
           }
 
           rootProject.name = "KurumsalPuantaj"
+
           include(":app")
           EOF
 
@@ -128,9 +130,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 3
+                  versionCode 4
 
-                  versionName "1.0.2"
+                  versionName "1.0.3"
               }
 
               signingConfigs {
@@ -270,6 +272,7 @@ jobs:
                   window.setNavigationBarColor(Color.WHITE);
 
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                       window.getDecorView().setSystemUiVisibility(
                               View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                       );
@@ -285,6 +288,12 @@ jobs:
                   settings.setDomStorageEnabled(true);
                   settings.setAllowFileAccess(true);
                   settings.setAllowContentAccess(true);
+
+                  // Eski HTML/CSS/JS önbelleğini kullanma
+                  settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+
+                  webView.clearCache(true);
+                  webView.clearHistory();
 
                   webView.setWebViewClient(new WebViewClient());
 
@@ -360,7 +369,9 @@ jobs:
               private void handleBack() {
 
                   if (webView != null && webView.canGoBack()) {
+
                       webView.goBack();
+
                       return;
                   }
 
@@ -389,34 +400,50 @@ jobs:
               public void onBackPressed() {
 
                   if (Build.VERSION.SDK_INT < 33) {
+
                       handleBack();
+
                   } else {
+
                       super.onBackPressed();
                   }
               }
           }
           EOF
 
+      # Eski build dosyalarını temizle
+      - name: Temiz build
+        working-directory: android
+        run: |
+          gradle --no-daemon clean
+
+      # Debug APK
       - name: Debug APK
         working-directory: android
         run: |
           gradle --no-daemon :app:assembleDebug
 
+      # Release APK
       - name: Release APK
         working-directory: android
         run: |
           gradle --no-daemon :app:assembleRelease
 
+      # Release AAB
       - name: Release AAB
         working-directory: android
         run: |
           gradle --no-daemon :app:bundleRelease
 
+      # Artifact
       - name: APK ve AAB dosyalarını yükle
         uses: actions/upload-artifact@v6
         with:
-          name: kurumsal-puantaj-android-v1.0.2
+
+          name: kurumsal-puantaj-android-v1.0.3
+
           if-no-files-found: error
+
           path: |
             android/app/build/outputs/apk/debug/*.apk
             android/app/build/outputs/apk/release/*.apk
