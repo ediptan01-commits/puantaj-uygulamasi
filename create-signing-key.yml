@@ -1,0 +1,44 @@
+name: Puantaj Signing Key Oluştur
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-key:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Signing key oluştur
+        env:
+          STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          set -e
+
+          keytool -genkeypair \
+            -v \
+            -keystore puantaj-release.jks \
+            -storetype JKS \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -alias "$KEY_ALIAS" \
+            -storepass "$STORE_PASSWORD" \
+            -keypass "$KEY_PASSWORD" \
+            -dname "CN=Kurumsal Puantaj, OU=Puantaj, O=Ediptan, L=Turkey, C=TR"
+
+          base64 -w 0 puantaj-release.jks > puantaj-key-base64.txt
+
+      - name: Base64 dosyasını yükle
+        uses: actions/upload-artifact@v6
+        with:
+          name: puantaj-signing-key
+          path: puantaj-key-base64.txt
+          retention-days: 1
