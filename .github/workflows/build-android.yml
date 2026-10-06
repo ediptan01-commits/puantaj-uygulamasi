@@ -152,7 +152,7 @@ jobs:
 
                   applicationId "com.ediptan.kurumsalpuantaj"
 
-                  minSdk 23
+                  minSdk 24
 
                   targetSdk 36
 
