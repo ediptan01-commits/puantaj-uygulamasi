@@ -281,7 +281,30 @@ jobs:
           cd ios/artifact
           zip -r KurumsalPuantaj-iOS-Simulator.zip KurumsalPuantaj.app
 
-      - name: iOS Artifact yükle
+            - name: Build çıktısını bul
+        run: |
+          echo "=== APP DOSYALARI ==="
+          find ios -type d -name "*.app" -print
+
+      - name: iOS uygulamasını ZIP yap
+        run: |
+          mkdir -p ios/artifact
+
+          APP_PATH=$(find ios -type d -name "KurumsalPuantaj.app" | head -n 1)
+
+          echo "APP_PATH=$APP_PATH"
+
+          if [ -z "$APP_PATH" ]; then
+            echo "HATA: KurumsalPuantaj.app bulunamadı!"
+            exit 1
+          fi
+
+          cp -R "$APP_PATH" ios/artifact/KurumsalPuantaj.app
+
+          cd ios/artifact
+          zip -r KurumsalPuantaj-iOS-Simulator.zip KurumsalPuantaj.app
+
+      - name: Artifact yükle
         uses: actions/upload-artifact@v4
         with:
           name: kurumsal-puantaj-ios-simulator
