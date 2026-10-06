@@ -26,7 +26,6 @@ jobs:
 
           set -e
 
-          mkdir -p ios/KurumsalPuantaj
           mkdir -p ios/KurumsalPuantaj/Assets
 
           cp index.html ios/KurumsalPuantaj/Assets/
@@ -124,11 +123,11 @@ jobs:
 
                   webView.allowsBackForwardNavigationGestures = true
 
-                  if let url =
-                      Bundle.main.url(
-                          forResource: "index",
-                          withExtension: "html"
-                      ) {
+                  if let url = Bundle.main.url(
+                      forResource: "index",
+                      withExtension: "html",
+                      subdirectory: "Assets"
+                  ) {
 
                       webView.loadFileURL(
                           url,
@@ -186,8 +185,33 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             build
 
-      - name: iOS build dosyasını yükle
+      - name: Build çıktısını kontrol et
+        run: |
+          echo "=== BUILD OUTPUT ==="
+          find ios/build -type d -name "*.app" -print
+
+      - name: iOS uygulamasını ZIP yap
+        run: |
+          mkdir -p ios/artifact
+
+          APP_PATH=$(find ios/build -type d -name "KurumsalPuantaj.app" | head -n 1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "HATA: .app dosyası bulunamadı!"
+            exit 1
+          fi
+
+          echo "Bulunan uygulama:"
+          echo "$APP_PATH"
+
+          cp -R "$APP_PATH" ios/artifact/KurumsalPuantaj.app
+
+          cd ios/artifact
+          zip -r KurumsalPuantaj-iOS-Simulator.zip KurumsalPuantaj.app
+
+      - name: iOS Artifact yükle
         uses: actions/upload-artifact@v4
         with:
           name: kurumsal-puantaj-ios-simulator
-          path: ios/build/Build/Products/Debug-iphonesimulator/KurumsalPuantaj.app
+          path: ios/artifact/KurumsalPuantaj-iOS-Simulator.zip
+          if-no-files-found: error
