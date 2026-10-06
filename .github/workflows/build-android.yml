@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Kaynak kodunu al
         uses: actions/checkout@v7
@@ -30,12 +31,19 @@ jobs:
 
       - name: Android projesini hazırla
         shell: bash
+        env:
+          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           set -e
+
           mkdir -p android/app/src/main/java/com/ediptan/kurumsalpuantaj
           mkdir -p android/app/src/main/res/values
           mkdir -p android/app/src/main/res/drawable
           mkdir -p android/app/src/main/assets
+
           cp index.html kurumsal.html kurumsal.css kurumsal.js bireysel.html android/app/src/main/assets/
           cp assets/icon_puantaj.webp android/app/src/main/res/drawable/icon_puantaj.webp
 
@@ -47,10 +55,15 @@ jobs:
                   gradlePluginPortal()
               }
           }
+
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories { google(); mavenCentral() }
+              repositories {
+                  google()
+                  mavenCentral()
+              }
           }
+
           rootProject.name = "KurumsalPuantaj"
           include(":app")
           GRADLE_SETTINGS
@@ -67,22 +80,57 @@ jobs:
           android.nonTransitiveRClass=true
           GRADLE_PROPERTIES
 
+          # Kalıcı imzalama anahtarı GitHub Secrets'tan gelirse release APK/AAB
+          # aynı imza ile üretilir ve sonraki sürümler kaldırmadan güncellenebilir.
+          if [[ -n "${SIGNING_KEY_BASE64}" && -n "${SIGNING_STORE_PASSWORD}" && -n "${SIGNING_KEY_ALIAS}" && -n "${SIGNING_KEY_PASSWORD}" ]]; then
+            echo "${SIGNING_KEY_BASE64}" | base64 --decode > android/app/release-key.jks
+
+            cat >> android/gradle.properties <<GRADLE_SIGNING RELEASE_STORE_FILE=app/release-key.jks RELEASE_STORE_PASSWORD=${SIGNING_STORE_PASSWORD} RELEASE_KEY_ALIAS=${SIGNING_KEY_ALIAS} RELEASE_KEY_PASSWORD=${SIGNING_KEY_PASSWORD} GRADLE_SIGNING
+          fi
+
           cat > android/app/build.gradle <<'GRADLE_APP'
-          plugins { id "com.android.application" }
+          plugins {
+              id "com.android.application"
+          }
+
           android {
               namespace "com.ediptan.kurumsalpuantaj"
               compileSdk 36
+
               defaultConfig {
                   applicationId "com.ediptan.kurumsalpuantaj"
                   minSdk 23
                   targetSdk 36
-                  versionCode 2
-                  versionName "1.0.1"
+                  versionCode 3
+                  versionName "1.0.2"
               }
+
+              signingConfigs {
+                  if (project.hasProperty("RELEASE_STORE_FILE")) {
+                      release {
+                          storeFile file(RELEASE_STORE_FILE)
+                          storePassword RELEASE_STORE_PASSWORD
+                          keyAlias RELEASE_KEY_ALIAS
+                          keyPassword RELEASE_KEY_PASSWORD
+                      }
+                  }
+              }
+
               buildTypes {
-                  debug { applicationIdSuffix ".debug" }
-                  release { minifyEnabled false; shrinkResources false }
+                  debug {
+                      applicationIdSuffix ".debug"
+                  }
+
+                  release {
+                      minifyEnabled false
+                      shrinkResources false
+
+                      if (project.hasProperty("RELEASE_STORE_FILE")) {
+                          signingConfig signingConfigs.release
+                      }
+                  }
               }
+
               compileOptions {
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
@@ -92,62 +140,129 @@ jobs:
 
           cat > android/app/src/main/res/values/styles.xml <<'STYLES'
           <?xml version="1.0" encoding="utf-8"?>
-          <resources> <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar"> <item name="android:fontFamily">sans</item> <item name="android:colorAccent">#1769ED</item> <item name="android:navigationBarColor">#F2F5FB</item> <item name="android:statusBarColor">#F2F5FB</item> <item name="android:windowLightStatusBar">true</item> </style> </resources>
+          <resources>
+              <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:windowActionModeOverlay">true</item>
+                  <item name="android:windowNoTitle">true</item>
+                  <item name="android:windowLightStatusBar">true</item>
+                  <item name="android:windowLightNavigationBar">true</item>
+                  <item name="android:colorAccent">#1769ED</item>
+              </style>
+          </resources>
           STYLES
 
           cat > android/app/src/main/AndroidManifest.xml <<'MANIFEST'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <application android:allowBackup="true" android:label="Kurumsal Puantaj" android:icon="@drawable/icon_puantaj" android:roundIcon="@drawable/icon_puantaj" android:supportsRtl="true" android:theme="@style/AppTheme"> <activity android:name=".MainActivity" android:exported="true"> <intent-filter> <action android:name="android.intent.action.MAIN" /> <category android:name="android.intent.category.LAUNCHER" /> </intent-filter> </activity> </application> </manifest>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <application
+                  android:allowBackup="true"
+                  android:label="Kurumsal Puantaj"
+                  android:icon="@drawable/icon_puantaj"
+                  android:roundIcon="@drawable/icon_puantaj"
+                  android:supportsRtl="true"
+                  android:theme="@style/AppTheme">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:enableOnBackInvokedCallback="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+
+                  </activity>
+              </application>
+
+          </manifest>
           MANIFEST
 
-          cp /dev/stdin android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java <<'JAVA'
+          cat > android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java <<'JAVA'
           package com.ediptan.kurumsalpuantaj;
 
           import android.app.Activity;
           import android.graphics.Insets;
           import android.os.Build;
           import android.os.Bundle;
+          import android.view.View;
           import android.view.WindowInsets;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import android.widget.FrameLayout;
 
           public class MainActivity extends Activity {
+
               private WebView webView;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
+
+                  FrameLayout root = new FrameLayout(this);
+
                   webView = new WebView(this);
+                  webView.setFitsSystemWindows(false);
+
+                  FrameLayout.LayoutParams webParams = new FrameLayout.LayoutParams(
+                          FrameLayout.LayoutParams.MATCH_PARENT,
+                          FrameLayout.LayoutParams.MATCH_PARENT
+                  );
+                  root.addView(webView, webParams);
+
+                  setContentView(root);
+
                   WebSettings settings = webView.getSettings();
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
                   settings.setAllowFileAccess(true);
                   settings.setAllowContentAccess(true);
+                  settings.setBuiltInZoomControls(false);
+                  settings.setDisplayZoomControls(false);
+
                   webView.setWebViewClient(new WebViewClient());
 
-                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                      webView.setOnApplyWindowInsetsListener((v, insets) -> {
-                          Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
-                          v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-                          return insets;
-                      });
-                  } else {
-                      webView.setOnApplyWindowInsetsListener((v, insets) -> {
-                          v.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(),
-                                  insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
-                          return insets;
-                      });
-                  }
+                  View.OnApplyWindowInsetsListener insetListener = (v, insets) -> {
+                      int left = 0;
+                      int top = 0;
+                      int right = 0;
+                      int bottom = 0;
 
-                  setContentView(webView);
-                  webView.requestApplyInsets();
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                          Insets bars = insets.getInsets(
+                                  WindowInsets.Type.statusBars()
+                                          | WindowInsets.Type.navigationBars()
+                                          | WindowInsets.Type.displayCutout()
+                          );
+
+                          left = bars.left;
+                          top = bars.top;
+                          right = bars.right;
+                          bottom = bars.bottom;
+                      } else {
+                          left = insets.getSystemWindowInsetLeft();
+                          top = insets.getSystemWindowInsetTop();
+                          right = insets.getSystemWindowInsetRight();
+                          bottom = insets.getSystemWindowInsetBottom();
+                      }
+
+                      webView.setPadding(left, top, right, bottom);
+                      return insets;
+                  };
+
+                  root.setOnApplyWindowInsetsListener(insetListener);
+                  root.requestApplyInsets();
+
                   webView.loadUrl("file:///android_asset/index.html");
 
                   if (Build.VERSION.SDK_INT >= 33) {
                       getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                               android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                              this::handleBack);
+                              this::handleBack
+                      );
                   }
               }
 
@@ -156,19 +271,28 @@ jobs:
                       webView.goBack();
                       return;
                   }
+
                   if (webView != null) {
                       String url = webView.getUrl();
-                      if (url != null && (url.contains("bireysel.html") || url.contains("kurumsal.html"))) {
+
+                      if (url != null &&
+                              (url.contains("bireysel.html") ||
+                               url.contains("kurumsal.html"))) {
                           webView.loadUrl("file:///android_asset/index.html");
                           return;
                       }
                   }
+
                   finish();
               }
 
               @Override
               public void onBackPressed() {
-                  handleBack();
+                  if (Build.VERSION.SDK_INT < 33) {
+                      handleBack();
+                  } else {
+                      super.onBackPressed();
+                  }
               }
           }
           JAVA
@@ -188,9 +312,9 @@ jobs:
       - name: APK ve AAB dosyalarını yükle
         uses: actions/upload-artifact@v6
         with:
-          name: kurumsal-puantaj-android
+          name: kurumsal-puantaj-android-v1.0.2
           if-no-files-found: error
           path: |
-            android/app/build/outputs/apk/debug/app-debug.apk
-            android/app/build/outputs/apk/release/app-release-unsigned.apk
-            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
