@@ -34,10 +34,12 @@ jobs:
           set -e
           mkdir -p android/app/src/main/java/com/ediptan/kurumsalpuantaj
           mkdir -p android/app/src/main/res/values
+          mkdir -p android/app/src/main/res/drawable
           mkdir -p android/app/src/main/assets
           cp index.html kurumsal.html kurumsal.css kurumsal.js bireysel.html android/app/src/main/assets/
+          cp assets/icon_puantaj.webp android/app/src/main/res/drawable/icon_puantaj.webp
 
-          cat > android/settings.gradle <<'EOF'
+          cat > android/settings.gradle <<'GRADLE_SETTINGS'
           pluginManagement {
               repositories {
                   google()
@@ -51,21 +53,21 @@ jobs:
           }
           rootProject.name = "KurumsalPuantaj"
           include(":app")
-          EOF
+          GRADLE_SETTINGS
 
-          cat > android/build.gradle <<'EOF'
+          cat > android/build.gradle <<'GRADLE_ROOT'
           plugins {
               id "com.android.application" version "9.1.1" apply false
           }
-          EOF
+          GRADLE_ROOT
 
-          cat > android/gradle.properties <<'EOF'
+          cat > android/gradle.properties <<'GRADLE_PROPERTIES'
           org.gradle.jvmargs=-Xmx3g -Dfile.encoding=UTF-8
           android.useAndroidX=true
           android.nonTransitiveRClass=true
-          EOF
+          GRADLE_PROPERTIES
 
-          cat > android/app/build.gradle <<'EOF'
+          cat > android/app/build.gradle <<'GRADLE_APP'
           plugins { id "com.android.application" }
           android {
               namespace "com.ediptan.kurumsalpuantaj"
@@ -86,64 +88,90 @@ jobs:
                   targetCompatibility JavaVersion.VERSION_17
               }
           }
-          EOF
+          GRADLE_APP
 
-          cat > android/app/src/main/res/values/styles.xml <<'EOF'
+          cat > android/app/src/main/res/values/styles.xml <<'STYLES'
           <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
-                  <item name="android:fontFamily">sans</item>
-                  <item name="android:colorAccent">#1769ED</item>
-                  <item name="android:navigationBarColor">#F2F5FB</item>
-                  <item name="android:statusBarColor">#F2F5FB</item>
-                  <item name="android:windowLightStatusBar">true</item>
-              </style>
-          </resources>
-          EOF
+          <resources> <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar"> <item name="android:fontFamily">sans</item> <item name="android:colorAccent">#1769ED</item> <item name="android:navigationBarColor">#F2F5FB</item> <item name="android:statusBarColor">#F2F5FB</item> <item name="android:windowLightStatusBar">true</item> </style> </resources>
+          STYLES
 
-          cat > android/app/src/main/AndroidManifest.xml <<'EOF'
+          cat > android/app/src/main/AndroidManifest.xml <<'MANIFEST'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application
-                  android:allowBackup="true"
-                  android:label="Kurumsal Puantaj"
-                  android:supportsRtl="true"
-                  android:theme="@style/AppTheme">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <application android:allowBackup="true" android:label="Kurumsal Puantaj" android:icon="@drawable/icon_puantaj" android:roundIcon="@drawable/icon_puantaj" android:supportsRtl="true" android:theme="@style/AppTheme"> <activity android:name=".MainActivity" android:exported="true"> <intent-filter> <action android:name="android.intent.action.MAIN" /> <category android:name="android.intent.category.LAUNCHER" /> </intent-filter> </activity> </application> </manifest>
+          MANIFEST
 
-          cat > android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java <<'EOF'
+          cp /dev/stdin android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java <<'JAVA'
           package com.ediptan.kurumsalpuantaj;
+
           import android.app.Activity;
+          import android.graphics.Insets;
+          import android.os.Build;
           import android.os.Bundle;
+          import android.view.WindowInsets;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
 
           public class MainActivity extends Activity {
-              @Override protected void onCreate(Bundle savedInstanceState) {
+              private WebView webView;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
-                  WebView webView = new WebView(this);
+                  webView = new WebView(this);
                   WebSettings settings = webView.getSettings();
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
                   settings.setAllowFileAccess(true);
                   settings.setAllowContentAccess(true);
                   webView.setWebViewClient(new WebViewClient());
+
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                      webView.setOnApplyWindowInsetsListener((v, insets) -> {
+                          Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+                          v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                          return insets;
+                      });
+                  } else {
+                      webView.setOnApplyWindowInsetsListener((v, insets) -> {
+                          v.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(),
+                                  insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
+                          return insets;
+                      });
+                  }
+
                   setContentView(webView);
+                  webView.requestApplyInsets();
                   webView.loadUrl("file:///android_asset/index.html");
+
+                  if (Build.VERSION.SDK_INT >= 33) {
+                      getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                              android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                              this::handleBack);
+                  }
+              }
+
+              private void handleBack() {
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                      return;
+                  }
+                  if (webView != null) {
+                      String url = webView.getUrl();
+                      if (url != null && (url.contains("bireysel.html") || url.contains("kurumsal.html"))) {
+                          webView.loadUrl("file:///android_asset/index.html");
+                          return;
+                      }
+                  }
+                  finish();
+              }
+
+              @Override
+              public void onBackPressed() {
+                  handleBack();
               }
           }
-          EOF
+          JAVA
 
       - name: Debug APK
         working-directory: android
