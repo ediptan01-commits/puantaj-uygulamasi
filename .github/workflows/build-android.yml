@@ -156,9 +156,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 5
+                  versionCode 6
 
-                  versionName "1.0.4"
+                  versionName "1.0.5"
               }
 
               signingConfigs {
@@ -522,7 +522,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
 
-          name: kurumsal-puantaj-android-v1.0.4
+          name: kurumsal-puantaj-android-v1.0.5
 
           if-no-files-found: error
 
