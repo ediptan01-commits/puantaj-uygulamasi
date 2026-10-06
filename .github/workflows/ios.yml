@@ -1,0 +1,193 @@
+name: Kurumsal Puantaj - iOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+
+      - name: Xcode sürümünü kontrol et
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: XcodeGen kur
+        run: |
+          brew install xcodegen
+
+      - name: iOS projesini hazırla
+        run: |
+
+          set -e
+
+          mkdir -p ios/KurumsalPuantaj
+          mkdir -p ios/KurumsalPuantaj/Assets
+
+          cp index.html ios/KurumsalPuantaj/Assets/
+          cp kurumsal.html ios/KurumsalPuantaj/Assets/
+          cp kurumsal.css ios/KurumsalPuantaj/Assets/
+          cp kurumsal.js ios/KurumsalPuantaj/Assets/
+          cp bireysel.html ios/KurumsalPuantaj/Assets/
+
+          cp -R assets ios/KurumsalPuantaj/Assets/
+
+          cat > ios/project.yml <<'EOF'
+          name: KurumsalPuantaj
+
+          options:
+            bundleIdPrefix: com.ediptan
+            deploymentTarget:
+              iOS: "15.0"
+
+          targets:
+
+            KurumsalPuantaj:
+
+              type: application
+
+              platform: iOS
+
+              deploymentTarget: "15.0"
+
+              sources:
+                - path: KurumsalPuantaj
+
+              settings:
+                PRODUCT_BUNDLE_IDENTIFIER: com.ediptan.kurumsalpuantaj
+                PRODUCT_NAME: Kurumsal Puantaj
+                SWIFT_VERSION: "5.0"
+                TARGETED_DEVICE_FAMILY: "1,2"
+
+              info:
+                path: KurumsalPuantaj/Info.plist
+
+          EOF
+
+          cat > ios/KurumsalPuantaj/Info.plist <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
+          <plist version="1.0">
+          <dict>
+
+              <key>CFBundleDisplayName</key>
+              <string>Kurumsal Puantaj</string>
+
+              <key>CFBundleIdentifier</key>
+              <string>com.ediptan.kurumsalpuantaj</string>
+
+              <key>CFBundleName</key>
+              <string>Kurumsal Puantaj</string>
+
+              <key>CFBundleShortVersionString</key>
+              <string>1.0.0</string>
+
+              <key>CFBundleVersion</key>
+              <string>1</string>
+
+              <key>UILaunchScreen</key>
+              <dict/>
+
+              <key>UISupportedInterfaceOrientations</key>
+              <array>
+                  <string>UIInterfaceOrientationPortrait</string>
+              </array>
+
+          </dict>
+          </plist>
+          EOF
+
+          cat > ios/KurumsalPuantaj/ContentView.swift <<'EOF'
+          import SwiftUI
+          import WebKit
+
+          struct WebView: UIViewRepresentable {
+
+              func makeUIView(context: Context) -> WKWebView {
+
+                  let configuration = WKWebViewConfiguration()
+
+                  configuration.websiteDataStore =
+                      WKWebsiteDataStore.default()
+
+                  let webView = WKWebView(
+                      frame: .zero,
+                      configuration: configuration
+                  )
+
+                  webView.allowsBackForwardNavigationGestures = true
+
+                  if let url =
+                      Bundle.main.url(
+                          forResource: "index",
+                          withExtension: "html"
+                      ) {
+
+                      webView.loadFileURL(
+                          url,
+                          allowingReadAccessTo:
+                              url.deletingLastPathComponent()
+                      )
+                  }
+
+                  return webView
+              }
+
+              func updateUIView(
+                  _ webView: WKWebView,
+                  context: Context
+              ) {}
+          }
+
+          struct ContentView: View {
+
+              var body: some View {
+
+                  WebView()
+                      .ignoresSafeArea()
+              }
+          }
+
+          @main
+          struct KurumsalPuantajApp: App {
+
+              var body: some Scene {
+
+                  WindowGroup {
+
+                      ContentView()
+                  }
+              }
+          }
+          EOF
+
+      - name: Xcode projesini oluştur
+        working-directory: ios
+        run: |
+          xcodegen generate
+
+      - name: iOS Simulator build
+        working-directory: ios
+        run: |
+          xcodebuild \
+            -project KurumsalPuantaj.xcodeproj \
+            -scheme KurumsalPuantaj \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: iOS build dosyasını yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: kurumsal-puantaj-ios-simulator
+          path: ios/build/Build/Products/Debug-iphonesimulator/KurumsalPuantaj.app
