@@ -1,6 +1,6 @@
 name: Kurumsal Puantaj - Capacitor iOS
 
-on:
+"on":
   workflow_dispatch:
 
 permissions:
