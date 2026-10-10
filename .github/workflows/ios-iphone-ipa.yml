@@ -1,0 +1,73 @@
+
+name: Kurumsal Puantaj - iPhone IPA
+
+"on":
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-iphone-ipa:
+    runs-on: macos-latest
+
+    steps:
+      - name: Kaynak kodunu al
+        uses: actions/checkout@v4
+        with:
+          ref: ios-capacitor
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Web dosyalarını hazırla
+        run: |
+          set -e
+          mkdir -p www
+          cp index.html www/
+          cp kurumsal.html www/
+          cp kurumsal.css www/
+          cp kurumsal.js www/
+          cp bireysel.html www/
+          if [ -d assets ]; then
+            cp -R assets www/
+          fi
+
+      - name: Bağımlılıkları kur
+        run: npm install
+
+      - name: iOS projesini oluştur
+        run: npx cap add ios
+
+      - name: iOS projesini eşitle
+        run: npx cap sync ios
+
+      - name: iPhone için derle
+        run: |
+          set -e
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -sdk iphoneos \
+            -configuration Debug \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            IPHONEOS_DEPLOYMENT_TARGET=14.0 \
+            build
+
+      - name: IPA dosyasını paketle
+        run: |
+          set -e
+          mkdir -p ipa/Payload
+          cp -R build/Build/Products/Debug-iphoneos/App.app ipa/Payload/
+          cd ipa
+          zip -r ../Kurumsal-Puantaj-iPhone-Unsigned.ipa Payload
+
+      - name: IPA dosyasını kaydet
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kurumsal-Puantaj-iPhone-IPA
+          path: Kurumsal-Puantaj-iPhone-Unsigned.ipa
+          if-no-files-found: error
