@@ -1,16 +1,15 @@
 name: Kurumsal Puantaj - Capacitor iOS
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-contents: read
+  contents: read
 
 jobs:
-build-ios:
-runs-on: macos-latest
-
-steps:
+ build-ios:
+  runs-on: macos-latest 
+  steps:
   - name: Kaynak kodunu al
     uses: actions/checkout@v4
     with:
