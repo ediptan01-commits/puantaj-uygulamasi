@@ -1,0 +1,65 @@
+name: Kurumsal Puantaj - Capacitor iOS
+
+on:
+workflow_dispatch:
+
+permissions:
+contents: read
+
+jobs:
+build-ios:
+runs-on: macos-latest
+
+steps:
+  - name: Kaynak kodunu al
+    uses: actions/checkout@v4
+    with:
+      ref: ios-capacitor
+
+  - name: Node.js kur
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22
+      cache: npm
+
+  - name: Xcode sürümünü kontrol et
+    run: xcodebuild -version
+
+  - name: Web dosyalarını hazırla
+    run: |
+      set -e
+      mkdir -p www
+      cp index.html www/
+      cp kurumsal.html www/
+      cp kurumsal.css www/
+      cp kurumsal.js www/
+      cp bireysel.html www/
+      if [ -d assets ]; then
+        cp -R assets www/
+      fi
+
+  - name: Capacitor bağımlılıklarını kur
+    run: npm install
+
+  - name: iOS projesini oluştur
+    run: npx cap add ios
+
+  - name: iOS projesini senkronize et
+    run: npx cap sync ios
+
+  - name: iOS Simulator derlemesi
+    run: |
+      xcodebuild \
+        -workspace ios/App/App.xcworkspace \
+        -scheme App \
+        -sdk iphonesimulator \
+        -configuration Debug \
+        -derivedDataPath build \
+        CODE_SIGNING_ALLOWED=NO \
+        build
+
+  - name: Test uygulamasını kaydet
+    uses: actions/upload-artifact@v4
+    with:
+      name: Kurumsal-Puantaj-iOS-Test
+      path: build/Build/Products/Debug-iphonesimulator/App.app
