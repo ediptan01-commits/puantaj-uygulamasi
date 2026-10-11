@@ -1330,18 +1330,20 @@ class="main">
 
 
             <div class="paymentBox">
+    <label>Günlük Yevmiye (TL)</label>
+    <input
+        id="dailyRate"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Örn. 1500"
+        oninput="paymentChanged()">
+</div>
 
-                <label>
-                    Ücreti
-                </label>
-
-                <input
-                id="salary"
-                type="number"
-                placeholder="0"
-                oninput="paymentChanged()">
-
-            </div>
+<div class="paymentBox">
+    <label>Hesaplanan Hakediş</label>
+    <div id="earnedSalary" class="balance">0 TL</div>
+</div>
 
 
             <div class="paymentBox">
@@ -2461,48 +2463,38 @@ function updateSummary(){
    ÖDEME
 ================================================== */
 
-function updatePayment(){
 
-    const data =
-        getMonthData();
+function updatePayment() {
+    const data = getMonthData();
 
+    const dailyRate = Number(data.dailyRate || 0);
+    const received = Number(data.received || 0);
 
-    document.getElementById(
-        "salary"
-    ).value =
-        data.salary || "";
+    let workedUnits = 0;
 
+    Object.values(data.days || {}).forEach(day => {
+        if (day.status === "worked") {
+            workedUnits += Number(day.wage ?? 1);
+        } else if (day.status === "half") {
+            workedUnits += 0.5;
+        }
+    });
 
-    document.getElementById(
-        "received"
-    ).value =
+    const earned = dailyRate * workedUnits;
+
+    document.getElementById("dailyRate").value =
+        data.dailyRate ?? "";
+
+    document.getElementById("received").value =
         data.received || "";
 
+    document.getElementById("earnedSalary").textContent =
+        earned.toLocaleString("tr-TR") + " TL";
 
-    const balance =
-
-        Number(
-            data.salary || 0
-        )
-
-        -
-
-        Number(
-            data.received || 0
-        );
-
-
-    document.getElementById(
-        "balance"
-    ).textContent =
-
-        balance.toLocaleString(
-            "tr-TR"
-        )
-        +
-        " TL";
-
+    document.getElementById("balance").textContent =
+        (earned - received).toLocaleString("tr-TR") + " TL";
 }
+   
 
 
 /* ==================================================
