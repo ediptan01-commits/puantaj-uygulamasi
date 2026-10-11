@@ -2511,34 +2511,21 @@ function updatePayment(){
 
 function paymentChanged(){
 
-    const data =
-        getMonthData();
+    const data = getMonthData();
 
-
-    data.salary =
+    data.dailyRate =
         Number(
-            document.getElementById(
-                "salary"
-            ).value
-        )
-        ||
-        0;
-
+            document.getElementById("dailyRate").value
+        ) || 0;
 
     data.received =
         Number(
-            document.getElementById(
-                "received"
-            ).value
-        )
-        ||
-        0;
-
+            document.getElementById("received").value
+        ) || 0;
 
     saveData();
 
     updatePayment();
-
 }
 
 
