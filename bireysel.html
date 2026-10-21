@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Bireysel Puantaj</title>
+<title>Puantaj</title>
 
 <style>
 
@@ -1393,6 +1393,7 @@ class="main">
 
         <div class="managementGrid">
             <button class="managementButton" onclick="openSiteManager()">🏗️<span>Şantiyeler</span></button>
+            <button class="managementButton" onclick="openIndividualPro()">⭐<span>Pro / Geri yükle</span></button>
             <button class="managementButton" onclick="openEmployeeManager()">👷<span>Çalışanlar</span></button>
             <button class="managementButton" onclick="downloadBackup()">💾<span>Yedek İndir</span></button>
             <button class="managementButton" onclick="openRestorePicker()">📥<span>Yedekten Yükle</span></button>
@@ -2569,6 +2570,13 @@ function closeAddEmployee(){
     editingEmployeeId = null;
 }
 
+function isIndividualPro(){ return localStorage.getItem("kurumsalPuantajPro") === "1"; }
+window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0"); if(active){ closeIndividualPro(); showToast("Puantaj Pro etkinleştirildi."); } };
+window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
+function openIndividualPro(){ document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
+function closeIndividualPro(){ document.getElementById("individualProModal").classList.remove("show"); }
+function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(); else showToast("Google Play satın alma ekranı gerekli."); }
+function restoreIndividualPro(){ if(window.PlayBilling) window.PlayBilling.restorePurchases(); else showToast("Satın alma geri yükleme Google Play sürümünde kullanılabilir."); }
 function saveNewEmployee(){
     const input = document.getElementById("employeeNameInput");
     const name = input.value.trim();
@@ -2579,6 +2587,7 @@ function saveNewEmployee(){
         if(employee){ employee.name = name; employee.siteId = siteId; currentEmployee = employee; }
         showToast("Çalışan güncellendi.");
     } else {
+        if(!isIndividualPro() && employees.length >= 1){ closeAddEmployee(); openIndividualPro(); return; }
         const newEmployee = {id: Date.now(), name, siteId, months:{}};
         employees.push(newEmployee);
         currentEmployee = newEmployee;
@@ -2636,6 +2645,7 @@ function saveSite(){
         if(site) site.name = name;
         showToast("Şantiye güncellendi.");
     } else {
+        if(!isIndividualPro() && sites.length >= 1){ closeSiteManager(); openIndividualPro(); return; }
         sites.push({id:"site_"+Date.now(), name});
         showToast("Şantiye eklendi.");
     }
@@ -2858,6 +2868,17 @@ if (employees.length > 0) {
 
 </script>
 
+<div id="individualProModal" class="modal">
+    <div class="modalBox">
+        <div class="modalTitle">⭐ Puantaj Pro</div>
+        <p class="modalText">Tek seferlik satın almayla bireysel çalışan ve şantiye sınırlarını kaldırın.</p>
+        <div class="modalButtons">
+            <button class="cancelButton" onclick="closeIndividualPro()">Kapat</button>
+            <button class="saveEmployeeButton" onclick="buyIndividualPro()">Pro'yu Satın Al</button>
+        </div>
+        <div class="modalButtons"><button class="cancelButton" onclick="restoreIndividualPro()">Satın Almayı Geri Yükle</button></div>
+    </div>
+</div>
 </body>
 
 </html>
