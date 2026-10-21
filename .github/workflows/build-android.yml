@@ -156,9 +156,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 6
+                  versionCode 7
 
-                  versionName "1.0.5"
+                  versionName "1.0.6"
               }
 
               signingConfigs {
@@ -191,6 +191,10 @@ jobs:
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
               }
+          }
+
+          dependencies {
+              implementation "com.android.billingclient:billing:8.2.1"
           }
           EOF
 
@@ -227,7 +231,7 @@ jobs:
 
               <application
                   android:allowBackup="true"
-                  android:label="Kurumsal Puantaj"
+                  android:label="Puantaj"
                   android:icon="@drawable/icon_puantaj"
                   android:roundIcon="@drawable/icon_puantaj"
                   android:supportsRtl="true"
@@ -269,9 +273,14 @@ jobs:
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import android.webkit.JavascriptInterface;
+          import com.android.billingclient.api.*;
+          import java.util.Collections;
           import android.widget.FrameLayout;
 
           public class MainActivity extends Activity {
+              private static final String PRODUCT_ID = "kurumsal_puantaj_pro";
+              private BillingClient billingClient;
 
               private WebView webView;
               private FrameLayout root;
@@ -295,6 +304,7 @@ jobs:
 
                   setContentView(root);
 
+                  setupBilling();
                   setupWebView();
 
                   if (Build.VERSION.SDK_INT >= 33) {
@@ -314,6 +324,7 @@ jobs:
                   WebSettings settings = webView.getSettings();
 
                   settings.setJavaScriptEnabled(true);
+                  webView.addJavascriptInterface(new PlayBillingBridge(), "PlayBilling");
                   settings.setDomStorageEnabled(true);
                   settings.setAllowFileAccess(true);
                   settings.setAllowContentAccess(true);
@@ -422,7 +433,57 @@ jobs:
                   }
               }
 
-              private void handleBack() {
+                  private void setupBilling() {
+                            billingClient = BillingClient.newBuilder(this)
+                                .setListener((result, purchases) -> {
+                                    if (result.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null)
+                                        for (Purchase purchase : purchases) handlePurchase(purchase);
+                                    else if (result.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
+                                        runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")");
+                                })
+                                .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
+                                .build();
+                            billingClient.startConnection(new BillingClientStateListener() {
+                                public void onBillingSetupFinished(BillingResult result) { if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) queryEntitlement(); }
+                                public void onBillingServiceDisconnected() { }
+                            });
+                        }
+                        private void runJs(String script) { runOnUiThread(() -> { if (webView != null) webView.evaluateJavascript(script, null); }); }
+                        private void queryEntitlement() {
+                            if (billingClient == null || !billingClient.isReady()) return;
+                            billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(), (result, purchases) -> {
+                                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) return;
+                                boolean active = false;
+                                for (Purchase purchase : purchases) {
+                                    if (purchase.getProducts().contains(PRODUCT_ID) && purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) { if (purchase.isAcknowledged()) active = true; handlePurchase(purchase); }
+                                }
+                                runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(" + active + ")");
+                            });
+                        }
+                        private void handlePurchase(Purchase purchase) {
+                            if (!purchase.getProducts().contains(PRODUCT_ID) || purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) return;
+                            if (purchase.isAcknowledged()) { runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)"); return; }
+                            billingClient.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build(), result -> {
+                                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)");
+                            });
+                        }
+                        private final class PlayBillingBridge {
+                            @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
+                            @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
+                            @JavascriptInterface public void buyPro() {
+                                runOnUiThread(() -> {
+                                    if (billingClient == null || !billingClient.isReady()) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
+                                    QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder().setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.INAPP).build();
+                                    billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(Collections.singletonList(product)).build(), (result, details) -> {
+                                        if (result.getResponseCode() != BillingClient.BillingResponseCode.OK || details.getProductDetailsList().isEmpty()) { runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")"); return; }
+                                        ProductDetails detail = details.getProductDetailsList().get(0);
+                                        BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).build())).build();
+                                        billingClient.launchBillingFlow(MainActivity.this, flow);
+                                    });
+                                });
+                            }
+                        }
+                        private void handleBack() {
 
                   if (webView != null &&
                           webView.canGoBack()) {
@@ -482,6 +543,7 @@ jobs:
                       webView = null;
                   }
 
+                  if (billingClient != null) billingClient.endConnection();
                   super.onDestroy();
               }
           }
@@ -522,7 +584,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
 
-          name: kurumsal-puantaj-android-v1.0.5
+          name: puantaj-android-v1.0.6
 
           if-no-files-found: error
 
