@@ -28,6 +28,7 @@ function openPro(){
     const modal = document.getElementById("proModal");
     if(!modal) return;
     updateProStatus();
+    if(window.PlayBilling) window.PlayBilling.isPro();
     modal.classList.add("show");
 }
 
@@ -49,6 +50,7 @@ function updateProStatus(){
     }
 }
 
+window.onProBillingError = function(code){ showAppNotice("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını ve test kullanıcısını kontrol edin. (" + code + ")", {title:"Pro Satın Alma", type:"error"}); };
 function onProEntitlementChanged(active){
     localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0");
     updateProStatus();
@@ -612,6 +614,7 @@ function saveModal(){
 
 
     if(modalType==="site"){
+        if(localStorage.getItem("kurumsalPuantajPro") !== "1" && data.sites.length >= 1){ closeModal(); openPro(); return; }
 
         data.sites.push({
 
@@ -626,6 +629,7 @@ function saveModal(){
 
 
     if(modalType==="team"){
+       if(localStorage.getItem("kurumsalPuantajPro") !== "1" && data.teams.length >= 1){ closeModal(); openPro(); return; }
 
        const selectedSiteId = document.getElementById("teamSite").value;
 
