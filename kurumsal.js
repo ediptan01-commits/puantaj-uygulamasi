@@ -17,7 +17,7 @@ let data = {
 let modalType="";
 
 
-const PRO_PRODUCT_ID = "kurumsal_puantaj_pro";
+const PRO_PRODUCT_ID = "puantaj_pro";
 let reportCache = { type: "monthly", startKey: "", endKey: "", rows: [] };
 
 function isProUnlocked(){
@@ -60,7 +60,7 @@ function onProEntitlementChanged(active){
 function buyPro(){
     if(isProUnlocked()){ updateProStatus(); return; }
     if(window.PlayBilling && typeof window.PlayBilling.buyPro === "function"){
-        window.PlayBilling.buyPro();
+        window.PlayBilling.buyPro(document.getElementById("proPlan").value);
     }else{
         showAppNotice("Satın alma ekranı yalnızca Google Play sürümünde kullanılabilir.", {title: "Pro Satın Alma", type: "error"});
     }
