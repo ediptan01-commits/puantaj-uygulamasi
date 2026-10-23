@@ -2575,7 +2575,7 @@ window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsa
 window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
 function openIndividualPro(){ document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
 function closeIndividualPro(){ document.getElementById("individualProModal").classList.remove("show"); }
-function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(); else showToast("Google Play satın alma ekranı gerekli."); }
+function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(document.getElementById("individualProPlan").value); else showToast("Google Play satın alma ekranı gerekli."); }
 function restoreIndividualPro(){ if(window.PlayBilling) window.PlayBilling.restorePurchases(); else showToast("Satın alma geri yükleme Google Play sürümünde kullanılabilir."); }
 function saveNewEmployee(){
     const input = document.getElementById("employeeNameInput");
@@ -2871,11 +2871,17 @@ if (employees.length > 0) {
 <div id="individualProModal" class="modal">
     <div class="modalBox">
         <div class="modalTitle">⭐ Puantaj Pro</div>
-        <p class="modalText">Tek seferlik satın almayla bireysel çalışan ve şantiye sınırlarını kaldırın.</p>
+        <p class="modalText">Aylık veya yıllık abonelikle bireysel çalışan ve şantiye sınırlarını kaldırın.</p>
+        <label for="individualProPlan">Abonelik dönemi</label>
+        <select id="individualProPlan" style="width:100%;padding:12px;margin:8px 0 16px;border-radius:10px">
+            <option value="aylik">Aylık abonelik</option>
+            <option value="yillik">Yıllık abonelik</option>
+        </select>
         <div class="modalButtons">
             <button class="cancelButton" onclick="closeIndividualPro()">Kapat</button>
-            <button class="saveEmployeeButton" onclick="buyIndividualPro()">Pro'yu Satın Al</button>
+            <button class="saveEmployeeButton" onclick="buyIndividualPro()">Abone Ol</button>
         </div>
+        <p class="modalText">Fiyat ve ödeme dönemi Google Play onay ekranında gösterilir. Abonelik, iptal edilmediği sürece seçtiğiniz dönemde otomatik yenilenir. Google Play abonelikler bölümünden iptal edebilirsiniz.</p>
         <div class="modalButtons"><button class="cancelButton" onclick="restoreIndividualPro()">Satın Almayı Geri Yükle</button></div>
     </div>
 </div>
