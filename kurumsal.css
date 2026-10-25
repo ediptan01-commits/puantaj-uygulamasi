@@ -1718,3 +1718,6 @@ body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; bord
 }
 
 .inputError{border-color:#dc2626 !important; box-shadow:0 0 0 3px rgba(220,38,38,.14) !important;}
+
+/* UCRETSIZ SURUM: PRO arayuzu gizli, ileride yeniden etkinlestirilebilir. */
+.quickPro, #proModal, .proBuyBtn, .proRestoreBtn { display: none !important; }
