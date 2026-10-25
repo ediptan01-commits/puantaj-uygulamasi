@@ -1393,7 +1393,7 @@ class="main">
 
         <div class="managementGrid">
             <button class="managementButton" onclick="openSiteManager()">🏗️<span>Şantiyeler</span></button>
-            <button class="managementButton" onclick="openIndividualPro()">⭐<span>Pro / Geri yükle</span></button>
+            <button class="managementButton" onclick="openIndividualPro()" style="display:none" aria-hidden="true">⭐<span>Pro / Geri yükle</span></button>
             <button class="managementButton" onclick="openEmployeeManager()">👷<span>Çalışanlar</span></button>
             <button class="managementButton" onclick="downloadBackup()">💾<span>Yedek İndir</span></button>
             <button class="managementButton" onclick="openRestorePicker()">📥<span>Yedekten Yükle</span></button>
@@ -2570,10 +2570,11 @@ function closeAddEmployee(){
     editingEmployeeId = null;
 }
 
-function isIndividualPro(){ return localStorage.getItem("kurumsalPuantajPro") === "1"; }
+const INDIVIDUAL_FREE_RELEASE = true;
+function isIndividualPro(){ return INDIVIDUAL_FREE_RELEASE || localStorage.getItem("kurumsalPuantajPro") === "1"; }
 window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0"); if(active){ closeIndividualPro(); showToast("Puantaj Pro etkinleştirildi."); } };
 window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
-function openIndividualPro(){ document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
+function openIndividualPro(){ if(INDIVIDUAL_FREE_RELEASE) return; document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
 function closeIndividualPro(){ document.getElementById("individualProModal").classList.remove("show"); }
 function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(document.getElementById("individualProPlan").value); else showToast("Google Play satın alma ekranı gerekli."); }
 function restoreIndividualPro(){ if(window.PlayBilling) window.PlayBilling.restorePurchases(); else showToast("Satın alma geri yükleme Google Play sürümünde kullanılabilir."); }
