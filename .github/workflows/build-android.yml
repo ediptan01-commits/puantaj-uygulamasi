@@ -1,4 +1,4 @@
-name: Kurumsal Puantaj - APK ve AAB
+name: Puantaj - Bireysel ve Kurumsal APK ve AAB
 
 on:
   workflow_dispatch:
@@ -75,6 +75,14 @@ jobs:
           mkdir -p android/app/src/main/res/drawable
           mkdir -p android/app/src/main/assets
 
+          for required_file in index.html bireysel.html kurumsal.html kurumsal.css kurumsal.js assets/icon_puantaj.webp; do
+            if [[ ! -s "$required_file" ]]; then
+              echo "HATA: Gerekli dosya bulunamadı veya boş: $required_file"
+              exit 1
+            fi
+          done
+
+          echo "Bireysel ve Kurumsal güncel kaynaklar paketleniyor."
           cp index.html android/app/src/main/assets/
           cp kurumsal.html android/app/src/main/assets/
           cp kurumsal.css android/app/src/main/assets/
@@ -156,9 +164,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 8
+                  versionCode 9
 
-                  versionName "1.0.7"
+                  versionName "1.0.8"
               }
 
               signingConfigs {
@@ -609,7 +617,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
 
-          name: puantaj-android-v1.0.6
+          name: puantaj-android-v1.0.8
 
           if-no-files-found: error
 
