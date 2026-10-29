@@ -1721,3 +1721,6 @@ body.darkTheme .calendarDay.selected { background: #1d416e; color: #dbeafe; bord
 
 /* UCRETSIZ SURUM: PRO arayuzu gizli, ileride yeniden etkinlestirilebilir. */
 .quickPro, #proModal, .proBuyBtn, .proRestoreBtn { display: none !important; }
+
+#appNoticeModal,#resetConfirmModal{z-index:10002}
+.modalBox{max-height:90vh;overflow-y:auto}

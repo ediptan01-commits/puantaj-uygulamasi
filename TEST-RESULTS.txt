@@ -1,0 +1,14 @@
+PASS Bireysel unlimited sites and employees, PRO=0
+PASS Bireysel edit dialog actually clickable
+PASS Bireysel attendance, note, payment, month
+PASS Bireysel actual wage and payment inputs
+PASS Bireysel native backup and restore chooser
+PASS Bireysel invalid backup, delete cancel/confirm, reset
+PASS Kurumsal unlimited sites teams workers PRO=0
+PASS Kurumsal attendance and payment
+PASS Kurumsal reports CSV PDF free and native
+PASS Kurumsal backup and restore picker
+PASS Settings and privacy
+PASS Kurumsal validation, all statuses, calendar, report period, deletion, reset
+PASS No missing inline click handlers
+ALL TESTS PASSED

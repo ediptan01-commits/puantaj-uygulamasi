@@ -21,10 +21,12 @@ const PRO_PRODUCT_ID = "puantaj_pro";
 let reportCache = { type: "monthly", startKey: "", endKey: "", rows: [] };
 
 function isProUnlocked(){
-    return localStorage.getItem("kurumsalPuantajPro") === "1";
+    return true; // Bu sürümde tüm özellikler ücretsizdir.
 }
 
 function openPro(){
+    showAppNotice("Tüm özellikler ücretsiz ve sınırsız kullanılabilir.");
+    return;
     const modal = document.getElementById("proModal");
     if(!modal) return;
     updateProStatus();
@@ -95,7 +97,7 @@ function buildReportRows(type){
         let worked=0, absent=0, leave=0, report=0;
         Object.entries(worker.attendance||{}).forEach(([date,status])=>{
             if(date<startKey||date>endKey) return;
-            if(status==="worked") worked++; else if(status==="absent") absent++; else if(status==="leave") leave++; else if(status==="report") report++;
+            if(status==="worked") worked++; else if(status==="half") worked+=0.5; else if(status==="absent") absent++; else if(status==="leave") leave++; else if(status==="report") report++;
         });
         const team=data.teams.find(t=>t.id===worker.teamId);
         const site=team?data.sites.find(s=>s.id===team.siteId):null;
@@ -116,6 +118,7 @@ function exportReportCSV(){
       ["Çalışan","Ekip","Şantiye","Çalıştı","Gelmedi","İzinli","Raporlu"].join(";"),
       ...r.rows.map(x=>[x.name,x.team,x.site,x.worked,x.absent,x.leave,x.report].map(v=>`"${String(v).replaceAll('"','""')}"`).join(";"))
     ];
+    if(window.PuantajNative){ window.PuantajNative.saveText(`puantaj-${r.type}-${r.startKey}.csv`, "text/csv", "\uFEFF"+lines.join("\r\n")); return; }
     const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
     const url=URL.createObjectURL(blob); const a=document.createElement("a");
     a.href=url; a.download=`puantaj-${r.type}-${r.startKey}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
@@ -126,6 +129,7 @@ function printReportPDF(){
     const r=buildReportRows(reportCache.type||"monthly");
     const company=(data.company||"Kurumsal Puantaj");
     const rows=r.rows.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.team)}</td><td>${escapeHtml(x.site)}</td><td>${x.worked}</td><td>${x.absent}</td><td>${x.leave}</td><td>${x.report}</td></tr>`).join("");
+    if(window.PuantajNative){ window.PuantajNative.printHtml(`<html><head><meta charset="utf-8"></head><body><h1>${escapeHtml(company)}</h1><p>${r.startKey} - ${r.endKey}</p><table border="1"><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli</th><th>Raporlu</th></tr>${rows}</table></body></html>`); return; }
     const w=window.open("","_blank","width=1100,height=800");
     if(!w){ showAppNotice("PDF / yazdırma penceresi tarayıcı tarafından engellendi. Açılır pencerelere izin verin.", {title: "PDF / Yazdırma", type: "error"}); return; }
     w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Puantaj Raporu</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#18202a}h1{margin:0 0 6px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f1f3f6}@media print{button{display:none}}</style></head><body><h1>${escapeHtml(company)}</h1><p>Puantaj Raporu · ${escapeHtml(r.startKey)} - ${escapeHtml(r.endKey)}</p><button onclick="window.print()">PDF olarak kaydet / Yazdır</button><table><thead><tr><th>Çalışan</th><th>Ekip</th><th>Şantiye</th><th>Çalıştı</th><th>Gelmedi</th><th>İzinli</th><th>Raporlu</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
@@ -148,6 +152,7 @@ function closeReports(){
 }
 
 function showReport(type){
+    reportCache.type=type;
 
     const content = document.getElementById("reportContent");
     const today = new Date();
@@ -181,8 +186,8 @@ function showReport(type){
         let days = 0;
 
         Object.entries(worker.attendance || {}).forEach(([date, status]) => {
-            if(date >= startKey && date <= endKey && status === "worked"){
-                days++;
+            if(date >= startKey && date <= endKey){
+                days += status === "worked" ? 1 : status === "half" ? 0.5 : 0;
             }
         });
 
@@ -199,8 +204,8 @@ function showReport(type){
         };
     });
 
-    const teamTotals = {};
-    const siteTotals = {};
+    const teamTotals = Object.create(null);
+    const siteTotals = Object.create(null);
 
     workerTotals.forEach(worker => {
         if(!teamTotals[worker.team]){
@@ -245,9 +250,9 @@ function showReport(type){
     workerTotals.forEach(worker => {
         html += `
             <tr>
-                <td>${worker.name}</td>
-                <td>${worker.team}</td>
-                <td>${worker.site}</td>
+                <td>${escapeHtml(worker.name)}</td>
+                <td>${escapeHtml(worker.team)}</td>
+                <td>${escapeHtml(worker.site)}</td>
                 <td>${worker.days}</td>
             </tr>
         `;
@@ -267,7 +272,7 @@ function showReport(type){
     `;
 
     Object.entries(teamTotals).forEach(([name, days]) => {
-        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+        html += `<tr><td>${escapeHtml(name)}</td><td>${days}</td></tr>`;
     });
 
     html += `
@@ -284,7 +289,7 @@ function showReport(type){
     `;
 
     Object.entries(siteTotals).forEach(([name, days]) => {
-        html += `<tr><td>${name}</td><td>${days}</td></tr>`;
+        html += `<tr><td>${escapeHtml(name)}</td><td>${days}</td></tr>`;
     });
 
     html += `</table></div>
@@ -392,6 +397,8 @@ function openModal(type){
     document.getElementById("paymentFields").style.display = "none";
 
     input.value="";
+    document.getElementById("nameField").style.display = type === "payment" ? "none" : "block";
+    if(type === "payment"){ document.getElementById("paymentAmount").value=""; document.getElementById("paymentNote").value=""; }
 
 
     if(type==="site"){
@@ -420,7 +427,7 @@ siteSelect.innerHTML = '<option value="">Şantiye seçin</option>';
 
 data.sites.forEach(site => {
     siteSelect.innerHTML +=
-        `<option value="${site.id}">${site.name}</option>`;
+        `<option value="${site.id}">${escapeHtml(site.name)}</option>`;
 });
 
     }
@@ -530,7 +537,7 @@ function renderTeamSelect(){
         data.teams.map(team=>`
 
             <option value="${team.id}">
-                ${team.name}
+                ${escapeHtml(team.name)}
             </option>
 
         `).join("");
@@ -569,7 +576,7 @@ function saveModal(){
         return;
     }
 
-    if(!amount || amount <= 0){
+    if(!Number.isFinite(amount) || amount <= 0){
         showAppNotice("Lütfen 0'dan büyük geçerli bir ödeme tutarı girin.", {title: "Ödeme Bilgisi Eksik", type: "error"});
         return;
     }
@@ -614,7 +621,6 @@ function saveModal(){
 
 
     if(modalType==="site"){
-        if(localStorage.getItem("kurumsalPuantajPro") !== "1" && data.sites.length >= 1){ closeModal(); openPro(); return; }
 
         data.sites.push({
 
@@ -629,7 +635,6 @@ function saveModal(){
 
 
     if(modalType==="team"){
-       if(localStorage.getItem("kurumsalPuantajPro") !== "1" && data.teams.length >= 1){ closeModal(); openPro(); return; }
 
        const selectedSiteId = document.getElementById("teamSite").value;
 
@@ -1104,7 +1109,7 @@ function renderSites() {
             <div class="site">
                 <div class="siteName"
                      onclick="toggleSite('${site.id}')">
-                    ${site.name}
+                    ${escapeHtml(site.name)}
                 </div>
 
                 <div class="siteInfo">
@@ -1126,7 +1131,7 @@ function renderSites() {
                         ${teams.length
                             ? teams.map(team => `
                                 <div class="teamRow">
-                                    ${team.name}
+                                    ${escapeHtml(team.name)}
                                 </div>
                             `).join("")
                             : "<p>Henüz ekip yok.</p>"
@@ -1165,7 +1170,7 @@ function renderTeams() {
             <div class="team"
                  onclick="openTeam('${team.id}')">
                 <div class="teamIcon">👷</div>
-                <div class="teamName">${team.name}</div>
+                <div class="teamName">${escapeHtml(team.name)}</div>
                 <div class="teamCount">${workerCount} çalışan</div>
                 <div>${site ? site.name : "Şantiye belirtilmedi"}</div>
                 <button onclick="event.stopPropagation(); deleteTeam('${team.id}')">
@@ -1666,7 +1671,7 @@ function renderTeamDetail(){
 
                     <div class="workerName">
 
-                        ${worker.name}
+                        ${escapeHtml(worker.name)}
 
                     </div>
 
@@ -1843,6 +1848,7 @@ function backupData() {
     data: data
   };
 
+  if(window.PuantajNative){ window.PuantajNative.saveText("puantaj-yedek-"+new Date().toISOString().slice(0,10)+".json", "application/json", JSON.stringify(backup,null,2)); return; }
   const blob = new Blob(
     [JSON.stringify(backup, null, 2)],
     { type: "application/json" }
@@ -1874,14 +1880,17 @@ function restoreData(event) {
     try {
       const backup = JSON.parse(e.target.result);
       const restored = backup.data;
-        console.log("Yedek içeriği:", backup);
+
 
       if (
         !restored ||
         !Array.isArray(restored.sites) ||
         !Array.isArray(restored.teams) ||
         !Array.isArray(restored.workers) ||
-        !Array.isArray(restored.payments)
+        !Array.isArray(restored.payments) ||
+        ["sites","teams","workers","payments"].some(key => restored[key].some(item => !item || typeof item.id !== "string" || !/^[a-zA-Z0-9_-]+$/.test(item.id))) ||
+        ["sites","teams","workers"].some(key => restored[key].some(item => typeof item.name !== "string")) ||
+        restored.workers.some(item => item.attendance != null && (typeof item.attendance !== "object" || Array.isArray(item.attendance)))
       ) {
         showAppNotice("Yedek dosyasının biçimi geçerli değil. Lütfen uygulamadan alınmış bir .json yedek dosyası seçin.", { title: "Yedek Dosyası Geçersiz", type: "error" });
         return;
@@ -1904,6 +1913,7 @@ function restoreData(event) {
     }
   };
 
+  reader.onerror = () => showAppNotice("Yedek dosyası okunamadı. Lütfen tekrar deneyin.", {type:"error"});
   reader.readAsText(file);
 }
 

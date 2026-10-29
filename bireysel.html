@@ -1050,6 +1050,8 @@ body{
 
 }
 
+#addEmployeeModal{z-index:10000} #confirmModal{z-index:10002}
+.modalBox{max-height:90vh;overflow-y:auto}
 </style>
 
 </head>
@@ -2344,6 +2346,7 @@ function isToday(day){
 
 function changeMonth(amount){
 
+    currentDate.setDate(1);
     currentDate.setMonth(
 
         currentDate.getMonth()
@@ -2503,6 +2506,7 @@ function updatePayment() {
 ================================================== */
 
 function paymentChanged(){
+    if(!currentEmployee){ showToast("Önce çalışan ekleyin veya seçin."); return; }
 
     const data = getMonthData();
 
@@ -2588,7 +2592,6 @@ function saveNewEmployee(){
         if(employee){ employee.name = name; employee.siteId = siteId; currentEmployee = employee; }
         showToast("Çalışan güncellendi.");
     } else {
-        if(!isIndividualPro() && employees.length >= 1){ closeAddEmployee(); openIndividualPro(); return; }
         const newEmployee = {id: Date.now(), name, siteId, months:{}};
         employees.push(newEmployee);
         currentEmployee = newEmployee;
@@ -2624,7 +2627,7 @@ function deleteIndividualEmployee(id){
         closeConfirm();
         closeEmployeeManager();
         if(currentEmployee) openEmployee(currentEmployee.id);
-        else { document.getElementById("employeeName").textContent = "Çalışan Yok"; renderEmployeeBar(); renderCalendar(); }
+        else { document.getElementById("employeeName").textContent = "Çalışan Yok"; document.getElementById("calendar").innerHTML=""; renderEmployeeBar(); updateSummaryEmpty(); }
         showToast("Çalışan silindi.");
     });
 }
@@ -2646,7 +2649,6 @@ function saveSite(){
         if(site) site.name = name;
         showToast("Şantiye güncellendi.");
     } else {
-        if(!isIndividualPro() && sites.length >= 1){ closeSiteManager(); openIndividualPro(); return; }
         sites.push({id:"site_"+Date.now(), name});
         showToast("Şantiye eklendi.");
     }
@@ -2678,6 +2680,7 @@ function renderSiteList(){
 
 function downloadBackup(){
     const payload = {version:2, exportedAt:new Date().toISOString(), employees, sites};
+    if(window.PuantajNative){ window.PuantajNative.saveText(`bireysel-puantaj-yedek-${new Date().toISOString().slice(0,10)}.json`, "application/json", JSON.stringify(payload,null,2)); return; }
     const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
     const url = URL.createObjectURL(blob); const a = document.createElement("a");
     a.href=url; a.download=`bireysel-puantaj-yedek-${new Date().toISOString().slice(0,10)}.json`;
@@ -2693,23 +2696,25 @@ function restoreBackup(event){
             const payload = JSON.parse(reader.result);
             const incomingEmployees = Array.isArray(payload) ? payload : payload.employees;
             const incomingSites = Array.isArray(payload.sites) ? payload.sites : [];
-            if(!Array.isArray(incomingEmployees)) throw new Error("Geçersiz yedek");
+            if(!Array.isArray(incomingEmployees) || incomingEmployees.some(e => !e || !Number.isSafeInteger(e.id) || typeof e.name !== "string" || (e.months != null && (typeof e.months !== "object" || Array.isArray(e.months)))) || incomingSites.some(s => !s || typeof s.id !== "string" || !/^[a-zA-Z0-9_-]+$/.test(s.id) || typeof s.name !== "string")) throw new Error("Geçersiz yedek");
             openConfirm("Yedekten Geri Yükle", "Yedekteki kayıtlar mevcut verilerinizle birleştirilecek. Aynı ID'ye sahip kayıt varsa mevcut kayıt korunacak. Devam edilsin mi?", () => {
                 const employeeIds = new Set(employees.map(e => e.id));
-                incomingEmployees.forEach(e => { if(e && !employeeIds.has(e.id)) employees.push(e); });
+                incomingEmployees.forEach(e => { if(e && !employeeIds.has(e.id))  { employees.push(e); employeeIds.add(e.id); } });
                 const siteIds = new Set(sites.map(s => s.id));
-                incomingSites.forEach(site => { if(site && !siteIds.has(site.id)) sites.push(site); });
-                saveData(); renderEmployeeBar(); if(currentEmployee) renderCalendar(); closeConfirm(); showToast("Yedek verileri mevcut kayıtlarla birleştirildi.");
+                incomingSites.forEach(site => { if(site && !siteIds.has(site.id))  { sites.push(site); siteIds.add(site.id); } });
+                saveData(); currentEmployee = currentEmployee || employees[0] || null; renderEmployeeBar(); if(currentEmployee) openEmployee(currentEmployee.id); renderEmployeeManager(); renderSiteList(); closeConfirm(); showToast("Yedek verileri mevcut kayıtlarla birleştirildi.");
             });
         } catch(e){ showToast("Yedek dosyası geçersiz."); }
         event.target.value = "";
     };
+    reader.onerror = () => showToast("Yedek dosyası okunamadı. Lütfen tekrar deneyin.");
     reader.readAsText(file);
 }
 function openResetDataModal(){ document.getElementById("resetDataModal").classList.add("show"); }
 function closeResetDataModal(){ document.getElementById("resetDataModal").classList.remove("show"); }
 function resetAllData(){
     employees=[]; sites=[]; currentEmployee=null;
+    updateSummaryEmpty();
     saveData();
     closeResetDataModal();
     document.getElementById("employeeName").textContent="Çalışan Yok";
@@ -2721,7 +2726,7 @@ function resetAllData(){
     document.getElementById("absent").textContent="0";
     document.getElementById("leaveCount").textContent="0";
     document.getElementById("reportCount").textContent="0";
-    document.getElementById("salary").value="";
+    document.getElementById("dailyRate").value="";
     document.getElementById("received").value="";
     document.getElementById("balance").textContent="0 TL";
     renderEmployeeBar();
@@ -2832,13 +2837,14 @@ function escapeHtml(value){
 
 
 function updateSummaryEmpty(){
+    document.getElementById("earnedSalary").textContent="0 TL";
     document.getElementById("worked").textContent="0";
     document.getElementById("hours").textContent="0 saat";
     document.getElementById("wage").textContent="0";
     document.getElementById("absent").textContent="0";
     document.getElementById("leaveCount").textContent="0";
     document.getElementById("reportCount").textContent="0";
-    document.getElementById("salary").value="";
+    document.getElementById("dailyRate").value="";
     document.getElementById("received").value="";
     document.getElementById("balance").textContent="0 TL";
 }
