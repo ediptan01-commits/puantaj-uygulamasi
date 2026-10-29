@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -88,6 +91,7 @@ jobs:
           cp kurumsal.css android/app/src/main/assets/
           cp kurumsal.js android/app/src/main/assets/
           cp bireysel.html android/app/src/main/assets/
+          cp privacy.html android/app/src/main/assets/
 
           cp assets/icon_puantaj.webp \
             android/app/src/main/res/drawable/icon_puantaj.webp
@@ -164,9 +168,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 9
+                  versionCode 10
 
-                  versionName "1.0.8"
+                  versionName "1.0.9"
               }
 
               signingConfigs {
@@ -201,9 +205,7 @@ jobs:
               }
           }
 
-          dependencies {
-              implementation "com.android.billingclient:billing:8.2.1"
-          }
+          dependencies { }
           EOF
 
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
@@ -267,320 +269,7 @@ jobs:
           </manifest>
           EOF
 
-          cat > android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java <<'EOF'
-          package com.ediptan.kurumsalpuantaj;
-
-          import android.app.Activity;
-          import android.graphics.Color;
-          import android.os.Build;
-          import android.os.Bundle;
-          import android.view.View;
-          import android.view.Window;
-          import android.view.WindowInsets;
-          import android.webkit.RenderProcessGoneDetail;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
-          import android.webkit.JavascriptInterface;
-          import com.android.billingclient.api.*;
-          import java.util.Collections;
-          import android.widget.FrameLayout;
-
-          public class MainActivity extends Activity {
-              private static final String PRODUCT_ID = "puantaj_pro";
-              private BillingClient billingClient;
-
-              private WebView webView;
-              private FrameLayout root;
-
-              @Override
-              protected void onCreate(Bundle savedInstanceState) {
-                  super.onCreate(savedInstanceState);
-
-                  Window window = getWindow();
-
-                  window.setStatusBarColor(Color.WHITE);
-                  window.setNavigationBarColor(Color.WHITE);
-
-                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                      window.getDecorView().setSystemUiVisibility(
-                              View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                      );
-                  }
-
-                  root = new FrameLayout(this);
-
-                  setContentView(root);
-
-                  setupBilling();
-                  setupWebView();
-
-                  if (Build.VERSION.SDK_INT >= 33) {
-                      getOnBackInvokedDispatcher()
-                              .registerOnBackInvokedCallback(
-                                      android.window.OnBackInvokedDispatcher
-                                              .PRIORITY_DEFAULT,
-                                      this::handleBack
-                              );
-                  }
-              }
-
-              @Override
-              protected void onResume() {
-                  super.onResume();
-                  queryEntitlement();
-              }
-
-              private void setupWebView() {
-
-                  webView = new WebView(this);
-
-                  WebSettings settings = webView.getSettings();
-
-                  settings.setJavaScriptEnabled(true);
-                  webView.addJavascriptInterface(new PlayBillingBridge(), "PlayBilling");
-                  settings.setDomStorageEnabled(true);
-                  settings.setAllowFileAccess(true);
-                  settings.setAllowContentAccess(true);
-
-                  settings.setCacheMode(
-                          WebSettings.LOAD_NO_CACHE
-                  );
-
-                  webView.clearCache(true);
-                  webView.clearHistory();
-
-                  webView.setWebViewClient(
-                          new WebViewClient() {
-
-                              @Override
-                              public void onPageFinished(WebView view, String url) {
-                                  queryEntitlement();
-                              }
-
-                              @Override
-                              public boolean onRenderProcessGone(
-                                      WebView view,
-                                      RenderProcessGoneDetail detail
-                              ) {
-
-                                  try {
-                                      root.removeView(view);
-
-                                      view.stopLoading();
-
-                                      view.loadUrl("about:blank");
-
-                                      view.destroy();
-
-                                  } catch (Exception ignored) {
-                                  }
-
-                                  setupWebView();
-
-                                  return true;
-                              }
-                          }
-                  );
-
-                  FrameLayout.LayoutParams params =
-                          new FrameLayout.LayoutParams(
-                                  FrameLayout.LayoutParams.MATCH_PARENT,
-                                  FrameLayout.LayoutParams.MATCH_PARENT
-                          );
-
-                  root.addView(webView, params);
-
-                  root.setOnApplyWindowInsetsListener(
-                          (view, insets) -> {
-
-                              int left = 0;
-                              int top = 0;
-                              int right = 0;
-                              int bottom = 0;
-
-                              if (Build.VERSION.SDK_INT >=
-                                      Build.VERSION_CODES.R) {
-
-                                  android.graphics.Insets systemBars =
-                                          insets.getInsets(
-                                                  WindowInsets.Type.statusBars()
-                                                          | WindowInsets.Type.navigationBars()
-                                                          | WindowInsets.Type.displayCutout()
-                                          );
-
-                                  left = systemBars.left;
-                                  top = systemBars.top;
-                                  right = systemBars.right;
-                                  bottom = systemBars.bottom;
-
-                              } else {
-
-                                  top =
-                                          insets.getSystemWindowInsetTop();
-
-                                  bottom =
-                                          insets.getSystemWindowInsetBottom();
-
-                                  left =
-                                          insets.getSystemWindowInsetLeft();
-
-                                  right =
-                                          insets.getSystemWindowInsetRight();
-                              }
-
-                              root.setPadding(
-                                      left,
-                                      top,
-                                      right,
-                                      bottom
-                              );
-
-                              return insets;
-                          }
-                  );
-
-                  root.requestApplyInsets();
-
-                  try {
-
-                      webView.loadUrl(
-                              "file:///android_asset/index.html"
-                      );
-
-                  } catch (Exception ignored) {
-                  }
-              }
-
-                  private void setupBilling() {
-                            billingClient = BillingClient.newBuilder(this)
-                                .setListener((result, purchases) -> {
-                                    if (result.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null)
-                                        for (Purchase purchase : purchases) handlePurchase(purchase);
-                                    else if (result.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
-                                        runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")");
-                                })
-                                .enableAutoServiceReconnection()
-                                .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
-                                .build();
-                            billingClient.startConnection(new BillingClientStateListener() {
-                                public void onBillingSetupFinished(BillingResult result) { if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) queryEntitlement(); }
-                                public void onBillingServiceDisconnected() { }
-                            });
-                        }
-                        private void runJs(String script) { runOnUiThread(() -> { if (webView != null) webView.evaluateJavascript(script, null); }); }
-                        private void queryEntitlement() {
-                            if (billingClient == null || !billingClient.isReady()) return;
-                            billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(), (result, purchases) -> {
-                                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) return;
-                                boolean active = false;
-                                for (Purchase purchase : purchases) {
-                                    if (purchase.getProducts().contains(PRODUCT_ID) && purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) { active = true; handlePurchase(purchase); }
-                                }
-                                runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(" + active + ")");
-                            });
-                        }
-                        private void handlePurchase(Purchase purchase) {
-                            if (!purchase.getProducts().contains(PRODUCT_ID) || purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) return;
-                            if (purchase.isAcknowledged()) { runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)"); return; }
-                            billingClient.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build(), result -> {
-                                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)");
-                            });
-                        }
-                        private final class PlayBillingBridge {
-                            @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
-                            @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
-                            @JavascriptInterface public void buyPro(String basePlanId) {
-                                if (!"aylik".equals(basePlanId) && !"yillik".equals(basePlanId)) return;
-                                runOnUiThread(() -> {
-                                    if (billingClient == null || !billingClient.isReady()) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
-                                    QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder().setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
-                                    billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(Collections.singletonList(product)).build(), (result, details) -> {
-                                        if (result.getResponseCode() != BillingClient.BillingResponseCode.OK || details.getProductDetailsList().isEmpty()) { runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")"); return; }
-                                        ProductDetails detail = details.getProductDetailsList().get(0);
-                                        ProductDetails.SubscriptionOfferDetails selected = null;
-                                        if (detail.getSubscriptionOfferDetails() != null) {
-                                            for (ProductDetails.SubscriptionOfferDetails offer : detail.getSubscriptionOfferDetails()) {
-                                                if (basePlanId.equals(offer.getBasePlanId()) && offer.getOfferId() == null) {
-                                                    selected = offer;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (selected == null) { runJs("window.onProBillingError && window.onProBillingError('PLAN_UNAVAILABLE')"); return; }
-                                        BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).setOfferToken(selected.getOfferToken()).build())).build();
-                                        BillingResult launched = billingClient.launchBillingFlow(MainActivity.this, flow);
-                                        if (launched.getResponseCode() != BillingClient.BillingResponseCode.OK && launched.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
-                                            runJs("window.onProBillingError && window.onProBillingError(" + launched.getResponseCode() + ")");
-                                    });
-                                });
-                            }
-                        }
-                        private void handleBack() {
-
-                  if (webView != null &&
-                          webView.canGoBack()) {
-
-                      webView.goBack();
-
-                      return;
-                  }
-
-                  if (webView != null) {
-
-                      String url = webView.getUrl();
-
-                      if (url != null &&
-                              (
-                                      url.contains("bireysel.html")
-                                      || url.contains("kurumsal.html")
-                              )) {
-
-                          webView.loadUrl(
-                                  "file:///android_asset/index.html"
-                          );
-
-                          return;
-                      }
-                  }
-
-                  finish();
-              }
-
-              @Override
-              public void onBackPressed() {
-
-                  if (Build.VERSION.SDK_INT < 33) {
-                      handleBack();
-                  } else {
-                      super.onBackPressed();
-                  }
-              }
-
-              @Override
-              protected void onDestroy() {
-
-                  if (webView != null) {
-
-                      try {
-
-                          webView.stopLoading();
-
-                          webView.setWebViewClient(null);
-
-                          webView.destroy();
-
-                      } catch (Exception ignored) {
-                      }
-
-                      webView = null;
-                  }
-
-                  if (billingClient != null) billingClient.endConnection();
-                  super.onDestroy();
-              }
-          }
-          EOF
+          cp MainActivity.java android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java
 
       - name: Temiz build
         working-directory: android
@@ -617,7 +306,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
 
-          name: puantaj-android-v1.0.8
+          name: puantaj-android-v1.0.9
 
           if-no-files-found: error
 
@@ -625,3 +314,17 @@ jobs:
             android/app/build/outputs/apk/debug/*.apk
             android/app/build/outputs/apk/release/*.apk
             android/app/build/outputs/bundle/release/*.aab
+
+      - name: GitHub sürümünü yayınla
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create v1.0.9 \
+            --target "$GITHUB_SHA" \
+            --title "Puantaj 1.0.9 — Yedekleme ve sınırsız kullanım" \
+            --notes-file RELEASE-NOTES.md \
+            android/app/build/outputs/apk/debug/app-debug.apk \
+            android/app/build/outputs/apk/release/app-release.apk \
+            android/app/build/outputs/bundle/release/app-release.aab
