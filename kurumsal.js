@@ -34,7 +34,7 @@ function isProUnlocked(){
     return localStorage.getItem("kurumsalPuantajPro") === "1";
 }
 
-function openPro(){
+function openPro(){ requestProPrices();
     const modal = document.getElementById("proModal");
     if(!modal) return;
     updateProStatus();
@@ -1957,3 +1957,4 @@ function restoreMergedData(restored) {
 loadData();
 
 render();
+
