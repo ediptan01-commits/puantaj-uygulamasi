@@ -168,9 +168,9 @@ jobs:
 
                   targetSdk 36
 
-                  versionCode 10
+                  versionCode 12
 
-                  versionName "1.0.9"
+                  versionName "1.0.11"
               }
 
               signingConfigs {
@@ -205,7 +205,9 @@ jobs:
               }
           }
 
-          dependencies { }
+          dependencies {
+              implementation "com.android.billingclient:billing:8.2.1"
+          }
           EOF
 
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
