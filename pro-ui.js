@@ -1,6 +1,6 @@
 /* PRO only removes ads; every attendance feature remains free and unlimited. */
 (function(){
-    let active=false, catalog=[], message="PRO reklamsız kullanım içindir. Reklamlar henüz eklenmediği için yeni abonelik satışı kapalıdır.";
+    let active=false, catalog=[], message="PRO yalnızca reklamsız kullanım içindir. Şu anda uygulamada reklam gösterilmiyor. Puantaj özellikleri ücretsiz ve sınırsızdır.";
     const individual=!!document.getElementById("individualProModal");
     const prefix=individual?"individualPro":"pro";
     const el=suffix=>document.getElementById(prefix+suffix);
@@ -16,7 +16,7 @@
         }
         const plan=catalog.find(x=>x.plan===select.value);
         button.disabled=active||!plan||plan.purchasable!==true;
-        button.textContent=active?"PRO etkin":plan&&plan.purchasable?"Abone Ol":"Satış henüz açılmadı";
+        button.textContent=active?"PRO etkin":plan&&plan.purchasable?"Abone Ol":"Plan şu anda kullanılamıyor";
         button.style.display="";
     }
     window.onProEntitlementChanged=function(value){active=value===true;if(previous)previous(active);render();};

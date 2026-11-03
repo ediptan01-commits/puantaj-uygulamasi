@@ -1,9 +1,9 @@
-# 1.0.10 PRO hazırlığı
+# Puantaj 1.0.10 (11)
 
-Uygulama ücretsiz ve sınırsız kalır. PRO yalnızca reklamları kaldırmak için aylık/yıllık abonelik olarak hazırlanmıştır. Reklam altyapısı kapalı olarak eklendi; reklam gösterimi ve yeni abonelik satışı kapalıdır.
+Mevcut ücretsiz özellikler ve sınırsız kullanım korunur. Aylık/yıllık PRO satın alma ve geri yükleme kodu etkindir. Reklam gösterimi kapalıdır; ekranlarda şu anda reklam bulunmadığı açıkça belirtilir.
 
-(7) arşivinden doğrulanan kimlikler: puantaj_pro, aylik, yillik. Eski tek seferlik kurumsal_puantaj_pro satın almaları da geri yükleme kapsamındadır. Fiyatlar Play ProductDetails verisinden alınır. Bekleyen ödeme PRO açmaz; doğrulanmış satın alma onaylanır. Yerel depolama PRO açamaz.
+Ürün puantaj_pro; temel planlar aylik ve yillik. Fiyatlar yalnızca Google Play'den alınır. Satın alma, Play'in güncel sahiplik sorgusu ve Puantaj'ın Play Console lisans ortak anahtarıyla kriptografik imza kontrolü sonrasında onaylanır. Bekleyen/duraklatılmış işlemler PRO açmaz. Eski tek seferlik kurumsal_puantaj_pro satın almaları da sorgulanır. Yerel depolama erişim kaynağı değildir.
 
-Doğrulama hizmetinin kaynak ve testleri eklendi, fakat canlı sunucuya kurulmadı. billing-config.json verificationUrl boş olduğundan gerçek geri yükleme henüz çalışmaz.
+Play Console'da üretim sürümü 10 (1.0.9) görüldü; yeni sürüm kodu 11'dir. Abonelik ekranı yeni Billing APK yüklemesi istiyor ve mevcut ürünleri göstermiyor. Gerçek Play lisans testleri henüz yapılmadı.
 
-Paket com.ediptan.kurumsalpuantaj, önerilen versionCode 11 / 1.0.10. Yeni anahtar üretilmez. Mevcut v1.0.9 AAB sertifikasıyla eşleşme derlemede zorunludur. Play üretimine yayın adımı yoktur.
+Paket com.ediptan.kurumsalpuantaj ve mevcut yükleme sertifikası korunur. Yeni imzalama anahtarı oluşturulmaz. Google Play üretimine otomatik yayın yoktur.

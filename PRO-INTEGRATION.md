@@ -1,40 +1,36 @@
-# PRO düzenlemesi — 3 Kasım 2026
+# PRO entegrasyonu — 3 Kasım 2026
 
-## Kullanıcının son belirlediği kapsam
+## Son kapsam
 
-Tüm puantaj özellikleri ücretsiz ve sınırsızdır. PRO yalnızca reklamları kaldırır; aylık ve yıllık abonelik olur. Reklamlar daha sonra eklenecektir. Bu çalışma PRO düzenlemesine odaklanır. Daha önce onaylanan üç raporlama ilavesi bu pakete eklenmedi; sonraki ücretsiz geliştirmeler olarak bekliyor.
+Puantaj ücretsiz ve sınırsızdır. PRO yalnızca reklamsız kullanım için aylık/yıllık aboneliktir. Kullanıcının açık talebiyle uygulamadaki PRO satış ayarı etkindir. Reklam SDK altyapısı hazır, gösterim kapalıdır. Kullanıcıya şu anda reklam gösterilmediği ve ücretsiz kullanımın sınırsız olduğu açıklanır. Önceden konuşulan üç yeni raporlama özelliği bu pakette yoktur.
 
-## Üç arşivin karşılaştırması
+## Kaynaklar
 
-- (5): Billing 8.2.1; tek seferlik INAPP ürün kurumsal_puantaj_pro. Sunucu doğrulaması yok.
-- (7): SUBS ürün puantaj_pro; aylik/yillik temel plan seçimi ve offer token bağlantısı var. Sunucu doğrulaması yok. Mevcut Play Console durumu kaynak kodundan teyit edilemez.
-- (8): Billing kaldırılmış, PRO ekranları gizli, tüm özellikler ücretsiz. Bu sürüm taban alındı.
-- GitHub main 14aad053152b3af1d7ac587c040e5ee2d73ebf28 dosyaları (8) ZIP'i ile birebir eşleşti. 29 Ekim Android derlemesi başarılı.
+(8) taban sürümdür ve GitHub main 14aad053152b3af1d7ac587c040e5ee2d73ebf28 ile birebir eşleşti. (5) eski INAPP ürün kurumsal_puantaj_pro içerir. (7) SUBS ürün puantaj_pro ve aylik/yillik temel planlarını içerir. (4)'te reklam kimlikleri bulunmadı.
 
-## Yapılan düzenlemeler
+## Doğrulama
 
-Bireysel ve kurumsal bölümlerde PRO ekranları erişilebilir. Sınırsız kullanım korunur. Aylık/yıllık fiyat Google Play'den alınır, yalnızca doğru dönemli otomatik yenilenen temel plan seçilir; başka kampanyaya rastgele geçilmez. Satın alma iptali, bekleme, bağlantı/doğrulama hataları açıklanır. Geri yükleme hem eski tek seferlik hem abonelik satın almalarını sorgular. Mevcut PRO sahibi yeniden satın almaya yönlendirilmez. Abonelik yönetimi Google Play'de açılır.
+Play Console'un Puantaj > Para kazanma kurulumu > Lisanslama sayfasındaki mevcut Base64 RSA ortak anahtarı alındı. Bu, uygulamanın özel imzalama anahtarı değildir; uygulama ikili dosyasına eklenmesi için Google'ın sağladığı ortak anahtardır. Özel anahtar okunmadı/oluşturulmadı.
 
-Reklam SDK/UMP, yerleşim ve PRO durumuna bağlı native kontrol eklendi; ads-config.json enabled=false. Hiçbir reklam isteği gönderilmez. salesEnabled=false; olmayan reklamsızlık avantajı için ödeme alınmaz. Yerel depolama erişim kaynağı değildir. Erişim önbelleği yoktur; doğrulama hatasında PRO durumu belirsiz/kapalı kalır, ücretsiz özellikler etkilenmez.
+billing-config.json verificationMode=play_signature, salesEnabled=true. Uygulama her açılışta/öne gelişte INAPP ve SUBS güncel sahiplik sorgularını yapar. Yalnızca beklenmiş paket/ürün/token, PURCHASED ve duraklatılmamış işlem için Google imzası doğrulanır. İmzasız, sahte, değiştirilmiş, farklı anahtarlı kayıtlar açılmaz. Doğrulama sonrası acknowledgement yapılır. Yerel depolama veya WebView callback'i native PRO yetkisini açamaz. Başarısız sorguda sınırsız ücretsiz özellikler çalışır; PRO doğrulanmış kabul edilmez.
 
-## Güvenli doğrulama
+Bu model cihazdaki Play sahiplik sorgusunu kullanır. Sunucu üzerinden gerçek zamanlı iade/süre sonu kontrolü ve RTDN daha güçlü koruma sağlar; Google bunları önerir. verification-service ayrı sunucu için hazırdır, fakat canlı kurulum yapılmadı. Sunucuya geçilirse verificationMode=server ve HTTPS verificationUrl tanımlanır; sunucu hatasında imza moduna sessiz geçiş yoktur.
 
-verification-service klasörü Google Play Developer API üzerinden token doğrulayan Node sunucusudur. Google Application Default Credentials kullanır; özel anahtar uygulamaya konmaz. Tek seferlik ve abonelik için ayrı uçlar kullanılır. İade/bekleme/süre sonu kapatır; ödenmiş süre içindeki iptal ve grace period erişimi korur. Paket/ürün izin listesi sunucuda sabittir. Testler gerçek Google'a bağlanmaz.
+## Kullanıcı arayüzü
 
-Sunucu henüz kurulmadı. verificationUrl boş olduğu için bu pakette gerçek geri yükleme tamamlanamaz. Servis hesabı yetkisi, HTTPS kurulum, merkezi oran sınırı, sunucuda güvenilir acknowledgement/retry ve RTDN gerçek satış açılışından önce tamamlanmalıdır. Ayrıntı verification-service/README.md içindedir.
+Bireysel/kurumsal PRO ekranları görünür. Uygun aylık/yıllık otomatik yenilenen temel plan, teklif belirteci ve fiyat Play'den alınır. Ürün/fiyat alınamıyorsa ödeme düğmesi kullanılamaz. Sahiplik sorgusu bitmeden ödeme başlatılmaz; mevcut PRO sahibi tekrar satın almaya gönderilmez. Satın alma iptali ve bekleme açıklanır. Geri yükleme ve Play abonelik yönetimi vardır.
 
-## İmza ve derleme
+## Play Console'da gözlenen durum
 
-Paket: com.ediptan.kurumsalpuantaj. Yeni anahtar oluşturulmadı. Mevcut SIGNING_* gizli ayarları korunur. Önceki v1.0.9 AAB indirilip sertifikası okundu. SHA-256: EB:B7:EB:62:AB:C9:DA:75:5F:37:10:2A:C5:5C:CF:ED:D9:29:98:55:22:3E:CB:63:FA:46:DD:26:99:16:01:82. Yeni derleme bu sertifikayla eşleşmezse durur. Bu yükleme sertifikasıdır; Play App Signing dağıtım sertifikası farklı olabilir.
+Üretim: 10 (1.0.9), 2 Kasım 2026. Hazırlanan yeni paket: 11 (1.0.10). Abonelik ekranı henüz abonelik göstermiyor ve yeni APK istiyor. Kullanıcı daha önce abonelikleri kurduğunu belirtti; Billing içeren paket yüklendikten sonra ürün ve planların gerçekten etkin/görünür olduğu teyit edilmelidir. Aylık/yıllık fiyatlar tahmin edilmedi.
 
-Önerilen sürüm kodu 11, ad 1.0.10. Play Console'daki en yüksek kod ayrıca kontrol edilmelidir. Hazırlık dalına gönderildiğinde yalnızca APK/AAB dosyaları derlenir. GitHub sürümü oluşturma ve Play'e yayın adımı yoktur. Ana dal birleştirmesi yapılmaz.
+## İmza
 
-## Tamamlanmadan önce
+Paket com.ediptan.kurumsalpuantaj. Mevcut SIGNING_* ayarları kullanılır. Önceki v1.0.9 AAB sertifikası okundu; SHA-256 EB:B7:EB:62:AB:C9:DA:75:5F:37:10:2A:C5:5C:CF:ED:D9:29:98:55:22:3E:CB:63:FA:46:DD:26:99:16:01:82. Derleme hem anahtarı hem yeni AAB'yi bu sertifikaya karşı kontrol eder. Bu yükleme sertifikasıdır; Play dağıtım sertifikası farklı olabilir.
 
-1. Doğrulama hizmetini kurun ve verificationUrl girin.
-2. Play Console'da puantaj_pro + aylik/yillik planlarını doğrulayın.
-3. Play test kanalında eski satın alma, aylık/yıllık satın alma, iptal, bekleyen ödeme, yeniden başlatma, geri yükleme, iade, süre sonu ve ağ kesintisini deneyin.
-4. Reklamlar ileride açılınca gerçek AdMob kimlikleri, UMP mesajları ve gizlilik metni/Data safety beyanı güncellensin. Native kontrol doğrulanmış PRO veya belirsiz durumdayken reklam istemez. Reklam ve izin durumuna ilişkin cihaz testleri yapılmalı.
-5. Reklamlar ve gerçek lisans testleri tamamlanmadan salesEnabled true yapılmasın. Kullanıcının açık onayı olmadan üretime yayın yapılmasın.
+## Test ve yayın
 
-Referans: https://developer.android.com/google/play/billing/integrate
+TEST-RESULTS.txt yalnızca çalıştırılmış kontrolleri belirtir. Gerçek Google Play test hesabında başarılı/iptal/bekleyen ödeme, yeniden başlatma, geri yükleme, eski satın alma ve abonelik yaşam döngüsü henüz denenmedi. Yayın onayı verilmez; kullanıcı açıkça onaylamadan Google Play üretimine yayın yapılmaz. Reklamlar açılmadan gizlilik/izin ve Play Data safety beyanları güncellenmelidir. Reklam olmayan sürümde reklamsız aboneliğin mağaza açıklaması ve güncel Play abonelik politikası ayrıca gözden geçirilmelidir.
+
+https://developer.android.com/reference/com/android/billingclient/api/Purchase
+https://developer.android.com/google/play/billing/security

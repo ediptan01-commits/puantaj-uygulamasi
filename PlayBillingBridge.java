@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
-/** Entitlements come from the verification service, never WebView storage. */
+/** Entitlements come from current Play ownership plus cryptographic verification, never WebView storage. */
 public final class PlayBillingBridge {
     private final Activity activity;
     private final WebView view;
@@ -53,6 +53,10 @@ public final class PlayBillingBridge {
         });
     }
     private boolean configured(){
+        if("play_signature".equals(config.optString("verificationMode"))){
+            try{return PurchaseSignatureVerifier.validKey(android.util.Base64.decode(config.optString("licensingPublicKey"),android.util.Base64.DEFAULT));}
+            catch(Exception e){return false;}
+        }
         try { URI u=new URI(config.optString("verificationUrl"));
             return "https".equals(u.getScheme()) && u.getHost()!=null && u.getUserInfo()==null;
         }catch(Exception e){return false;}
@@ -89,7 +93,7 @@ public final class PlayBillingBridge {
             for(Purchase p:snapshot){
                 if(!known(p))continue;
                 if(p.getPurchaseState()==Purchase.PurchaseState.PENDING){pending=true;continue;}
-                if(p.getPurchaseState()!=Purchase.PurchaseState.PURCHASED)continue;
+                if(p.getPurchaseState()!=Purchase.PurchaseState.PURCHASED||p.isSuspended())continue;
                 try{if(verify(p)){any=true;verified.add(p);}}catch(Exception e){failed=true;}
             }
             final boolean granted=any,error=failed,waiting=pending;
@@ -104,6 +108,12 @@ public final class PlayBillingBridge {
         });
     }
     private boolean verify(Purchase p)throws Exception{
+        if(!activity.getPackageName().equals(p.getPackageName())||p.getPurchaseToken().isEmpty()||!known(p))return false;
+        if("play_signature".equals(config.optString("verificationMode"))){
+            return PurchaseSignatureVerifier.verify(p.getOriginalJson(),
+                android.util.Base64.decode(p.getSignature(),android.util.Base64.DEFAULT),
+                android.util.Base64.decode(config.getString("licensingPublicKey"),android.util.Base64.DEFAULT));
+        }
         HttpURLConnection c=(HttpURLConnection)new URL(config.getString("verificationUrl")).openConnection();
         try{
             c.setInstanceFollowRedirects(false);c.setConnectTimeout(10000);c.setReadTimeout(10000);

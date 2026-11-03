@@ -1,6 +1,11 @@
 {
-  "salesEnabled": false,
+  "salesEnabled": true,
   "verificationUrl": "",
   "subscriptionProductId": "puantaj_pro",
-  "basePlans": {"aylik": "aylik", "yillik": "yillik"}
+  "basePlans": {
+    "aylik": "aylik",
+    "yillik": "yillik"
+  },
+  "verificationMode": "play_signature",
+  "licensingPublicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8EAY1mFC6eXJN3t3usN715Ry8EPQiCOFOybmfBbnBpqKKfiN72PEl9XO8uFOV8QWRDP3NheUB2Xl1b5tOjbhZP14nu6tSK7oOlfRfr9jqyBA+EdJETUmAPGw6oQxKWmq/wpT6TLCf6pO+YdhVjO1vpOnUbNjqnGz7Mdd3Gg8XyAwXTDCGgUh1TGp33eJFNIgj//l8LDv5fK6bLGe8g4RNbBusUtu8E9k0nR5Ms9Ru9+VQKXWor5ROJYOLxjdxX48C2J3LklZU8DylWziKWgB0x+26STATdeMJ2q+3+1lMNOIMhL+jdBy4taIVmag6YEX7ondXL5gHcJ3WrHX7US9QQIDAQAB"
 }

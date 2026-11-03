@@ -1,14 +1,12 @@
-2026-11-03 — PRO preparation, sales disabled
-PASS corporate JavaScript syntax
-PASS inline script syntax for index/bireysel/kurumsal
-PASS free CSV/PDF without PRO, HTML escaping, localStorage bypass prevention, strict entitlement and revocation
-PASS PRO UI tests (3): corporate/individual plan pricing, unavailable plan, disabled sales, restore/manage, web fallback
-PASS verification tests (4): legacy purchase/refund/pending/consumed; subscription active/grace/canceled/expired/on-hold/paused/pending; product/package mismatch; network error; token encoding
-PASS javac MainActivity + PlayBillingBridge with Android 36 + Billing 9.1.0
-PASS original v1.0.9 AAB signer read and pinned in workflow
-PENDING GitHub full signed APK/AAB build
-NOT RUN Android device UI or real Play license tests
-BLOCKED live restore: verification service not deployed; verificationUrl empty
-PASS AdPolicy: 12 combinations (disabled/PRO/unknown/no-consent block ad requests)
-INCLUDED dormant Ads SDK and UMP; no ad requests while disabled
-NOT INCLUDED live subscription sales / additional reports
+2026-11-03 — PRO sales enabled; ads disabled
+PASS free CSV/PDF without PRO, escaping, strict entitlement, localStorage bypass, revoke
+PASS PRO UI tests (3): monthly/yearly pricing, unavailable plan, allowed/blocked purchase states, restore/manage, web fallback
+PASS optional server verification tests (4): legacy and subscription lifecycle, mismatch, network, token encoding
+PASS Google licensing signature tests: authentic SHA1/SHA256 RSA, tampered JSON/signature, wrong key, empty signature, malformed key
+PASS AdPolicy: 12 disabled/PRO/unknown/consent combinations
+PASS Play Console public RSA licensing key parses
+PASS first signed preparation APK/AAB build 41570349911; old certificate guard
+PENDING final build with active PRO signature verification
+NOT RUN real Google Play license purchase/restore or Android device UI
+OBSERVED Play Console production versionCode 10; subscriptions page asks for Billing APK
+NOT INCLUDED additional report features; live ads; production publication
