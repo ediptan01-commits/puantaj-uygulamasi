@@ -1636,6 +1636,7 @@ function loadData(){
 function saveData(){
     localStorage.setItem("puantajEmployees", JSON.stringify(employees));
     localStorage.setItem("puantajIndividualSites", JSON.stringify(sites));
+    if (window.PuantajAds) window.PuantajAds.completedPuantajAction();
 }
 
 
