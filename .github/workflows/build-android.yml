@@ -292,7 +292,7 @@ jobs:
       - name: APK ve AAB dosyalarini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: puantaj-android-v1.0.13
+          name: puantaj-android-v1.0.14
           if-no-files-found: error
           path: |
             android/app/build/outputs/apk/debug/*.apk
@@ -308,7 +308,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          TAG="v1.0.13"
+          TAG="v1.0.14"
 
           FILES=(
             android/app/build/outputs/apk/debug/app-debug.apk
@@ -335,7 +335,7 @@ jobs:
 
             gh release create "$TAG" \
               --target "$GITHUB_SHA" \
-              --title "Puantaj PRO 1.0.13 - Aylik ve Yillik Abonelik" \
+              --title "Puantaj PRO 1.0.14 - Aylik ve Yillik Abonelik" \
               --generate-notes \
               "${FILES[@]}"
           fi
