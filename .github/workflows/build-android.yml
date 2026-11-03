@@ -1,3 +1,5 @@
+
+
 name: Puantaj - Bireysel ve Kurumsal APK ve AAB
 
 on:
@@ -14,25 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Kaynak kodunu al
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@v3
 
       - name: Android SDK paketlerini kur
         run: |
           sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Gradle 9.3.1
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "9.3.1"
 
@@ -43,69 +44,69 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-
         run: |
+          set -euo pipefail
 
-          set -e
+          echo "=== IMZA KONTROLU ==="
 
-          echo "=== İMZA KONTROLÜ ==="
+          for secret_name in \
+            SIGNING_KEY_BASE64 \
+            SIGNING_STORE_PASSWORD \
+            SIGNING_KEY_ALIAS \
+            SIGNING_KEY_PASSWORD
+          do
+            if [[ -z "${!secret_name:-}" ]]; then
+              echo "HATA: $secret_name bulunamadi!"
+              exit 1
+            fi
+          done
 
-          if [[ -z "$SIGNING_KEY_BASE64" ]]; then
-            echo "HATA: SIGNING_KEY_BASE64 bulunamadı!"
-            echo "Release APK/AAB imzasız oluşturulmayacak."
-            exit 1
-          fi
-
-          if [[ -z "$SIGNING_STORE_PASSWORD" ]]; then
-            echo "HATA: SIGNING_STORE_PASSWORD bulunamadı!"
-            exit 1
-          fi
-
-          if [[ -z "$SIGNING_KEY_ALIAS" ]]; then
-            echo "HATA: SIGNING_KEY_ALIAS bulunamadı!"
-            exit 1
-          fi
-
-          if [[ -z "$SIGNING_KEY_PASSWORD" ]]; then
-            echo "HATA: SIGNING_KEY_PASSWORD bulunamadı!"
-            exit 1
-          fi
-
-          echo "İmza Secret'ları mevcut."
+          echo "Imza bilgileri mevcut."
 
           mkdir -p android/app/src/main/java/com/ediptan/kurumsalpuantaj
           mkdir -p android/app/src/main/res/values
           mkdir -p android/app/src/main/res/drawable
           mkdir -p android/app/src/main/assets
 
-          for required_file in index.html bireysel.html kurumsal.html kurumsal.css kurumsal.js assets/icon_puantaj.webp; do
+          for required_file in \
+            index.html \
+            bireysel.html \
+            kurumsal.html \
+            kurumsal.css \
+            kurumsal.js \
+            privacy.html \
+            MainActivity.java \
+            assets/icon_puantaj.webp
+          do
             if [[ ! -s "$required_file" ]]; then
-              echo "HATA: Gerekli dosya bulunamadı veya boş: $required_file"
+              echo "HATA: Eksik veya bos dosya: $required_file"
               exit 1
             fi
           done
 
-          echo "Bireysel ve Kurumsal güncel kaynaklar paketleniyor."
+          echo "Bireysel ve Kurumsal kaynaklar paketleniyor."
+
           cp index.html android/app/src/main/assets/
+          cp bireysel.html android/app/src/main/assets/
           cp kurumsal.html android/app/src/main/assets/
           cp kurumsal.css android/app/src/main/assets/
           cp kurumsal.js android/app/src/main/assets/
-          cp bireysel.html android/app/src/main/assets/
           cp privacy.html android/app/src/main/assets/
 
           cp assets/icon_puantaj.webp \
             android/app/src/main/res/drawable/icon_puantaj.webp
 
-          echo "Signing key hazırlanıyor..."
+          echo "Signing key hazirlaniyor..."
 
-          echo "$SIGNING_KEY_BASE64" | base64 --decode > android/app/release-key.jks
+          printf '%s' "$SIGNING_KEY_BASE64" | \
+            base64 --decode > android/app/release-key.jks
 
           if [[ ! -s android/app/release-key.jks ]]; then
-            echo "HATA: Signing key oluşturulamadı!"
+            echo "HATA: Signing key olusturulamadi!"
             exit 1
           fi
 
-          echo "Signing key başarıyla hazırlandı."
+          echo "Signing key hazir."
 
           cat > android/settings.gradle <<'EOF'
           pluginManagement {
@@ -118,7 +119,6 @@ jobs:
 
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
               repositories {
                   google()
                   mavenCentral()
@@ -126,7 +126,6 @@ jobs:
           }
 
           rootProject.name = "KurumsalPuantaj"
-
           include(":app")
           EOF
 
@@ -142,12 +141,12 @@ jobs:
           android.nonTransitiveRClass=true
           EOF
 
-          cat >> android/gradle.properties <<EOF
-          RELEASE_STORE_FILE=release-key.jks
-          RELEASE_STORE_PASSWORD=$SIGNING_STORE_PASSWORD
-          RELEASE_KEY_ALIAS=$SIGNING_KEY_ALIAS
-          RELEASE_KEY_PASSWORD=$SIGNING_KEY_PASSWORD
-          EOF
+          {
+            printf 'RELEASE_STORE_FILE=release-key.jks\n'
+            printf 'RELEASE_STORE_PASSWORD=%s\n' "$SIGNING_STORE_PASSWORD"
+            printf 'RELEASE_KEY_ALIAS=%s\n' "$SIGNING_KEY_ALIAS"
+            printf 'RELEASE_KEY_PASSWORD=%s\n' "$SIGNING_KEY_PASSWORD"
+          } >> android/gradle.properties
 
           cat > android/app/build.gradle <<'EOF'
           plugins {
@@ -155,26 +154,20 @@ jobs:
           }
 
           android {
-
               namespace "com.ediptan.kurumsalpuantaj"
 
               compileSdk 36
 
               defaultConfig {
-
                   applicationId "com.ediptan.kurumsalpuantaj"
-
                   minSdk 24
-
                   targetSdk 36
 
                   versionCode 12
-
                   versionName "1.0.11"
               }
 
               signingConfigs {
-
                   release {
                       storeFile file(RELEASE_STORE_FILE)
                       storePassword RELEASE_STORE_PASSWORD
@@ -184,22 +177,18 @@ jobs:
               }
 
               buildTypes {
-
                   debug {
                       applicationIdSuffix ".debug"
                   }
 
                   release {
-
                       minifyEnabled false
                       shrinkResources false
-
                       signingConfig signingConfigs.release
                   }
               }
 
               compileOptions {
-
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
               }
@@ -212,34 +201,29 @@ jobs:
 
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-
           <resources>
-
               <style
                   name="AppTheme"
                   parent="@android:style/Theme.Material.Light.NoActionBar">
 
                   <item name="android:fontFamily">sans</item>
                   <item name="android:windowNoTitle">true</item>
-
                   <item name="android:colorAccent">#1769ED</item>
-
                   <item name="android:statusBarColor">#FFFFFF</item>
                   <item name="android:navigationBarColor">#FFFFFF</item>
-
                   <item name="android:windowLightStatusBar">true</item>
                   <item name="android:windowLightNavigationBar">true</item>
-
               </style>
-
           </resources>
           EOF
 
           cat > android/app/src/main/AndroidManifest.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
 
-          <manifest
-              xmlns:android="http://schemas.android.com/apk/res/android">
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission
+                  android:name="com.android.vending.BILLING" />
 
               <application
                   android:allowBackup="true"
@@ -255,23 +239,20 @@ jobs:
                       android:enableOnBackInvokedCallback="true">
 
                       <intent-filter>
-
                           <action
                               android:name="android.intent.action.MAIN" />
 
                           <category
                               android:name="android.intent.category.LAUNCHER" />
-
                       </intent-filter>
 
                   </activity>
-
               </application>
-
           </manifest>
           EOF
 
-          cp MainActivity.java android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java
+          cp MainActivity.java \
+            android/app/src/main/java/com/ediptan/kurumsalpuantaj/MainActivity.java
 
       - name: Temiz build
         working-directory: android
@@ -293,40 +274,68 @@ jobs:
         run: |
           gradle --no-daemon :app:bundleRelease
 
-      - name: İmzayı doğrula
+      - name: Imzayi dogrula
         working-directory: android
         run: |
-          echo "=== RELEASE APK İMZA KONTROLÜ ==="
+          set -e
 
-          $ANDROID_HOME/build-tools/36.0.0/apksigner verify \
+          echo "=== RELEASE APK IMZA KONTROLU ==="
+
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify \
             --verbose \
             app/build/outputs/apk/release/app-release.apk
 
-          echo "APK imzası geçerli."
+          echo "APK imzasi gecerli."
 
-      - name: APK ve AAB dosyalarını yükle
-        uses: actions/upload-artifact@v6
+      - name: APK ve AAB dosyalarini yukle
+        uses: actions/upload-artifact@v4
         with:
-
-          name: puantaj-android-v1.0.9
-
+          name: puantaj-android-v1.0.11
           if-no-files-found: error
-
           path: |
             android/app/build/outputs/apk/debug/*.apk
             android/app/build/outputs/apk/release/*.apk
             android/app/build/outputs/bundle/release/*.aab
 
-      - name: GitHub sürümünü yayınla
+      - name: GitHub surumunu yayinla
         if: github.ref == 'refs/heads/main'
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          gh release create v1.0.9 \
-            --target "$GITHUB_SHA" \
-            --title "Puantaj 1.0.9 — Yedekleme ve sınırsız kullanım" \
-            --notes-file RELEASE-NOTES.md \
-            android/app/build/outputs/apk/debug/app-debug.apk \
-            android/app/build/outputs/apk/release/app-release.apk \
+          set -euo pipefail
+
+          TAG="v1.0.11"
+
+          FILES=(
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release.apk
             android/app/build/outputs/bundle/release/app-release.aab
+          )
+
+          for file in "${FILES[@]}"; do
+            if [[ ! -s "$file" ]]; then
+              echo "HATA: Dosya bulunamadi: $file"
+              exit 1
+            fi
+          done
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release zaten mevcut."
+            echo "APK ve AAB dosyalari guncelleniyor."
+
+            gh release upload "$TAG" \
+              "${FILES[@]}" \
+              --clobber
+          else
+            echo "Yeni Release olusturuluyor."
+
+            gh release create "$TAG" \
+              --target "$GITHUB_SHA" \
+              --title "Puantaj PRO 1.0.11 - Aylik ve Yillik Abonelik" \
+              --generate-notes \
+              "${FILES[@]}"
+          fi
+
+          echo "GitHub Release islemi tamamlandi."
