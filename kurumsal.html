@@ -444,6 +444,7 @@
         </select>
         <p id="proPriceStatus" role="status"></p>
         <button id="proPriceRetry" type="button" onclick="requestProPrices()" hidden>Fiyatları tekrar yükle</button>
+        <button type="button" onclick="if(window.PlayBilling) window.PlayBilling.showPrivacyOptions()" style="margin:8px 0">Reklam gizlilik seçenekleri</button>
         <script>
         let proPriceRequest = 0;
         let proPriceTimer;
