@@ -27,6 +27,8 @@ jobs:
 
       - name: Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
 
       - name: Android SDK paketlerini kur
         run: |
@@ -339,3 +341,4 @@ jobs:
           fi
 
           echo "GitHub Release islemi tamamlandi."
+
