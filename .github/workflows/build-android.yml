@@ -28,6 +28,8 @@ jobs:
           mkdir -p /tmp/puantaj-adpolicy
           javac -d /tmp/puantaj-adpolicy AdPolicy.java tests/AdPolicyTest.java
           java -cp /tmp/puantaj-adpolicy AdPolicyTest
+          javac -d /tmp/puantaj-adpolicy PurchaseSignatureVerifier.java tests/PurchaseSignatureVerifierTest.java
+          java -cp /tmp/puantaj-adpolicy PurchaseSignatureVerifierTest
 
       - name: JDK 17
         uses: actions/setup-java@v6
@@ -297,7 +299,7 @@ jobs:
           </manifest>
           EOF
 
-          cp MainActivity.java PlayBillingBridge.java AdvertisingController.java AdPolicy.java android/app/src/main/java/com/ediptan/kurumsalpuantaj/
+          cp MainActivity.java PlayBillingBridge.java AdvertisingController.java AdPolicy.java PurchaseSignatureVerifier.java android/app/src/main/java/com/ediptan/kurumsalpuantaj/
 
       - name: Temiz build
         working-directory: android
