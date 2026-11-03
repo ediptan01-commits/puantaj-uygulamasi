@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.View;
 import com.google.android.gms.ads.*;
 import com.google.android.gms.ads.interstitial.*;
+import com.google.android.ump.*;
 
 import android.widget.Toast;
 import java.io.OutputStream;
@@ -28,9 +29,12 @@ public class MainActivity extends Activity {
     // Google-provided TEST ad units for the first internal-test release.
     // Live banner: ca-app-pub-5866785474078079/3864793547
     // Live interstitial: ca-app-pub-5866785474078079/4543450391
-    private static final String BANNER_AD = "ca-app-pub-3940256099942544/6300978111";
-    private static final String FULL_AD = "ca-app-pub-3940256099942544/1033173712";
+    private static final String BANNER_AD = "ca-app-pub-5866785474078079/3864793547";
+    private static final String FULL_AD = "ca-app-pub-5866785474078079/4543450391";
     private BillingClient billingClient;
+    private ConsentInformation consentInformation;
+    private boolean adsInitialized = false;
+    private boolean bannerLoaded = false;
     private AdView bannerAd;
     private FrameLayout bannerSlot;
     private InterstitialAd fullAd;
@@ -158,6 +162,16 @@ private void setupBilling() {
           });
       }
       private final class PlayBillingBridge {
+          @JavascriptInterface public void showPrivacyOptions() {
+              runOnUiThread(() -> {
+                  if (consentInformation != null
+                      && consentInformation.getPrivacyOptionsRequirementStatus()
+                        == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED) {
+                      UserMessagingPlatform.showPrivacyOptionsForm(MainActivity.this,
+                          error -> { if (consentInformation.canRequestAds()) initializeAdsIfAllowed(); });
+                  } else notice("Bu hesap için ek reklam gizlilik seçeneği gerekmiyor.");
+              });
+          }
           @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
           @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
           // A subscription query must not run before the Play Billing connection is ready.
@@ -276,28 +290,49 @@ private void setupBilling() {
         bannerSlot = new FrameLayout(this);
         bannerSlot.setVisibility(View.GONE);
         root.addView(bannerSlot, new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM));
+        consentInformation = UserMessagingPlatform.getConsentInformation(this);
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder().build();
+        consentInformation.requestConsentInfoUpdate(this, params,
+            () -> UserMessagingPlatform.loadAndShowConsentFormIfRequired(this,
+                error -> initializeAdsIfAllowed()),
+            error -> initializeAdsIfAllowed());
+        // Prior-session consent can be used once the update request has started.
+        initializeAdsIfAllowed();
+    }
+    private void initializeAdsIfAllowed() {
+        if (adsInitialized || consentInformation == null || !consentInformation.canRequestAds()) return;
+        adsInitialized = true;
         MobileAds.initialize(this, status -> runOnUiThread(() -> {
+            if (bannerAd != null) return;
             bannerAd = new AdView(this);
             bannerAd.setAdUnitId(BANNER_AD);
             bannerAd.setAdSize(AdSize.BANNER);
             bannerAd.setAdListener(new AdListener() {
-                @Override public void onAdLoaded() { updateAdState(); }
+                @Override public void onAdLoaded() {
+                    bannerLoaded = true;
+                    updateAdState();
+                }
                 @Override public void onAdFailedToLoad(LoadAdError error) {
+                    bannerLoaded = false;
                     bannerSlot.setVisibility(View.GONE);
                     setBottomSpace(0);
                 }
             });
             bannerSlot.addView(bannerAd,
                 new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER_HORIZONTAL));
-            bannerAd.loadAd(new AdRequest.Builder().build());
-            requestFullAd();
+            // Do not load any ad until Play Billing has confirmed this account is free.
+            updateAdState();
         }));
     }
     private void requestFullAd() {
-        if (entitlementKnown && pro) return;
+        if (!entitlementKnown || pro || consentInformation == null ||
+                !consentInformation.canRequestAds() || fullAd != null) return;
         InterstitialAd.load(this, FULL_AD, new AdRequest.Builder().build(),
             new InterstitialAdLoadCallback() {
-                @Override public void onAdLoaded(InterstitialAd ad) { fullAd = ad; }
+                @Override public void onAdLoaded(InterstitialAd ad) {
+                    if (!entitlementKnown || pro) return;
+                    fullAd = ad;
+                }
                 @Override public void onAdFailedToLoad(LoadAdError error) { fullAd = null; }
             });
     }
@@ -308,11 +343,25 @@ private void setupBilling() {
         webView.setLayoutParams(p);
     }
     private void updateAdState() {
-        boolean display = entitlementKnown && !pro && bannerAd != null;
-        bannerSlot.setVisibility(display ? View.VISIBLE : View.GONE);
-        setBottomSpace(display ? (int)(50 * getResources().getDisplayMetrics().density + 0.5f) : 0);
-        if (pro) { fullAd = null; actionCount = 0; }
-        else if (entitlementKnown && fullAd == null) requestFullAd();
+        boolean allow = entitlementKnown && !pro && consentInformation != null
+            && consentInformation.canRequestAds();
+        if (bannerSlot == null) return;
+        if (!allow) {
+            bannerSlot.setVisibility(View.GONE);
+            setBottomSpace(0);
+            fullAd = null;
+            actionCount = 0;
+            return;
+        }
+        if (!adsInitialized) { initializeAdsIfAllowed(); return; }
+        if (bannerAd == null) return;
+        if (!bannerLoaded) {
+            bannerAd.loadAd(new AdRequest.Builder().build());
+            return;
+        }
+        bannerSlot.setVisibility(View.VISIBLE);
+        setBottomSpace((int)(50 * getResources().getDisplayMetrics().density + 0.5f));
+        if (fullAd == null) requestFullAd();
     }
     private final class NativeFiles {
         @JavascriptInterface public void saveText(String name,String mime,String text) {
