@@ -165,8 +165,8 @@ jobs:
                   minSdk 24
                   targetSdk 36
 
-                  versionCode 15
-                  versionName "1.0.14"
+                  versionCode 16
+                  versionName "1.0.15"
               }
 
               signingConfigs {
@@ -198,6 +198,7 @@ jobs:
 
           dependencies {
               implementation "com.android.billingclient:billing:8.2.1"
+              implementation "com.google.android.gms:play-services-ads:25.5.0"
           }
           EOF
 
@@ -226,6 +227,8 @@ jobs:
 
               <uses-permission
                   android:name="com.android.vending.BILLING" />
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
               <application
                   android:allowBackup="true"
@@ -234,6 +237,8 @@ jobs:
                   android:roundIcon="@drawable/icon_puantaj"
                   android:supportsRtl="true"
                   android:theme="@style/AppTheme">
+                  <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+                      android:value="ca-app-pub-5866785474078079~5665135380" />
 
                   <activity
                       android:name=".MainActivity"
@@ -292,7 +297,7 @@ jobs:
       - name: APK ve AAB dosyalarini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: puantaj-android-v1.0.14
+          name: puantaj-android-v1.0.15
           if-no-files-found: error
           path: |
             android/app/build/outputs/apk/debug/*.apk
@@ -308,7 +313,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          TAG="v1.0.14"
+          TAG="v1.0.15"
 
           FILES=(
             android/app/build/outputs/apk/debug/app-debug.apk
@@ -335,7 +340,7 @@ jobs:
 
             gh release create "$TAG" \
               --target "$GITHUB_SHA" \
-              --title "Puantaj PRO 1.0.14 - Aylik ve Yillik Abonelik" \
+              --title "Puantaj PRO 1.0.15 - Aylik ve Yillik Abonelik" \
               --generate-notes \
               "${FILES[@]}"
           fi
