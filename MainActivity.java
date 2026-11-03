@@ -126,6 +126,51 @@ private void setupBilling() {
       private final class PlayBillingBridge {
           @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
           @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
+          @JavascriptInterface public void loadProPrices(int request) {
+              runOnUiThread(() -> {
+                  if (billingClient == null) {
+                      sendProPrices(request, null, null);
+                      return;
+                  }
+                  QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+                      .setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
+                  billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder()
+                      .setProductList(Collections.singletonList(product)).build(), (result, details) -> {
+                          String monthly = null;
+                          String yearly = null;
+                          if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                              for (ProductDetails detail : details.getProductDetailsList()) {
+                                  if (PRODUCT_ID.equals(detail.getProductId())) {
+                                      monthly = recurringPrice(detail, "aylik", "P1M");
+                                      yearly = recurringPrice(detail, "yillik", "P1Y");
+                                  }
+                              }
+                          }
+                          sendProPrices(request, monthly, yearly);
+                      });
+              });
+          }
+
+          private String recurringPrice(ProductDetails detail, String plan, String period) {
+              if (detail.getSubscriptionOfferDetails() == null) return null;
+              for (ProductDetails.SubscriptionOfferDetails offer : detail.getSubscriptionOfferDetails()) {
+                  if (!plan.equals(offer.getBasePlanId()) || offer.getOfferId() != null) continue;
+                  for (ProductDetails.PricingPhase phase : offer.getPricingPhases().getPricingPhaseList()) {
+                      if (period.equals(phase.getBillingPeriod())
+                              && phase.getRecurrenceMode() == ProductDetails.RecurrenceMode.INFINITE_RECURRING) {
+                          return phase.getFormattedPrice();
+                      }
+                  }
+              }
+              return null;
+          }
+
+          private void sendProPrices(int request, String monthly, String yearly) {
+              runJs("window.onProPrices && window.onProPrices(" + request + ","
+                  + (monthly == null ? "null" : org.json.JSONObject.quote(monthly)) + ","
+                  + (yearly == null ? "null" : org.json.JSONObject.quote(yearly)) + ")");
+          }
+
           @JavascriptInterface public void buyPro(String basePlanId) {
               if (!"aylik".equals(basePlanId) && !"yillik".equals(basePlanId)) return;
               runOnUiThread(() -> {
@@ -212,3 +257,4 @@ private void setupBilling() {
         super.onDestroy();
     }
 }
+
