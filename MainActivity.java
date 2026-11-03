@@ -12,9 +12,13 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import com.android.billingclient.api.*;
 
-/** Offline WebView host. No billing gate: all features are free. */
+/** Offline WebView host with Google Play subscription billing. */
 public class MainActivity extends Activity {
+    private static final String PRODUCT_ID = "puantaj_pro";
+    private BillingClient billingClient;
     private WebView webView;
     private WebView printView;
     private FrameLayout root;
@@ -36,9 +40,12 @@ public class MainActivity extends Activity {
             return insets;
         });
         setupWebView();
+        setupBilling();
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
             android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleBack);
     }
+
+    @Override protected void onResume() { super.onResume(); queryEntitlement(); }
 
     private void setupWebView() {
         webView = new WebView(this);
@@ -47,6 +54,7 @@ public class MainActivity extends Activity {
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.addJavascriptInterface(new NativeFiles(), "PuantajNative");
+        webView.addJavascriptInterface(new PlayBillingBridge(), "PlayBilling");
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
@@ -65,6 +73,7 @@ public class MainActivity extends Activity {
             }
         });
         webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view,String url) { queryEntitlement(); }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url=request.getUrl().toString();
                 if (url.startsWith("file:///android_asset/") && !url.contains("..")) return false;
@@ -79,6 +88,70 @@ public class MainActivity extends Activity {
         webView.loadUrl("file:///android_asset/index.html");
     }
 
+private void setupBilling() {
+          billingClient = BillingClient.newBuilder(this)
+              .setListener((result, purchases) -> {
+                  if (result.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null)
+                      for (Purchase purchase : purchases) handlePurchase(purchase);
+                  else if (result.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
+                      runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")");
+              })
+              .enableAutoServiceReconnection()
+              .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
+              .build();
+          billingClient.startConnection(new BillingClientStateListener() {
+              public void onBillingSetupFinished(BillingResult result) { if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) queryEntitlement(); }
+              public void onBillingServiceDisconnected() { }
+          });
+      }
+      private void runJs(String script) { runOnUiThread(() -> { if (webView != null) webView.evaluateJavascript(script, null); }); }
+      private void queryEntitlement() {
+          if (billingClient == null || !billingClient.isReady()) return;
+          billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(), (result, purchases) -> {
+              if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) return;
+              boolean active = false;
+              for (Purchase purchase : purchases) {
+                  if (purchase.getProducts().contains(PRODUCT_ID) && purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) { active = true; handlePurchase(purchase); }
+              }
+              runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(" + active + ")");
+          });
+      }
+      private void handlePurchase(Purchase purchase) {
+          if (!purchase.getProducts().contains(PRODUCT_ID) || purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) return;
+          if (purchase.isAcknowledged()) { runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)"); return; }
+          billingClient.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build(), result -> {
+              if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)");
+          });
+      }
+      private final class PlayBillingBridge {
+          @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
+          @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
+          @JavascriptInterface public void buyPro(String basePlanId) {
+              if (!"aylik".equals(basePlanId) && !"yillik".equals(basePlanId)) return;
+              runOnUiThread(() -> {
+                  if (billingClient == null || !billingClient.isReady()) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
+                  QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder().setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
+                  billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(Collections.singletonList(product)).build(), (result, details) -> {
+                      if (result.getResponseCode() != BillingClient.BillingResponseCode.OK || details.getProductDetailsList().isEmpty()) { runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")"); return; }
+                      ProductDetails detail = details.getProductDetailsList().get(0);
+                      ProductDetails.SubscriptionOfferDetails selected = null;
+                      if (detail.getSubscriptionOfferDetails() != null) {
+                          for (ProductDetails.SubscriptionOfferDetails offer : detail.getSubscriptionOfferDetails()) {
+                              if (basePlanId.equals(offer.getBasePlanId()) && offer.getOfferId() == null) {
+                                  selected = offer;
+                                  break;
+                              }
+                          }
+                      }
+                      if (selected == null) { runJs("window.onProBillingError && window.onProBillingError('PLAN_UNAVAILABLE')"); return; }
+                      BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).setOfferToken(selected.getOfferToken()).build())).build();
+                      BillingResult launched = billingClient.launchBillingFlow(MainActivity.this, flow);
+                      if (launched.getResponseCode() != BillingClient.BillingResponseCode.OK && launched.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
+                          runJs("window.onProBillingError && window.onProBillingError(" + launched.getResponseCode() + ")");
+                  });
+              });
+          }
+      }
     private final class NativeFiles {
         @JavascriptInterface public void saveText(String name,String mime,String text) {
             runOnUiThread(() -> {
@@ -134,6 +207,7 @@ public class MainActivity extends Activity {
     @Override public void onBackPressed(){handleBack();}
     @Override protected void onDestroy(){
         if(fileCallback!=null){fileCallback.onReceiveValue(null);fileCallback=null;}
+        if(billingClient!=null) billingClient.endConnection();
         if(webView!=null){root.removeView(webView);webView.destroy();}
         super.onDestroy();
     }
