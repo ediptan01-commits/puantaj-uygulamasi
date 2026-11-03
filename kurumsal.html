@@ -453,32 +453,31 @@
         function renderProPrices() {
             const plan = document.getElementById("proPlan");
             const buy = document.getElementById("proPriceBuy");
-            const selectedPrice = proPrices[plan.value];
             const missing = !proPrices.aylik || !proPrices.yillik;
             for (const option of plan.options) {
                 const monthly = option.value === "aylik";
                 const label = monthly ? "Aylık abonelik" : "Yıllık abonelik";
                 const price = proPrices[option.value];
-                option.textContent = price ? label + " · " + price + (monthly ? "/ay" : "/yıl") : label;
-                option.disabled = !price;
-            }
-            if (!selectedPrice && (proPrices.aylik || proPrices.yillik)) {
-                plan.value = proPrices.aylik ? "aylik" : "yillik";
+                option.textContent = label + " · " + (price
+                    ? price + (monthly ? "/ay" : "/yıl")
+                    : (proPriceLoading ? "Fiyat yükleniyor…" : "Fiyat alınamadı"));
+                option.disabled = false;
             }
             const price = proPrices[plan.value];
-            plan.disabled = proPriceLoading || !price;
+            plan.disabled = false;
             buy.disabled = proPriceLoading || !price;
-            buy.textContent = price ? "Abone Ol · " + price + (plan.value === "aylik" ? "/ay" : "/yıl") : "Abone Ol";
+            buy.textContent = price ? "Abone Ol · " + price
+                + (plan.value === "aylik" ? "/ay" : "/yıl") : "Fiyat bekleniyor";
             let status = "";
             if (proPriceLoading) status = "Google Play fiyatları yükleniyor…";
-            else if (!proPrices.aylik && !proPrices.yillik) status = "Google Play abonelik fiyatları alınamadı.";
+            else if (!proPrices.aylik && !proPrices.yillik) status = "Google Play fiyatları alınamadı. Tekrar deneyin.";
             else if (!proPrices.aylik) status = "Aylık abonelik fiyatı alınamadı.";
-            else if (!proPrices.yillik) status = "Yıllık abonelik fiyatı alınamadı.";
+            else if (!proPrices.yillik) status = "Yıllık fiyat alınamadı; Google Play hesabınızın ülkesini ve plan uygunluğunu kontrol edin.";
             document.getElementById("proPriceStatus").textContent = status;
             document.getElementById("proPriceRetry").hidden = proPriceLoading || !missing;
         }
 
-        window.onProPrices = function (request, monthly, yearly) {
+        window.onProPrices = function(request, monthly, yearly) {
             if (request !== proPriceRequest || !proPriceLoading) return;
             clearTimeout(proPriceTimer);
             proPriceLoading = false;
@@ -495,7 +494,7 @@
                 window.onProPrices(request, null, null);
                 return;
             }
-            proPriceTimer = setTimeout(() => window.onProPrices(request, null, null), 10000);
+            proPriceTimer = setTimeout(() => window.onProPrices(request, null, null), 15000);
             window.PlayBilling.loadProPrices(request);
         }
         </script>
