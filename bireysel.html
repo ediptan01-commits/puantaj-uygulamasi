@@ -2544,6 +2544,7 @@ function populateEmployeeSiteSelect(selected){
 }
 
 function openAddEmployee(editId = null){
+    if(!editId && !checkIndividualFreeLimit("employee")) return;
     editingEmployeeId = editId;
     const modal = document.getElementById("addEmployeeModal");
     const input = document.getElementById("employeeNameInput");
@@ -2574,7 +2575,16 @@ function closeAddEmployee(){
     editingEmployeeId = null;
 }
 
-const INDIVIDUAL_FREE_RELEASE = true;
+const INDIVIDUAL_FREE_RELEASE = false;
+const INDIVIDUAL_FREE_LIMIT = 3;
+function checkIndividualFreeLimit(type){
+    if(isIndividualPro()) return true;
+    const count = type === "site" ? sites.length : employees.length;
+    if(count < INDIVIDUAL_FREE_LIMIT) return true;
+    openIndividualPro();
+    return false;
+}
+
 function isIndividualPro(){ return INDIVIDUAL_FREE_RELEASE || localStorage.getItem("kurumsalPuantajPro") === "1"; }
 window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0"); if(active){ closeIndividualPro(); showToast("Puantaj Pro etkinleştirildi."); } };
 window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
@@ -2592,6 +2602,7 @@ function saveNewEmployee(){
         if(employee){ employee.name = name; employee.siteId = siteId; currentEmployee = employee; }
         showToast("Çalışan güncellendi.");
     } else {
+        if(!checkIndividualFreeLimit("employee")) return;
         const newEmployee = {id: Date.now(), name, siteId, months:{}};
         employees.push(newEmployee);
         currentEmployee = newEmployee;
@@ -2641,6 +2652,7 @@ function openSiteManager(){
 }
 function closeSiteManager(){ document.getElementById("siteManagerModal").classList.remove("show"); editingSiteId = null; }
 function saveSite(){
+    if(!editingSiteId && !checkIndividualFreeLimit("site")) return;
     const input = document.getElementById("siteNameInput");
     const name = input.value.trim();
     if(!name){ showToast("Şantiye adı boş bırakılamaz."); return; }
@@ -2875,6 +2887,7 @@ if (employees.length > 0) {
 
 </script>
 
+<div style="margin:12px 16px;text-align:center"><button type="button" onclick="openIndividualPro()" style="border:1px solid #d8c9fa;border-radius:12px;background:#f5f0ff;padding:12px 18px;font-weight:700">⭐ Puantaj PRO — Aylık / Yıllık Abonelik</button></div>
 <div id="individualProModal" class="modal">
     <div class="modalBox">
         <div class="modalTitle">⭐ Puantaj Pro</div>
