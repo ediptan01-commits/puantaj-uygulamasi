@@ -356,6 +356,7 @@ function saveData(){
         JSON.stringify(data)
 
     );
+    if (window.PuantajAds) window.PuantajAds.completedPuantajAction();
 
 }
 
