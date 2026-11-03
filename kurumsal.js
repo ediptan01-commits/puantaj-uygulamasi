@@ -18,15 +18,23 @@ let modalType="";
 
 
 const PRO_PRODUCT_ID = "puantaj_pro";
+const FREE_RECORD_LIMIT = 3;
+
+function checkCorporateFreeLimit(type){
+    if(isProUnlocked() || !["site", "team", "worker"].includes(type)) return true;
+    const key = {site:"sites",team:"teams",worker:"workers"}[type];
+    if((data[key] || []).length < FREE_RECORD_LIMIT) return true;
+    openPro();
+    return false;
+}
+
 let reportCache = { type: "monthly", startKey: "", endKey: "", rows: [] };
 
 function isProUnlocked(){
-    return true; // Bu sürümde tüm özellikler ücretsizdir.
+    return localStorage.getItem("kurumsalPuantajPro") === "1";
 }
 
 function openPro(){
-    showAppNotice("Tüm özellikler ücretsiz ve sınırsız kullanılabilir.");
-    return;
     const modal = document.getElementById("proModal");
     if(!modal) return;
     updateProStatus();
@@ -372,6 +380,7 @@ function saveCompany(){
 /* MODAL */
 
 function openModal(type){
+    if(!checkCorporateFreeLimit(type)) return;
 
     modalType=type;
 
@@ -548,6 +557,7 @@ function renderTeamSelect(){
 /* KAYDET */
 
 function saveModal(){
+    if(!checkCorporateFreeLimit(modalType)) return;
 
     const name =
         document
