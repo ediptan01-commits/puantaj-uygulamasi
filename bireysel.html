@@ -1395,7 +1395,7 @@ class="main">
 
         <div class="managementGrid">
             <button class="managementButton" onclick="openSiteManager()">🏗️<span>Şantiyeler</span></button>
-            <button class="managementButton" onclick="openIndividualPro()" style="display:none" aria-hidden="true">⭐<span>Pro / Geri yükle</span></button>
+            <button class="managementButton" onclick="openIndividualPro()">⭐<span>PRO / Reklamsız</span></button>
             <button class="managementButton" onclick="openEmployeeManager()">👷<span>Çalışanlar</span></button>
             <button class="managementButton" onclick="downloadBackup()">💾<span>Yedek İndir</span></button>
             <button class="managementButton" onclick="openRestorePicker()">📥<span>Yedekten Yükle</span></button>
@@ -2575,10 +2575,11 @@ function closeAddEmployee(){
 }
 
 const INDIVIDUAL_FREE_RELEASE = true;
-function isIndividualPro(){ return INDIVIDUAL_FREE_RELEASE || localStorage.getItem("kurumsalPuantajPro") === "1"; }
-window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0"); if(active){ closeIndividualPro(); showToast("Puantaj Pro etkinleştirildi."); } };
+let individualProVerified = false;
+function isIndividualPro(){ return INDIVIDUAL_FREE_RELEASE || individualProVerified; }
+window.onProEntitlementChanged = function(active){ individualProVerified = active === true; };
 window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
-function openIndividualPro(){ if(INDIVIDUAL_FREE_RELEASE) return; document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
+function openIndividualPro(){ document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
 function closeIndividualPro(){ document.getElementById("individualProModal").classList.remove("show"); }
 function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(document.getElementById("individualProPlan").value); else showToast("Google Play satın alma ekranı gerekli."); }
 function restoreIndividualPro(){ if(window.PlayBilling) window.PlayBilling.restorePurchases(); else showToast("Satın alma geri yükleme Google Play sürümünde kullanılabilir."); }
@@ -2878,20 +2879,25 @@ if (employees.length > 0) {
 <div id="individualProModal" class="modal">
     <div class="modalBox">
         <div class="modalTitle">⭐ Puantaj Pro</div>
-        <p class="modalText">Aylık veya yıllık abonelikle bireysel çalışan ve şantiye sınırlarını kaldırın.</p>
+        <p class="modalText">Tüm özellikler ücretsiz ve sınırsızdır. Aylık veya yıllık PRO yalnızca reklamları kaldırır.</p>
         <label for="individualProPlan">Abonelik dönemi</label>
         <select id="individualProPlan" style="width:100%;padding:12px;margin:8px 0 16px;border-radius:10px">
             <option value="aylik">Aylık abonelik</option>
             <option value="yillik">Yıllık abonelik</option>
         </select>
+        <div id="individualProStatus" class="modalText" aria-live="polite"></div>
         <div class="modalButtons">
             <button class="cancelButton" onclick="closeIndividualPro()">Kapat</button>
-            <button class="saveEmployeeButton" onclick="buyIndividualPro()">Abone Ol</button>
+            <button id="individualProBuy" class="saveEmployeeButton" disabled onclick="buyIndividualPro()">Satış henüz açılmadı</button>
         </div>
-        <p class="modalText">Fiyat ve ödeme dönemi Google Play onay ekranında gösterilir. Abonelik, iptal edilmediği sürece seçtiğiniz dönemde otomatik yenilenir. Google Play abonelikler bölümünden iptal edebilirsiniz.</p>
+        <p class="modalText">Reklamlar henüz eklenmedi. Bu hazırlık sürümünde yeni abonelik satışı kapalıdır.</p>
+        <p style="font-size:13px">Satışlar açıldığında abonelik, iptal edilmedikçe aylık veya yıllık otomatik yenilenir. İptal, ödenmiş dönemin sonuna kadar kullanım hakkını korur.</p>
+        <button type="button" data-ad-privacy hidden onclick="showAdPrivacyOptions()">Reklam gizlilik tercihleri</button>
+        <button type="button" onclick="manageProSubscription()">Google Play aboneliğimi yönet</button>
         <div class="modalButtons"><button class="cancelButton" onclick="restoreIndividualPro()">Satın Almayı Geri Yükle</button></div>
     </div>
 </div>
+<script src="pro-ui.js"></script>
 </body>
 
 </html>

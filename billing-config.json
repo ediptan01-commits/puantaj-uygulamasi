@@ -1,0 +1,6 @@
+{
+  "salesEnabled": false,
+  "verificationUrl": "",
+  "subscriptionProductId": "puantaj_pro",
+  "basePlans": {"aylik": "aylik", "yillik": "yillik"}
+}

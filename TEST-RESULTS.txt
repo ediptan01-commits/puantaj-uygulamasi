@@ -1,14 +1,14 @@
-PASS Bireysel unlimited sites and employees, PRO=0
-PASS Bireysel edit dialog actually clickable
-PASS Bireysel attendance, note, payment, month
-PASS Bireysel actual wage and payment inputs
-PASS Bireysel native backup and restore chooser
-PASS Bireysel invalid backup, delete cancel/confirm, reset
-PASS Kurumsal unlimited sites teams workers PRO=0
-PASS Kurumsal attendance and payment
-PASS Kurumsal reports CSV PDF free and native
-PASS Kurumsal backup and restore picker
-PASS Settings and privacy
-PASS Kurumsal validation, all statuses, calendar, report period, deletion, reset
-PASS No missing inline click handlers
-ALL TESTS PASSED
+2026-11-03 — PRO preparation, sales disabled
+PASS corporate JavaScript syntax
+PASS inline script syntax for index/bireysel/kurumsal
+PASS free CSV/PDF without PRO, HTML escaping, localStorage bypass prevention, strict entitlement and revocation
+PASS PRO UI tests (3): corporate/individual plan pricing, unavailable plan, disabled sales, restore/manage, web fallback
+PASS verification tests (4): legacy purchase/refund/pending/consumed; subscription active/grace/canceled/expired/on-hold/paused/pending; product/package mismatch; network error; token encoding
+PASS javac MainActivity + PlayBillingBridge with Android 36 + Billing 9.1.0
+PASS original v1.0.9 AAB signer read and pinned in workflow
+PENDING GitHub full signed APK/AAB build
+NOT RUN Android device UI or real Play license tests
+BLOCKED live restore: verification service not deployed; verificationUrl empty
+PASS AdPolicy: 12 combinations (disabled/PRO/unknown/no-consent block ad requests)
+INCLUDED dormant Ads SDK and UMP; no ad requests while disabled
+NOT INCLUDED live subscription sales / additional reports

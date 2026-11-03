@@ -1,12 +1,9 @@
-Puantaj 1.0.9 (10)
+# 1.0.10 PRO hazırlığı
 
-- Bireysel ve Kurumsal yedek kaydetme ve yedekten geri yükleme düzeltildi.
-- Yedek dosyaları Android'in konum seçme ve kaydetme ekranıyla kaydedilir; başarı mesajı yalnızca dosya yazıldıktan sonra gösterilir.
-- Şantiye, ekip, çalışan ve rapor kullanımındaki eski PRO sınırları kaldırıldı.
-- Bireysel çalışan düzenleme ve boş başlangıç/sıfırlama hataları düzeltildi.
-- PDF/CSV dışa aktarma, rapor dönemi ve yarım gün hesapları düzeltildi.
-- Gizlilik bağlantısı ve diyalogların görünürlüğü iyileştirildi.
+Uygulama ücretsiz ve sınırsız kalır. PRO yalnızca reklamları kaldırmak için aylık/yıllık abonelik olarak hazırlanmıştır. Reklam altyapısı kapalı olarak eklendi; reklam gösterimi ve yeni abonelik satışı kapalıdır.
 
-13 otomatik tarayıcı test grubu geçti. Fiziksel Android cihaz testi bu çalışma sırasında yapılamadı.
+(7) arşivinden doğrulanan kimlikler: puantaj_pro, aylik, yillik. Eski tek seferlik kurumsal_puantaj_pro satın almaları da geri yükleme kapsamındadır. Fiyatlar Play ProductDetails verisinden alınır. Bekleyen ödeme PRO açmaz; doğrulanmış satın alma onaylanır. Yerel depolama PRO açamaz.
 
-Test APK'sı `.debug` paketine sahiptir ve mağazadaki uygulamadan ayrı kurulur. Google Play için `app-release.aab` kullanılır. Paket kimliği ve mevcut yayın anahtarı yapılandırması korunmuştur.
+Doğrulama hizmetinin kaynak ve testleri eklendi, fakat canlı sunucuya kurulmadı. billing-config.json verificationUrl boş olduğundan gerçek geri yükleme henüz çalışmaz.
+
+Paket com.ediptan.kurumsalpuantaj, önerilen versionCode 11 / 1.0.10. Yeni anahtar üretilmez. Mevcut v1.0.9 AAB sertifikasıyla eşleşme derlemede zorunludur. Play üretimine yayın adımı yoktur.

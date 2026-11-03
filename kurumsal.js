@@ -17,16 +17,14 @@ let data = {
 let modalType="";
 
 
-const PRO_PRODUCT_ID = "puantaj_pro";
+let proVerified = false;
 let reportCache = { type: "monthly", startKey: "", endKey: "", rows: [] };
 
 function isProUnlocked(){
-    return true; // Bu sürümde tüm özellikler ücretsizdir.
+    return proVerified;
 }
 
 function openPro(){
-    showAppNotice("Tüm özellikler ücretsiz ve sınırsız kullanılabilir.");
-    return;
     const modal = document.getElementById("proModal");
     if(!modal) return;
     updateProStatus();
@@ -44,7 +42,7 @@ function updateProStatus(){
     const buy=document.querySelector(".proBuyBtn");
     if(!el) return;
     if(isProUnlocked()){
-        el.textContent="✓ Pro aktif — tüm Pro özellikleri açık.";
+        el.textContent="✓ PRO satın almanız doğrulandı.";
         if(buy) buy.style.display="none";
     }else{
         el.textContent="Pro henüz aktif değil.";
@@ -54,9 +52,9 @@ function updateProStatus(){
 
 window.onProBillingError = function(code){ showAppNotice("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını ve test kullanıcısını kontrol edin. (" + code + ")", {title:"Pro Satın Alma", type:"error"}); };
 function onProEntitlementChanged(active){
-    localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0");
+    proVerified = active === true;
     updateProStatus();
-    if(active) closePro();
+
 }
 
 function buyPro(){
@@ -75,6 +73,11 @@ function restoreProPurchase(){
         showAppNotice("Satın alma geri yükleme yalnızca Google Play sürümünde kullanılabilir.", {title: "Satın Alma", type: "error"});
     }
 }
+
+window.onProBillingMessage = function(message){
+    const el=document.getElementById("proStatus");
+    if(el) el.textContent=message;
+};
 
 function requirePro(action){
     if(isProUnlocked()) return true;
@@ -108,7 +111,6 @@ function buildReportRows(type){
 }
 
 function exportReportCSV(){
-    if(!requirePro()) return;
     const r=buildReportRows(reportCache.type||"monthly");
     const company=(data.company||"Kurumsal Puantaj").replaceAll('"','""');
     const lines=[
@@ -125,7 +127,6 @@ function exportReportCSV(){
 }
 
 function printReportPDF(){
-    if(!requirePro()) return;
     const r=buildReportRows(reportCache.type||"monthly");
     const company=(data.company||"Kurumsal Puantaj");
     const rows=r.rows.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.team)}</td><td>${escapeHtml(x.site)}</td><td>${x.worked}</td><td>${x.absent}</td><td>${x.leave}</td><td>${x.report}</td></tr>`).join("");

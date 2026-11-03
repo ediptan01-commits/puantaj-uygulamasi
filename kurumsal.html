@@ -411,29 +411,26 @@
 </div>
 
 <!-- PRO SATIN ALMA PENCERESİ -->
-<div id="proModal" class="modal" style="display:none !important;" role="dialog" aria-modal="true" aria-labelledby="proTitle">
+<div id="proModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="proTitle">
     <div class="modalBox proBox">
         <div class="modalTitle" id="proTitle">⭐ Puantaj Pro</div>
-        <p class="settingsDescription">Abonelik ile Pro özelliklerini açın.</p>
-        <div class="proFeatureList">
-            <div>✓ Sınırsız şantiye ve ekip</div>
-            <div>✓ PDF raporu oluşturma</div>
-            <div>✓ Excel/CSV dışa aktarma</div>
-            <div>✓ Gelişmiş rapor filtreleri</div>
-            <div>✓ Gelecekte eklenecek Pro özellikleri</div>
-        </div>
+        <p class="settingsDescription">Tüm özellikler ücretsiz ve sınırsızdır. PRO yalnızca reklamları kaldırır.</p>
+        <div class="proFeatureList">Sınırsız kullanım, mevcut raporlar, PDF/CSV ve yedekleme ücretsiz kalır.</div>
         <label for="proPlan">Abonelik dönemi</label>
         <select id="proPlan" style="width:100%;padding:12px;margin:8px 0 16px;border-radius:10px">
             <option value="aylik">Aylık abonelik</option>
             <option value="yillik">Yıllık abonelik</option>
         </select>
-        <div id="proStatus" class="proStatus">Pro durumu kontrol ediliyor…</div>
+        <div id="proStatus" class="proStatus" aria-live="polite">Pro durumu kontrol ediliyor…</div>
         <div class="buttons">
             <button class="cancel" type="button" onclick="closePro()">Kapat</button>
-            <button class="save proBuyBtn" type="button" onclick="buyPro()">⭐ Abone Ol</button>
+            <button id="proBuy" class="save proBuyBtn" disabled type="button" onclick="buyPro()">Satış henüz açılmadı</button>
         </div>
         <button class="proRestoreBtn" type="button" onclick="restoreProPurchase()">Satın almayı geri yükle</button>
-        <small class="proLegal">Fiyat ve ödeme dönemi Google Play onay ekranında gösterilir. Abonelik, iptal edilmediği sürece seçtiğiniz dönemde otomatik yenilenir. Google Play abonelikler bölümünden iptal edebilirsiniz.</small>
+        <p style="font-size:13px">Satışlar açıldığında abonelik, iptal edilmedikçe aylık veya yıllık otomatik yenilenir. İptal, ödenmiş dönemin sonuna kadar kullanım hakkını korur.</p>
+        <button type="button" data-ad-privacy hidden onclick="showAdPrivacyOptions()">Reklam gizlilik tercihleri</button>
+        <button type="button" onclick="manageProSubscription()">Google Play aboneliğimi yönet</button>
+        <small class="proLegal">Reklamlar henüz eklenmedi. Bu hazırlık sürümünde yeni abonelik satışı kapalıdır. Eski satın almalar geri yüklenebilir.</small>
     </div>
 </div>
 
@@ -441,6 +438,7 @@
 <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modalBox settingsBox">
         <div class="modalTitle" id="settingsTitle">⚙️ Ayarlar</div>
+        <button type="button" class="proRestoreBtn" onclick="openPro()">PRO / Reklamsız kullanım</button>
         <p class="settingsDescription">Şirket bilgilerinizi ve uygulama görünümünü düzenleyin.</p>
         <div class="settingsSection">
             <h3>🏢 Şirket Bilgileri</h3>
@@ -547,5 +545,6 @@
         applyPuantajTheme(prefs.theme || "light");
     })();
 </script>
+<script src="pro-ui.js"></script>
 </body>
 </html>

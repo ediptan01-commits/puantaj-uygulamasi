@@ -13,11 +13,14 @@ import android.widget.Toast;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-/** Offline WebView host. No billing gate: all features are free. */
+/** Existing features remain free. */
 public class MainActivity extends Activity {
     private WebView webView;
+    private PlayBillingBridge billing;
     private WebView printView;
     private FrameLayout root;
+    private android.widget.LinearLayout body;
+    private AdvertisingController ads;
     private ValueCallback<Uri[]> fileCallback;
     private String pendingText;
     private static final int OPEN_FILE = 21, SAVE_FILE = 22;
@@ -35,6 +38,12 @@ public class MainActivity extends Activity {
                 insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
+        body=new android.widget.LinearLayout(this);
+        body.setOrientation(android.widget.LinearLayout.VERTICAL);
+        root.addView(body,new FrameLayout.LayoutParams(-1,-1));
+        FrameLayout adSlot=new FrameLayout(this);
+        body.addView(adSlot,new android.widget.LinearLayout.LayoutParams(-1,-2));
+        ads=new AdvertisingController(this,adSlot);
         setupWebView();
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
             android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleBack);
@@ -47,6 +56,10 @@ public class MainActivity extends Activity {
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.addJavascriptInterface(new NativeFiles(), "PuantajNative");
+        if(billing!=null) billing.close();
+        ads.onEntitlement(null);
+        billing=new PlayBillingBridge(this,webView,ads::onEntitlement);
+        webView.addJavascriptInterface(billing,"PlayBilling");
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
@@ -70,16 +83,20 @@ public class MainActivity extends Activity {
                 if (url.startsWith("file:///android_asset/") && !url.contains("..")) return false;
                 notice("Bu bağlantı uygulama içinde açılamıyor."); return true;
             }
+            @Override public void onPageFinished(WebView view,String url) {
+                if(url.startsWith("file:///android_asset/")){billing.isPro();ads.setPage(view);}
+            }
             @Override public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
-                root.removeView(view); view.destroy(); setupWebView();
+                body.removeView(view); view.destroy(); setupWebView();
                 notice("Ekran yeniden açıldı; kaydedilmiş verileriniz korunuyor."); return true;
             }
         });
-        root.addView(webView, new FrameLayout.LayoutParams(-1,-1));
+        body.addView(webView,0,new android.widget.LinearLayout.LayoutParams(-1,0,1f));
         webView.loadUrl("file:///android_asset/index.html");
     }
 
     private final class NativeFiles {
+        @JavascriptInterface public void showAdPrivacy(){runOnUiThread(()->ads.showPrivacy());}
         @JavascriptInterface public void saveText(String name,String mime,String text) {
             runOnUiThread(() -> {
                 if(pendingText != null){ notice("Lütfen açık kaydetme işlemini tamamlayın."); return; }
@@ -132,9 +149,13 @@ public class MainActivity extends Activity {
         webView.evaluateJavascript("(function(){var ms=Array.from(document.querySelectorAll('.modal.show'));if(ms.length){ms[ms.length-1].classList.remove('show');return true;}var t=document.getElementById('teamDetail');if(t&&t.style.display==='block'){closeTeam();return true;}var r=document.getElementById('reportsScreen');if(r&&r.style.display==='block'){closeReports();return true;}if(!location.pathname.endsWith('/index.html')){location.href='index.html';return true;}return false;})()", value -> {if("false".equals(value))finish();});
     }
     @Override public void onBackPressed(){handleBack();}
+    @Override protected void onPause(){if(ads!=null)ads.pause();super.onPause();}
+    @Override protected void onResume(){super.onResume();if(ads!=null)ads.resume();if(billing!=null)billing.refresh();}
     @Override protected void onDestroy(){
+        if(billing!=null)billing.close();
+        if(ads!=null)ads.close();
         if(fileCallback!=null){fileCallback.onReceiveValue(null);fileCallback=null;}
-        if(webView!=null){root.removeView(webView);webView.destroy();}
+        if(webView!=null){body.removeView(webView);webView.destroy();}
         super.onDestroy();
     }
 }
