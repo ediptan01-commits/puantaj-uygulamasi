@@ -9,6 +9,11 @@ import android.os.Build;
 import android.print.PrintManager;
 import android.webkit.*;
 import android.widget.FrameLayout;
+import android.view.Gravity;
+import android.view.View;
+import com.google.android.gms.ads.*;
+import com.google.android.gms.ads.interstitial.*;
+
 import android.widget.Toast;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +25,19 @@ public class MainActivity extends Activity {
     private static final String PRODUCT_ID = "puantaj_pro";
     private static final String MONTHLY_PLAN = "aylik";
     private static final String YEARLY_PLAN = "yillik-v2";
+    // Google-provided TEST ad units for the first internal-test release.
+    // Live banner: ca-app-pub-5866785474078079/3864793547
+    // Live interstitial: ca-app-pub-5866785474078079/4543450391
+    private static final String BANNER_AD = "ca-app-pub-3940256099942544/6300978111";
+    private static final String FULL_AD = "ca-app-pub-3940256099942544/1033173712";
     private BillingClient billingClient;
+    private AdView bannerAd;
+    private FrameLayout bannerSlot;
+    private InterstitialAd fullAd;
+    private volatile boolean entitlementKnown = false;
+    private volatile boolean pro = true;
+    private int actionCount = 0;
+    private long lastFullAd = 0L;
     private WebView webView;
     private WebView printView;
     private FrameLayout root;
@@ -43,11 +60,19 @@ public class MainActivity extends Activity {
         });
         setupWebView();
         setupBilling();
+        setupAds();
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
             android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleBack);
     }
 
-    @Override protected void onResume() { super.onResume(); queryEntitlement(); }
+    @Override protected void onResume() {
+        super.onResume(); queryEntitlement();
+        if (bannerAd != null) bannerAd.resume();
+    }
+    @Override protected void onPause() {
+        if (bannerAd != null) bannerAd.pause();
+        super.onPause();
+    }
 
     private void setupWebView() {
         webView = new WebView(this);
@@ -57,6 +82,7 @@ public class MainActivity extends Activity {
         webView.getSettings().setAllowContentAccess(true);
         webView.addJavascriptInterface(new NativeFiles(), "PuantajNative");
         webView.addJavascriptInterface(new PlayBillingBridge(), "PlayBilling");
+        webView.addJavascriptInterface(new AdBridge(), "PuantajAds");
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
@@ -115,11 +141,17 @@ private void setupBilling() {
               for (Purchase purchase : purchases) {
                   if (purchase.getProducts().contains(PRODUCT_ID) && purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) { active = true; handlePurchase(purchase); }
               }
+              pro = active;
+              entitlementKnown = true;
+              runOnUiThread(this::updateAdState);
               runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(" + active + ")");
           });
       }
       private void handlePurchase(Purchase purchase) {
           if (!purchase.getProducts().contains(PRODUCT_ID) || purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) return;
+          pro = true;
+          entitlementKnown = true;
+          runOnUiThread(this::updateAdState);
           if (purchase.isAcknowledged()) { runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)"); return; }
           billingClient.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build(), result -> {
               if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) runJs("window.onProEntitlementChanged && window.onProEntitlementChanged(true)");
@@ -221,6 +253,67 @@ private void setupBilling() {
               }, () -> runJs("window.onProBillingError && window.onProBillingError('BILLING_NOT_READY')"), 20));
           }
       }
+    private final class AdBridge {
+        @JavascriptInterface public void completedPuantajAction() {
+            runOnUiThread(() -> {
+                if (!entitlementKnown || pro) return;
+                actionCount++;
+                if (actionCount < 5 || fullAd == null ||
+                    android.os.SystemClock.elapsedRealtime() - lastFullAd < 180000L) return;
+                actionCount = 0;
+                lastFullAd = android.os.SystemClock.elapsedRealtime();
+                InterstitialAd current = fullAd;
+                fullAd = null;
+                current.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override public void onAdDismissedFullScreenContent() { requestFullAd(); }
+                    @Override public void onAdFailedToShowFullScreenContent(AdError error) { requestFullAd(); }
+                });
+                current.show(MainActivity.this);
+            });
+        }
+    }
+    private void setupAds() {
+        bannerSlot = new FrameLayout(this);
+        bannerSlot.setVisibility(View.GONE);
+        root.addView(bannerSlot, new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM));
+        MobileAds.initialize(this, status -> runOnUiThread(() -> {
+            bannerAd = new AdView(this);
+            bannerAd.setAdUnitId(BANNER_AD);
+            bannerAd.setAdSize(AdSize.BANNER);
+            bannerAd.setAdListener(new AdListener() {
+                @Override public void onAdLoaded() { updateAdState(); }
+                @Override public void onAdFailedToLoad(LoadAdError error) {
+                    bannerSlot.setVisibility(View.GONE);
+                    setBottomSpace(0);
+                }
+            });
+            bannerSlot.addView(bannerAd,
+                new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER_HORIZONTAL));
+            bannerAd.loadAd(new AdRequest.Builder().build());
+            requestFullAd();
+        }));
+    }
+    private void requestFullAd() {
+        if (entitlementKnown && pro) return;
+        InterstitialAd.load(this, FULL_AD, new AdRequest.Builder().build(),
+            new InterstitialAdLoadCallback() {
+                @Override public void onAdLoaded(InterstitialAd ad) { fullAd = ad; }
+                @Override public void onAdFailedToLoad(LoadAdError error) { fullAd = null; }
+            });
+    }
+    private void setBottomSpace(int pixels) {
+        if (webView == null) return;
+        FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) webView.getLayoutParams();
+        p.bottomMargin = pixels;
+        webView.setLayoutParams(p);
+    }
+    private void updateAdState() {
+        boolean display = entitlementKnown && !pro && bannerAd != null;
+        bannerSlot.setVisibility(display ? View.VISIBLE : View.GONE);
+        setBottomSpace(display ? (int)(50 * getResources().getDisplayMetrics().density + 0.5f) : 0);
+        if (pro) { fullAd = null; actionCount = 0; }
+        else if (entitlementKnown && fullAd == null) requestFullAd();
+    }
     private final class NativeFiles {
         @JavascriptInterface public void saveText(String name,String mime,String text) {
             runOnUiThread(() -> {
@@ -277,6 +370,7 @@ private void setupBilling() {
     @Override protected void onDestroy(){
         if(fileCallback!=null){fileCallback.onReceiveValue(null);fileCallback=null;}
         if(billingClient!=null) billingClient.endConnection();
+        if(bannerAd!=null) { bannerAd.destroy(); bannerAd=null; }
         if(webView!=null){root.removeView(webView);webView.destroy();}
         super.onDestroy();
     }
