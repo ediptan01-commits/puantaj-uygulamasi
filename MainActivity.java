@@ -128,19 +128,25 @@ private void setupBilling() {
       private final class PlayBillingBridge {
           @JavascriptInterface public void isPro() { runOnUiThread(() -> queryEntitlement()); }
           @JavascriptInterface public void restorePurchases() { runOnUiThread(() -> queryEntitlement()); }
+          // A subscription query must not run before the Play Billing connection is ready.
+          private void withBillingReady(Runnable ready, Runnable failed, int retries) {
+              if (billingClient == null) { failed.run(); return; }
+              if (billingClient.isReady()) { ready.run(); return; }
+              if (retries <= 0) { failed.run(); return; }
+              new android.os.Handler(android.os.Looper.getMainLooper())
+                  .postDelayed(() -> withBillingReady(ready, failed, retries - 1), 500);
+          }
+
           @JavascriptInterface public void loadProPrices(int request) {
-              runOnUiThread(() -> {
-                  if (billingClient == null) {
-                      sendProPrices(request, null, null);
-                      return;
-                  }
+              runOnUiThread(() -> withBillingReady(() -> {
                   QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
                       .setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
                   billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder()
                       .setProductList(Collections.singletonList(product)).build(), (result, details) -> {
                           String monthly = null;
                           String yearly = null;
-                          if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                          if (result.getResponseCode() == BillingClient.BillingResponseCode.OK
+                                  && details.getProductDetailsList() != null) {
                               for (ProductDetails detail : details.getProductDetailsList()) {
                                   if (PRODUCT_ID.equals(detail.getProductId())) {
                                       monthly = recurringPrice(detail, MONTHLY_PLAN, "P1M");
@@ -150,7 +156,7 @@ private void setupBilling() {
                           }
                           sendProPrices(request, monthly, yearly);
                       });
-              });
+              }, () -> sendProPrices(request, null, null), 20));
           }
 
           private ProductDetails.SubscriptionOfferDetails basePlanOffer(ProductDetails detail, String plan) {
@@ -182,20 +188,37 @@ private void setupBilling() {
           @JavascriptInterface public void buyPro(String plan) {
               if (!MONTHLY_PLAN.equals(plan) && !"yillik".equals(plan)) return;
               String basePlanId = MONTHLY_PLAN.equals(plan) ? MONTHLY_PLAN : YEARLY_PLAN;
-              runOnUiThread(() -> {
-                  if (billingClient == null) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
-                  QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder().setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
-                  billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(Collections.singletonList(product)).build(), (result, details) -> {
-                      if (result.getResponseCode() != BillingClient.BillingResponseCode.OK || details.getProductDetailsList().isEmpty()) { runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")"); return; }
-                      ProductDetails detail = details.getProductDetailsList().get(0);
-                      ProductDetails.SubscriptionOfferDetails selected = basePlanOffer(detail, basePlanId);
-                      if (selected == null) { runJs("window.onProBillingError && window.onProBillingError('PLAN_UNAVAILABLE')"); return; }
-                      BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).setOfferToken(selected.getOfferToken()).build())).build();
-                      BillingResult launched = billingClient.launchBillingFlow(MainActivity.this, flow);
-                      if (launched.getResponseCode() != BillingClient.BillingResponseCode.OK && launched.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
-                          runJs("window.onProBillingError && window.onProBillingError(" + launched.getResponseCode() + ")");
-                  });
-              });
+              String billingPeriod = MONTHLY_PLAN.equals(plan) ? "P1M" : "P1Y";
+              runOnUiThread(() -> withBillingReady(() -> {
+                  QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+                      .setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
+                  billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder()
+                      .setProductList(Collections.singletonList(product)).build(), (result, details) -> {
+                          if (result.getResponseCode() != BillingClient.BillingResponseCode.OK
+                                  || details.getProductDetailsList() == null || details.getProductDetailsList().isEmpty()) {
+                              runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")");
+                              return;
+                          }
+                          ProductDetails detail = details.getProductDetailsList().get(0);
+                          ProductDetails.SubscriptionOfferDetails selected = basePlanOffer(detail, basePlanId);
+                          if (selected == null || recurringPrice(detail, basePlanId, billingPeriod) == null) {
+                              runJs("window.onProBillingError && window.onProBillingError('PLAN_UNAVAILABLE')");
+                              return;
+                          }
+                          runOnUiThread(() -> {
+                              BillingFlowParams flow = BillingFlowParams.newBuilder()
+                                  .setProductDetailsParamsList(Collections.singletonList(
+                                      BillingFlowParams.ProductDetailsParams.newBuilder()
+                                          .setProductDetails(detail).setOfferToken(selected.getOfferToken()).build()))
+                                  .build();
+                              BillingResult launched = billingClient.launchBillingFlow(MainActivity.this, flow);
+                              if (launched.getResponseCode() != BillingClient.BillingResponseCode.OK
+                                      && launched.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
+                                  runJs("window.onProBillingError && window.onProBillingError("
+                                      + launched.getResponseCode() + ")");
+                          });
+                      });
+              }, () -> runJs("window.onProBillingError && window.onProBillingError('BILLING_NOT_READY')"), 20));
           }
       }
     private final class NativeFiles {
