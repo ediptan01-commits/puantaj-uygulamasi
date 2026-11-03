@@ -2588,7 +2588,7 @@ function checkIndividualFreeLimit(type){
 function isIndividualPro(){ return INDIVIDUAL_FREE_RELEASE || localStorage.getItem("kurumsalPuantajPro") === "1"; }
 window.onProEntitlementChanged = function(active){ localStorage.setItem("kurumsalPuantajPro", active ? "1" : "0"); if(active){ closeIndividualPro(); showToast("Puantaj Pro etkinleştirildi."); } };
 window.onProBillingError = function(){ showToast("Google Play satın alma işlemi tamamlanamadı. Ürünün Play Console ayarlarını kontrol edin."); };
-function openIndividualPro(){ if(INDIVIDUAL_FREE_RELEASE) return; document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
+function openIndividualPro(){ requestProPrices(); if(INDIVIDUAL_FREE_RELEASE) return; document.getElementById("individualProModal").classList.add("show"); if(window.PlayBilling) window.PlayBilling.isPro(); }
 function closeIndividualPro(){ document.getElementById("individualProModal").classList.remove("show"); }
 function buyIndividualPro(){ if(window.PlayBilling) window.PlayBilling.buyPro(document.getElementById("individualProPlan").value); else showToast("Google Play satın alma ekranı gerekli."); }
 function restoreIndividualPro(){ if(window.PlayBilling) window.PlayBilling.restorePurchases(); else showToast("Satın alma geri yükleme Google Play sürümünde kullanılabilir."); }
@@ -2893,13 +2893,67 @@ if (employees.length > 0) {
         <div class="modalTitle">⭐ Puantaj Pro</div>
         <p class="modalText">Aylık veya yıllık abonelikle bireysel çalışan ve şantiye sınırlarını kaldırın.</p>
         <label for="individualProPlan">Abonelik dönemi</label>
-        <select id="individualProPlan" style="width:100%;padding:12px;margin:8px 0 16px;border-radius:10px">
+        <select id="individualProPlan" onchange="renderProPrices()" disabled style="width:100%;padding:12px;margin:8px 0 16px;border-radius:10px">
             <option value="aylik">Aylık abonelik</option>
             <option value="yillik">Yıllık abonelik</option>
         </select>
+        <p id="proPriceStatus" role="status"></p>
+        <button id="proPriceRetry" type="button" onclick="requestProPrices()" hidden>Tekrar dene</button>
+        <script>
+        let proPriceRequest = 0;
+        let proPriceTimer;
+        let proPrices = {};
+        let proPriceLoading = false;
+
+        function renderProPrices() {
+            const plan = document.getElementById("individualProPlan");
+            const buy = document.getElementById("proPriceBuy");
+            const selectedPrice = proPrices[plan.value];
+            const missing = !proPrices.aylik || !proPrices.yillik;
+            for (const option of plan.options) {
+                const monthly = option.value === "aylik";
+                const label = monthly ? "Aylık abonelik" : "Yıllık abonelik";
+                const price = proPrices[option.value];
+                option.textContent = price ? label + " · " + price + (monthly ? "/ay" : "/yıl") : label;
+                option.disabled = !price;
+            }
+            if (!selectedPrice && (proPrices.aylik || proPrices.yillik)) {
+                plan.value = proPrices.aylik ? "aylik" : "yillik";
+            }
+            const price = proPrices[plan.value];
+            plan.disabled = !price;
+            buy.disabled = !price;
+            buy.textContent = price ? "Abone Ol · " + price + (plan.value === "aylik" ? "/ay" : "/yıl") : "Abone Ol";
+            document.getElementById("proPriceStatus").textContent = proPriceLoading
+                ? "Google Play fiyatları yükleniyor…" : missing ? "Bazı abonelik fiyatları alınamadı." : "";
+            document.getElementById("proPriceRetry").hidden = proPriceLoading || !missing;
+        }
+
+        window.onProPrices = function (request, monthly, yearly) {
+            if (request !== proPriceRequest || !proPriceLoading) return;
+            clearTimeout(proPriceTimer);
+            proPriceLoading = false;
+            proPrices = { aylik: monthly, yillik: yearly };
+            renderProPrices();
+        };
+
+        function requestProPrices() {
+            clearTimeout(proPriceTimer);
+            const request = ++proPriceRequest;
+            proPrices = {};
+            proPriceLoading = true;
+            renderProPrices();
+            if (!window.PlayBilling || typeof window.PlayBilling.loadProPrices !== "function") {
+                window.onProPrices(request, null, null);
+                return;
+            }
+            proPriceTimer = setTimeout(() => window.onProPrices(request, null, null), 10000);
+            window.PlayBilling.loadProPrices(request);
+        }
+        </script>
         <div class="modalButtons">
             <button class="cancelButton" onclick="closeIndividualPro()">Kapat</button>
-            <button class="saveEmployeeButton" onclick="buyIndividualPro()">Abone Ol</button>
+            <button class="saveEmployeeButton" id="proPriceBuy" disabled onclick="buyIndividualPro()">Abone Ol</button>
         </div>
         <p class="modalText">Fiyat ve ödeme dönemi Google Play onay ekranında gösterilir. Abonelik, iptal edilmediği sürece seçtiğiniz dönemde otomatik yenilenir. Google Play abonelikler bölümünden iptal edebilirsiniz.</p>
         <div class="modalButtons"><button class="cancelButton" onclick="restoreIndividualPro()">Satın Almayı Geri Yükle</button></div>
@@ -2908,3 +2962,4 @@ if (employees.length > 0) {
 </body>
 
 </html>
+
