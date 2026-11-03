@@ -165,8 +165,8 @@ jobs:
                   minSdk 24
                   targetSdk 36
 
-                  versionCode 12
-                  versionName "1.0.11"
+                  versionCode 13
+                  versionName "1.0.12"
               }
 
               signingConfigs {
@@ -292,7 +292,7 @@ jobs:
       - name: APK ve AAB dosyalarini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: puantaj-android-v1.0.11
+          name: puantaj-android-v1.0.12
           if-no-files-found: error
           path: |
             android/app/build/outputs/apk/debug/*.apk
@@ -308,7 +308,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          TAG="v1.0.11"
+          TAG="v1.0.12"
 
           FILES=(
             android/app/build/outputs/apk/debug/app-debug.apk
@@ -335,10 +335,11 @@ jobs:
 
             gh release create "$TAG" \
               --target "$GITHUB_SHA" \
-              --title "Puantaj PRO 1.0.11 - Aylik ve Yillik Abonelik" \
+              --title "Puantaj PRO 1.0.12 - Aylik ve Yillik Abonelik" \
               --generate-notes \
               "${FILES[@]}"
           fi
 
           echo "GitHub Release islemi tamamlandi."
+
 
