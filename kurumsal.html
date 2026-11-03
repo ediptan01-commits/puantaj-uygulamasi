@@ -412,6 +412,20 @@
 
 <!-- PRO SATIN ALMA PENCERESİ -->
 <div style="max-width:1100px;margin:12px auto;padding:0 16px"><button type="button" onclick="openPro()" style="width:100%;padding:14px;border-radius:14px;border:1px solid #d8c9fa;background:#f5f0ff;font-weight:700">⭐ Puantaj PRO — Aylık / Yıllık Abonelik</button></div>
+<style>
+#proModal > .modalBox {
+    box-sizing: border-box;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+#proPriceRetry {
+    width: 100%;
+    margin: 0 0 12px;
+    min-height: 44px;
+}
+</style>
 <div id="proModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="proTitle">
     <div class="modalBox proBox">
         <div class="modalTitle" id="proTitle">⭐ Puantaj Pro</div>
@@ -429,7 +443,7 @@
             <option value="yillik">Yıllık abonelik</option>
         </select>
         <p id="proPriceStatus" role="status"></p>
-        <button id="proPriceRetry" type="button" onclick="requestProPrices()" hidden>Tekrar dene</button>
+        <button id="proPriceRetry" type="button" onclick="requestProPrices()" hidden>Fiyatları tekrar yükle</button>
         <script>
         let proPriceRequest = 0;
         let proPriceTimer;
@@ -452,11 +466,15 @@
                 plan.value = proPrices.aylik ? "aylik" : "yillik";
             }
             const price = proPrices[plan.value];
-            plan.disabled = !price;
-            buy.disabled = !price;
+            plan.disabled = proPriceLoading || !price;
+            buy.disabled = proPriceLoading || !price;
             buy.textContent = price ? "Abone Ol · " + price + (plan.value === "aylik" ? "/ay" : "/yıl") : "Abone Ol";
-            document.getElementById("proPriceStatus").textContent = proPriceLoading
-                ? "Google Play fiyatları yükleniyor…" : missing ? "Bazı abonelik fiyatları alınamadı." : "";
+            let status = "";
+            if (proPriceLoading) status = "Google Play fiyatları yükleniyor…";
+            else if (!proPrices.aylik && !proPrices.yillik) status = "Google Play abonelik fiyatları alınamadı.";
+            else if (!proPrices.aylik) status = "Aylık abonelik fiyatı alınamadı.";
+            else if (!proPrices.yillik) status = "Yıllık abonelik fiyatı alınamadı.";
+            document.getElementById("proPriceStatus").textContent = status;
             document.getElementById("proPriceRetry").hidden = proPriceLoading || !missing;
         }
 
@@ -471,7 +489,6 @@
         function requestProPrices() {
             clearTimeout(proPriceTimer);
             const request = ++proPriceRequest;
-            proPrices = {};
             proPriceLoading = true;
             renderProPrices();
             if (!window.PlayBilling || typeof window.PlayBilling.loadProPrices !== "function") {

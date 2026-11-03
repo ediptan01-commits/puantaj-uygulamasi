@@ -18,6 +18,8 @@ import com.android.billingclient.api.*;
 /** Offline WebView host with Google Play subscription billing. */
 public class MainActivity extends Activity {
     private static final String PRODUCT_ID = "puantaj_pro";
+    private static final String MONTHLY_PLAN = "aylik";
+    private static final String YEARLY_PLAN = "yillik-v2";
     private BillingClient billingClient;
     private WebView webView;
     private WebView printView;
@@ -141,8 +143,8 @@ private void setupBilling() {
                           if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                               for (ProductDetails detail : details.getProductDetailsList()) {
                                   if (PRODUCT_ID.equals(detail.getProductId())) {
-                                      monthly = recurringPrice(detail, "aylik", "P1M");
-                                      yearly = recurringPrice(detail, "yillik", "P1Y");
+                                      monthly = recurringPrice(detail, MONTHLY_PLAN, "P1M");
+                                      yearly = recurringPrice(detail, YEARLY_PLAN, "P1Y");
                                   }
                               }
                           }
@@ -151,15 +153,21 @@ private void setupBilling() {
               });
           }
 
-          private String recurringPrice(ProductDetails detail, String plan, String period) {
+          private ProductDetails.SubscriptionOfferDetails basePlanOffer(ProductDetails detail, String plan) {
               if (detail.getSubscriptionOfferDetails() == null) return null;
               for (ProductDetails.SubscriptionOfferDetails offer : detail.getSubscriptionOfferDetails()) {
-                  if (!plan.equals(offer.getBasePlanId()) || offer.getOfferId() != null) continue;
-                  for (ProductDetails.PricingPhase phase : offer.getPricingPhases().getPricingPhaseList()) {
-                      if (period.equals(phase.getBillingPeriod())
-                              && phase.getRecurrenceMode() == ProductDetails.RecurrenceMode.INFINITE_RECURRING) {
-                          return phase.getFormattedPrice();
-                      }
+                  if (plan.equals(offer.getBasePlanId()) && offer.getOfferId() == null) return offer;
+              }
+              return null;
+          }
+
+          private String recurringPrice(ProductDetails detail, String plan, String period) {
+              ProductDetails.SubscriptionOfferDetails offer = basePlanOffer(detail, plan);
+              if (offer == null) return null;
+              for (ProductDetails.PricingPhase phase : offer.getPricingPhases().getPricingPhaseList()) {
+                  if (period.equals(phase.getBillingPeriod())
+                          && phase.getRecurrenceMode() == ProductDetails.RecurrenceMode.INFINITE_RECURRING) {
+                      return phase.getFormattedPrice();
                   }
               }
               return null;
@@ -171,23 +179,16 @@ private void setupBilling() {
                   + (yearly == null ? "null" : org.json.JSONObject.quote(yearly)) + ")");
           }
 
-          @JavascriptInterface public void buyPro(String basePlanId) {
-              if (!"aylik".equals(basePlanId) && !"yillik".equals(basePlanId)) return;
+          @JavascriptInterface public void buyPro(String plan) {
+              if (!MONTHLY_PLAN.equals(plan) && !"yillik".equals(plan)) return;
+              String basePlanId = MONTHLY_PLAN.equals(plan) ? MONTHLY_PLAN : YEARLY_PLAN;
               runOnUiThread(() -> {
-                  if (billingClient == null || !billingClient.isReady()) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
+                  if (billingClient == null) { runJs("window.onProBillingError && window.onProBillingError(-1)"); return; }
                   QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder().setProductId(PRODUCT_ID).setProductType(BillingClient.ProductType.SUBS).build();
                   billingClient.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(Collections.singletonList(product)).build(), (result, details) -> {
                       if (result.getResponseCode() != BillingClient.BillingResponseCode.OK || details.getProductDetailsList().isEmpty()) { runJs("window.onProBillingError && window.onProBillingError(" + result.getResponseCode() + ")"); return; }
                       ProductDetails detail = details.getProductDetailsList().get(0);
-                      ProductDetails.SubscriptionOfferDetails selected = null;
-                      if (detail.getSubscriptionOfferDetails() != null) {
-                          for (ProductDetails.SubscriptionOfferDetails offer : detail.getSubscriptionOfferDetails()) {
-                              if (basePlanId.equals(offer.getBasePlanId()) && offer.getOfferId() == null) {
-                                  selected = offer;
-                                  break;
-                              }
-                          }
-                      }
+                      ProductDetails.SubscriptionOfferDetails selected = basePlanOffer(detail, basePlanId);
                       if (selected == null) { runJs("window.onProBillingError && window.onProBillingError('PLAN_UNAVAILABLE')"); return; }
                       BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).setOfferToken(selected.getOfferToken()).build())).build();
                       BillingResult launched = billingClient.launchBillingFlow(MainActivity.this, flow);
