@@ -1,0 +1,18 @@
+
+/* Puantaj first-run tutorial: independent of attendance and billing data. */
+.pt-help-button{position:fixed;right:16px;bottom:78px;z-index:8000;border:1px solid #abc4e7;background:#1457bc;color:white;border-radius:24px;padding:10px 14px;box-shadow:0 6px 18px #112c5866;font:700 14px Arial,sans-serif;cursor:pointer}
+.pt-overlay{position:fixed;inset:0;z-index:100000;background:rgba(9,23,42,.74)}
+.pt-focus{position:fixed;z-index:100001;pointer-events:none;border:3px solid #facc15;border-radius:14px;box-shadow:0 0 0 9999px rgba(9,23,42,.72),0 0 0 6px rgba(250,204,21,.2);transition:top .16s,left .16s,width .16s,height .16s}
+.pt-panel{position:fixed;z-index:100002;left:14px;right:14px;max-width:440px;margin:0 auto;box-sizing:border-box;border-radius:20px;background:#fff;color:#172a46;box-shadow:0 15px 50px #0007;padding:20px 18px 16px;font:16px/1.45 Arial,sans-serif;max-height:48vh;overflow:auto}
+.pt-panel h2{font-size:21px;margin:0 0 8px;font-weight:800;color:#10294c}
+.pt-panel p{margin:0;color:#475569;font-size:15px}
+.pt-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:18px}
+.pt-actions button{border:0;border-radius:11px;padding:11px 15px;min-height:42px;font:700 14px Arial,sans-serif;cursor:pointer}
+.pt-next{background:#1769ed;color:#fff}
+.pt-skip{background:#eef2f7;color:#334155}
+.pt-step-count{font-size:12px;color:#64748b;font-weight:700;margin-right:auto}
+.pt-welcome{position:fixed;z-index:100002;left:18px;right:18px;top:50%;transform:translateY(-50%);max-width:410px;margin:auto;padding:28px 22px;background:white;color:#172a46;border-radius:24px;box-shadow:0 15px 45px #0006;text-align:center;font-family:Arial,sans-serif}
+.pt-welcome h2{font-size:24px;margin:12px 0;color:#10294c}
+.pt-welcome p{font-size:15px;line-height:1.5;color:#475569;margin:0 0 15px}
+.pt-welcome .pt-emoji{font-size:45px}
+@media(max-height:570px){.pt-panel{max-height:56vh;padding:14px}.pt-help-button{bottom:64px}}
