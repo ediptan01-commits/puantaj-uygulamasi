@@ -77,6 +77,8 @@ jobs:
             kurumsal.css \
             kurumsal.js \
             privacy.html \
+            onboarding.css \
+            onboarding.js \
             MainActivity.java \
             assets/icon_puantaj.webp
           do
@@ -94,6 +96,8 @@ jobs:
           cp kurumsal.css android/app/src/main/assets/
           cp kurumsal.js android/app/src/main/assets/
           cp privacy.html android/app/src/main/assets/
+          cp onboarding.css android/app/src/main/assets/
+          cp onboarding.js android/app/src/main/assets/
 
           cp assets/icon_puantaj.webp \
             android/app/src/main/res/drawable/icon_puantaj.webp
@@ -165,8 +169,8 @@ jobs:
                   minSdk 24
                   targetSdk 36
 
-                  versionCode 17
-                  versionName "1.0.16"
+                  versionCode 18
+                  versionName "1.0.17"
               }
 
               signingConfigs {
@@ -298,7 +302,7 @@ jobs:
       - name: APK ve AAB dosyalarini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: puantaj-android-v1.0.16
+          name: puantaj-android-v1.0.17
           if-no-files-found: error
           path: |
             android/app/build/outputs/apk/debug/*.apk
@@ -314,7 +318,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          TAG="v1.0.16"
+          TAG="v1.0.17"
 
           FILES=(
             android/app/build/outputs/apk/debug/app-debug.apk
@@ -341,7 +345,7 @@ jobs:
 
             gh release create "$TAG" \
               --target "$GITHUB_SHA" \
-              --title "Puantaj PRO 1.0.16 - Aylik ve Yillik Abonelik" \
+              --title "Puantaj PRO 1.0.17 - Aylik ve Yillik Abonelik" \
               --generate-notes \
               "${FILES[@]}"
           fi
