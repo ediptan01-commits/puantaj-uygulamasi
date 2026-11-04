@@ -119,13 +119,10 @@
   }
   function init() {
     if (mode === "home") { welcome(); return; }
-    const button=make("button","pt-help-button","? Rehber");
-    button.type="button";
-    button.setAttribute("aria-label","Kullanım rehberini yeniden aç");
-    button.addEventListener("click", start);
-    document.body.appendChild(button);
+    // The floating button is removed; the walkthrough is accessible in settings.
     if (localStorage.getItem(key) !== "1") start();
   }
+  window.startPuantajGuide = start;
   if (document.readyState === "complete") init();
   else window.addEventListener("load", init, {once:true});
 })();
